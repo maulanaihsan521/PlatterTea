@@ -1,0 +1,166 @@
+// PlatterTea — Food & Tea Database Schema
+// Public Website (Company Profile + Product Showcase) + Admin CMS
+// NOTE: No transaction tables (cart/order/payment) — website is NOT e-commerce.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============ CONTENT: CATEGORIES & PRODUCTS ============
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?
+  sortOrder   Int       @default(0)
+  status      String    @default("PUBLISHED") // DRAFT | PUBLISHED | ARCHIVED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+model Product {
+  id             String        @id @default(cuid())
+  name           String
+  slug           String        @unique
+  categoryId     String?
+  category       Category?     @relation(fields: [categoryId], references: [id])
+  price          Int           @default(0) // in Rupiah
+  shortDesc      String?
+  fullDesc       String?
+  composition    String? // newline separated items
+  mainImage      String?
+  galleryImages  String? // newline separated URLs
+  featured       Boolean       @default(false)
+  status         String        @default("PUBLISHED") // DRAFT | PUBLISHED | ARCHIVED
+  sortOrder      Int           @default(0)
+  // product info extras
+  portion        String? // e.g. "1 orang"
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+// ============ PROMOTIONS ============
+
+model Promotion {
+  id          String    @id @default(cuid())
+  title       String
+  subtitle    String?
+  description String?
+  image       String?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String    @default("PUBLISHED") // DRAFT | PUBLISHED | EXPIRED | ARCHIVED
+  featured    Boolean   @default(false)
+  ctaLabel    String    @default("Lihat Informasi")
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ============ GALLERY ============
+
+model GalleryItem {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  image       String
+  category    String   @default("produk") // produk | booth | event | bts | brand
+  sortOrder   Int      @default(0)
+  status      String   @default("PUBLISHED") // DRAFT | PUBLISHED | ARCHIVED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============ TESTIMONIALS ============
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String? // e.g. "Mahasiswa"
+  photo     String?
+  content   String
+  rating    Int      @default(5)
+  status    String   @default("PUBLISHED") // DRAFT | PUBLISHED | ARCHIVED
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============ FAQ ============
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String   @default("umum")
+  sortOrder Int      @default(0)
+  status    String   @default("PUBLISHED") // DRAFT | PUBLISHED | ARCHIVED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============ SITE SETTINGS (key-value) ============
+// keys: hero_title, hero_subtitle, about_story, about_vision, about_mission,
+// whatsapp, email, phone, address, maps_url, opening_hours,
+// instagram_url, tiktok_url, footer_note, seo_title, seo_description
+
+model SiteSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ============ ADMIN USERS (for future CMS) ============
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("CONTENT_ADMIN") // SUPER_ADMIN | CONTENT_ADMIN | EDITOR
+  status       String   @default("ACTIVE")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ============ ADMIN AUDIT LOG (riwayat aktivitas admin) ============
+
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  userId      String? // id AdminUser (bisa null utk event anonim, mis. login gagal)
+  userName    String?
+  userEmail   String?
+  action      String // CREATE | UPDATE | DELETE | LOGIN | LOGOUT | LOGIN_FAILED | IMPORT
+  entity      String // Product | Category | Promotion | Testimonial | Faq | Gallery | Settings | User | Data | Auth
+  entityId    String?
+  entityLabel String? // nama/label yang mudah dibaca manusia
+  detail      String? // JSON string ringkasan perubahan
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entity])
+  @@index([userId])
+}
+
+// ============ PASSWORD RESET TOKENS (reset via link dari Super Admin) ============
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique // sha256 dari token — token mentah TIDAK disimpan
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}

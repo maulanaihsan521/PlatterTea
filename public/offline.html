@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Offline — PlatterTea</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/brand/favicon.png" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #F7F3E9;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 24px;
+    }
+    .card {
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 48px 32px;
+      box-shadow: 0 16px 48px rgba(23, 61, 50, 0.12);
+    }
+    .leaf-wrap { font-size: 56px; line-height: 1; margin-bottom: 20px; }
+    h1 { color: #173D32; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+    p { color: rgba(23, 61, 50, 0.65); font-size: 14px; line-height: 1.65; margin-top: 12px; }
+    .hand { color: #E8A126; font-style: italic; font-weight: 700; }
+    button {
+      margin-top: 28px;
+      min-height: 48px;
+      padding: 0 32px;
+      border: 0;
+      border-radius: 999px;
+      background: #173D32;
+      color: #F7F3E9;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+      box-shadow: 0 6px 18px rgba(23, 61, 50, 0.3);
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(23, 61, 50, 0.35); }
+    img { height: 64px; width: auto; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <img src="/brand/logo.png" alt="Logo PlatterTea" />
+    <img
+      src="/brand/mascot-sit.png"
+      alt="Maskot PlatterTea duduk santai"
+      style="height: auto; width: 150px; margin: 18px auto 10px"
+    />
+    <h1>Kamu Sedang Offline</h1>
+    <p>
+      Koneksi internet terputus. <span class="hand">Tenang,</span> halaman yang pernah kamu buka
+      tetap bisa diakses — coba muat ulang saat koneksi kembali.
+    </p>
+    <button onclick="location.reload()">Coba Lagi</button>
+  </main>
+</body>
+</html>

@@ -1,0 +1,280 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-plus-jakarta);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-caveat);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* PlatterTea Brand Colors */
+  --color-forest: var(--forest);
+  --color-forest-dark: var(--forest-dark);
+  --color-forest-light: var(--forest-light);
+  --color-cream: var(--cream);
+  --color-cream-dark: var(--cream-dark);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-dark: var(--gold-dark);
+  --color-caramel: var(--caramel);
+  --color-beige: var(--beige);
+  --color-sage: var(--sage);
+  --color-sage-light: var(--sage-light);
+}
+
+:root {
+  --radius: 1rem;
+
+  /* PlatterTea Brand Palette */
+  --forest: #173D32;
+  --forest-dark: #0F2E26;
+  --forest-light: #2A5546;
+  --cream: #F7F3E9;
+  --cream-dark: #EFE8D8;
+  --gold: #E8A126;
+  --gold-light: #F3C56B;
+  --gold-dark: #C9861B;
+  --caramel: #B96F45;
+  --beige: #EDE2D1;
+  --sage: #A7B3A9;
+  --sage-light: #EEF3EF;
+
+  --background: #F7F3E9;
+  --foreground: #25312C;
+  --card: #FFFFFF;
+  --card-foreground: #25312C;
+  --popover: #FFFFFF;
+  --popover-foreground: #25312C;
+  --primary: #173D32;
+  --primary-foreground: #F7F3E9;
+  --secondary: #EEF3EF;
+  --secondary-foreground: #173D32;
+  --muted: #F5F7F6;
+  --muted-foreground: #6B7A70;
+  --accent: #E8A126;
+  --accent-foreground: #173D32;
+  --destructive: #C0392B;
+  --border: #E5E0D3;
+  --input: #E5E0D3;
+  --ring: #173D32;
+  --chart-1: #173D32;
+  --chart-2: #E8A126;
+  --chart-3: #B96F45;
+  --chart-4: #A7B3A9;
+  --chart-5: #0F2E26;
+  --sidebar: #F7F3E9;
+  --sidebar-foreground: #25312C;
+  --sidebar-primary: #173D32;
+  --sidebar-primary-foreground: #F7F3E9;
+  --sidebar-accent: #EEF3EF;
+  --sidebar-accent-foreground: #173D32;
+  --sidebar-border: #E5E0D3;
+  --sidebar-ring: #173D32;
+}
+
+.dark {
+  --background: #0F2E26;
+  --foreground: #F7F3E9;
+  --card: #173D32;
+  --card-foreground: #F7F3E9;
+  --popover: #173D32;
+  --popover-foreground: #F7F3E9;
+  --primary: #E8A126;
+  --primary-foreground: #0F2E26;
+  --secondary: #2A5546;
+  --secondary-foreground: #F7F3E9;
+  --muted: #2A5546;
+  --muted-foreground: #A7B3A9;
+  --accent: #E8A126;
+  --accent-foreground: #0F2E26;
+  --destructive: #E74C3C;
+  --border: #2A5546;
+  --input: #2A5546;
+  --ring: #E8A126;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "ss01", "cv11";
+    /* clip (bukan hidden) → elemen dekoratif yang keluar viewport tidak bikin
+       horizontal scroll / zoom-out di mobile, dan position: sticky tetap bekerja */
+    overflow-x: clip;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ============ PlatterTea Custom Utilities ============ */
+
+.font-script {
+  font-family: var(--font-kaushan), var(--font-caveat), cursive;
+}
+
+.font-hand {
+  font-family: var(--font-caveat), cursive;
+}
+
+/* Soft organic blob shapes */
+.pt-blob {
+  border-radius: 58% 42% 45% 55% / 55% 48% 52% 45%;
+}
+
+/* Custom scrollbar */
+.pt-scroll::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.pt-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.pt-scroll::-webkit-scrollbar-thumb {
+  background: #A7B3A9;
+  border-radius: 999px;
+}
+.pt-scroll::-webkit-scrollbar-thumb:hover {
+  background: #173D32;
+}
+
+/* Hide scrollbar for horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Subtle entrance animations (150-300ms per brand guideline) */
+@keyframes pt-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pt-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes pt-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes pt-sway {
+  0%, 100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+
+.pt-fade-up {
+  animation: pt-fade-up 0.3s ease-out both;
+}
+.pt-fade-in {
+  animation: pt-fade-in 0.25s ease-out both;
+}
+.pt-float {
+  animation: pt-float 4s ease-in-out infinite;
+}
+.pt-sway {
+  animation: pt-sway 6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* Staggered children */
+.pt-stagger > * {
+  animation: pt-fade-up 0.3s ease-out both;
+}
+.pt-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.pt-stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.pt-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.pt-stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.pt-stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.pt-stagger > *:nth-child(6) { animation-delay: 0.3s; }
+.pt-stagger > *:nth-child(7) { animation-delay: 0.35s; }
+.pt-stagger > *:nth-child(8) { animation-delay: 0.4s; }
+
+/* Safe area for mobile bottom nav */
+.pt-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Mascot-specific animation — goyang lembut seperti jalan */
+@keyframes pt-mascot-sway {
+  0%, 100% {
+    transform: rotate(-3deg) translateY(0);
+  }
+  50% {
+    transform: rotate(3deg) translateY(-6px);
+  }
+}
+.pt-mascot-sway {
+  animation: pt-mascot-sway 3.6s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* Aksesibilitas: hormati preferensi reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .pt-float,
+  .pt-sway,
+  .pt-mascot-sway,
+  .pt-fade-up,
+  .pt-fade-in,
+  .pt-stagger > * {
+    animation: none !important;
+  }
+}
