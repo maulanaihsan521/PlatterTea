@@ -401,3 +401,10 @@ Stage Summary:
 1. User: rotasi GitHub classic token + password DB Supabase via dashboard (pernah dibagikan via chat)
 2. Pertimbangkan: repo private atau branch protection (main) + Dependabot + secret scanning di GitHub Settings
 3. JSON-LD layout masih statis; touch drag reorder & SW offline LRU tetap pending dari ronde sebelumnya
+
+### Verifikasi Akhir Audit (Task 12-a)
+- Force push sukses: remote HEAD = f20f15a (orphan commit bersih, 222 file, 0 file sensitif via API tree check)
+- Spot-check raw.githubusercontent: seed.ts / AdminLogin.tsx / create-admin.ts / worklog.md → 0 kredensial
+- bun run lint: clean; dev.log: bersih dari token/sekret
+- E2E UI: halaman #/admin tanpa hint demo; login dengan password baru (dari .env) → Dashboard tampil "Selamat sore"; password lama ditolak di level API
+- File junk "--clip-x" (screenshot testing) dihapus dari commit; script rotasi sementara dihapus; file temp /tmp dibersihkan
