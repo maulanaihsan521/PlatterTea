@@ -623,3 +623,23 @@ Stage Summary:
 2. Warning a11y pre-existing radix DialogContent (minor)
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-j
+Agent: main (Z.ai Code)
+Task: Permintaan user — ganti password admin ke password pilihan user (13 karakter; nilai tidak dicantumkan di repo publik)
+
+Work Log:
+- Ganti password admin via jalur resmi (bukan tulis langsung DB): login API (sesi cookie temp) → POST /api/admin/change-password dengan verifikasi password lama → 200 {"changed":true}. Password tersimpan sebagai hash scrypt (salt acak) di tabel AdminUser Supabase; perubahan tercatat otomatis di audit log (PASSWORD_CHANGE ok:true)
+- Verifikasi berlapis: password lama → 401 (ditolak), password baru → 200 (diterima); login via UI agent-browser dengan password baru → dashboard tampil, 0 console error
+- .env ADMIN_PASSWORD diperbarui agar catatan kredensial seed konsisten dengan DB (.env tetap gitignored — diverifikasi tidak masuk commit)
+- Catatan keamanan untuk user: password pilihan user relatif lemah (kombinasi kata umum + angka); disarankan nanti diganti ke passphrase lebih kuat, dan fitur rate-limit login (5x gagal → kunci 15 menit) tetap aktif sebagai proteksi
+
+Stage Summary:
+- Password admin kini password pilihan user (hash scrypt di DB, nilai TIDAK ditulis di worklog/repo) — login API & UI terverifikasi sukses; password lama tidak berlaku lagi
+- Tidak ada kode yang diubah (hanya data DB + .env gitignored + worklog) — permukaan serangan tidak bertambah
+
+## Unresolved Issues / Next Priorities
+1. User: pertimbangkan passphrase lebih kuat di kemudian hari; rotasi kredensial lain yang pernah terekspos di chat (GitHub token, kunci Supabase)
+2. Warning a11y pre-existing radix DialogContent (minor)
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
