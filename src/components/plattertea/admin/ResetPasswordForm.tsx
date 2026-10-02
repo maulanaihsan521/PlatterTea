@@ -1,7 +1,7 @@
 'use client'
 
 // ============ Form Reset Password (akses via link/kode dari Super Admin) ============
-// Dipasang di #/admin/reset dan #/admin/reset/{token} — alur publik tanpa sesi.
+// Dipasang di #/P578Admin/reset dan #/P578Admin/reset/{token} — alur publik tanpa sesi.
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -78,7 +78,7 @@ export function ResetPasswordForm({ token: initialToken }: { token?: string }) {
               asChild
               className="mt-5 h-11 w-full rounded-full bg-forest text-sm font-bold text-cream hover:bg-forest-dark"
             >
-              <a href="#/admin">Masuk ke Dashboard</a>
+              <a href="#/P578Admin">Masuk ke Dashboard</a>
             </Button>
           </div>
         ) : (
@@ -167,7 +167,7 @@ export function ResetPasswordForm({ token: initialToken }: { token?: string }) {
             </Button>
 
             <p className="text-center text-[11px] text-forest/40">
-              <a href="#/admin" className="underline-offset-2 hover:text-forest hover:underline">
+              <a href="#/P578Admin" className="underline-offset-2 hover:text-forest hover:underline">
                 ← Kembali ke halaman masuk
               </a>
             </p>

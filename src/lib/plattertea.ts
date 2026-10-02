@@ -90,7 +90,8 @@ export function parseHash(hash: string): Route {
   const parts = clean.split('/').filter(Boolean)
   if (parts.length === 0) return { view: 'home' }
   switch (parts[0]) {
-    case 'admin':
+    // Slug admin disamarkan (tidak mudah ditebak) — URL resmi: #/P578Admin
+    case 'P578Admin':
       return { view: 'admin', path: parts.slice(1) }
     case 'menu':
       if (parts[1]) return { view: 'product', slug: parts[1] }
@@ -129,7 +130,7 @@ export function routeToHash(route: Route): string {
     case 'faq':
       return '#/faq'
     case 'admin':
-      return `#/admin/${route.path.join('/')}`
+      return route.path.length ? `#/P578Admin/${route.path.join('/')}` : '#/P578Admin'
   }
 }
 

@@ -195,7 +195,7 @@ export function AdminLogin({ onLogin }: { onLogin: (u: AdminUser) => void }) {
 
           <p className="text-center text-[12px]">
             <a
-              href="#/admin/reset"
+              href="#/P578Admin/reset"
               className="font-bold text-forest/60 underline-offset-2 transition-colors hover:text-gold-dark hover:underline"
             >
               Lupa password? Gunakan kode reset dari Super Admin →

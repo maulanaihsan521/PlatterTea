@@ -20,7 +20,7 @@ import { routeToHash, type Route } from '@/lib/plattertea'
 /**
  * PlatterTea — Public Website + Admin CMS
  * Public: Company Profile + Product Showcase + WhatsApp Contact
- * Admin:  CMS untuk kelola konten (login via #/admin)
+ * Admin:  CMS untuk kelola konten (login via #/P578Admin)
  * (No transaction features — website is NOT e-commerce per brand rules)
  */
 function PlatterTeaApp() {

@@ -9,7 +9,7 @@ Dibangun dengan **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4**,
 ## Fitur
 
 - **Website publik** — Home, Menu, Detail Produk, Promo, About, Galeri, Contact, FAQ (SPA hash-routing)
-- **Admin CMS** (`#/admin`) — kelola produk, kategori, promo, testimoni, FAQ, galeri, media, pengaturan site, pengguna, audit log
+- **Admin CMS** (`#/P578Admin`) — kelola produk, kategori, promo, testimoni, FAQ, galeri, media, pengaturan site, pengguna, audit log
 - **PWA** — installable, service worker, halaman offline
 - **Upload otomatis WebP** — semua gambar upload dikonversi & dikompres (hemat storage free plan)
 - **Media Storage ganda** — Supabase Storage (produksi) atau local disk (dev), via env

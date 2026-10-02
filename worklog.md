@@ -940,3 +940,19 @@ Stage Summary:
 1. User: tes share link di WhatsApp (URL og baru otomatis ter-fetch)
 2. Opsional: Google Business Profile + Search Console
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal, ganti admin password produksi
+
+---
+Task ID: 12-x
+Agent: main (Z.ai Code)
+Task: Ganti URL admin #/admin → #/P578Admin (slug disamarkan)
+
+Work Log:
+- GANTI SLUG ROUTE: parseHash case 'P578Admin' (view internal tetap 'admin'); routeToHash → #/P578Admin[/path] (dashboard tanpa trailing slash); komentar jelaskan tujuan obfuscation
+- UPDATE SEMUA LINK: AdminView.onNavigate (#/P578Admin & #/P578Admin/<key>), AdminLogin (lupa password → #/P578Admin/reset), ResetPasswordForm (2 link balik ke login), API reset-link route (url token reset), komentar kode (page.tsx, use-plattertea, AdminView, ResetPasswordForm), README.md, PANDUAN-DEPLOY.md checklist
+- URL LAMA #/admin → default parse → HOME PUBLIK (link lama tidak lagi membuka admin)
+- QA agent-browser lokal: #/P578Admin render login ✓; #/admin jatuh ke home publik ✓; login admin@plattertea.id → dashboard #/P578Admin ✓; nav Produk → #/P578Admin/products ✓; reload deep-link tetap di section Produk ✓; lint bersih
+
+Stage Summary:
+- URL admin produksi resmi: https://plattertea.vercel.app/#/P578Admin
+- Keamanan API tidak berubah (session middleware tetap melindungi /api/admin/*) — perubahan ini obscurity layer URL saja
+- Catatan utk user: bookmark lama #/admin tidak berlaku; token reset password via Super Admin otomatis pakai URL baru

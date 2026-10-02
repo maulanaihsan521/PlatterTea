@@ -161,7 +161,7 @@ export function AdminView({ path = [] }: { path?: string[] }) {
   const [checking, setChecking] = useState(true)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Deep-link #/admin/reset/{token} — alur reset password berdiri sendiri
+  // Deep-link #/P578Admin/reset/{token} — alur reset password berdiri sendiri
   const isResetFlow = path[0] === 'reset'
 
   // Section diambil langsung dari URL → deep-link, refresh, dan tombol back/forward bekerja
@@ -202,7 +202,7 @@ export function AdminView({ path = [] }: { path?: string[] }) {
 
   const onNavigate = (k: string) => {
     // URL-driven: hashchange akan me-render ulang AdminView dengan path baru
-    window.location.hash = k === 'dashboard' ? '#/admin' : `#/admin/${k}`
+    window.location.hash = k === 'dashboard' ? '#/P578Admin' : `#/P578Admin/${k}`
     setDrawerOpen(false)
   }
 

@@ -28,7 +28,7 @@ function subscribeHash(callback: () => void) {
 
 export function useHashRoute() {
   // Saat SSR & hydration selalu mulai dari home, lalu sinkron ke hash asli
-  // setelah mount — mencegah hydration mismatch pada deep-link (mis. #/admin).
+  // setelah mount — mencegah hydration mismatch pada deep-link (mis. #/P578Admin).
   const route = useSyncExternalStore(subscribeHash, getHashRoute, () => HOME_ROUTE)
 
   useEffect(() => {

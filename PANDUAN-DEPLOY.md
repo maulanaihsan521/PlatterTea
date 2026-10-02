@@ -107,7 +107,7 @@ Klik **Deploy** → tunggu ±2–3 menit sampai muncul layar **Congratulations!*
 
 - [ ] Home & semua halaman tampil: **Menu, Promo, About, Contact, FAQ**
 - [ ] Tambah produk ke **keranjang** → **Pesan via WhatsApp** → pesan WA terisi otomatis dengan isi pesanan
-- [ ] Buka `https://domain-anda.vercel.app/#/admin` → login dengan email + **password lama yang tersimpan di database** (masih yang lama — langsung lanjut ke langkah berikut)
+- [ ] Buka `https://domain-anda.vercel.app/#/P578Admin` → login dengan email + **password lama yang tersimpan di database** (masih yang lama — langsung lanjut ke langkah berikut)
 - [ ] 🔒 **Ganti password**: Admin → **Pengaturan → Keamanan Akun** → isi password lama + password kuat baru (min. 10 karakter) → simpan. Password tersimpan ter-enskripsi di database, jadi berlaku di Vercel maupun lokal.
 - [ ] **Upload 1 foto test** lewat CMS → pastikan tampil di website (bukti Supabase Storage bekerja) → hapus foto test
 - [ ] Edit satu teks kecil → **Save** → muat ulang website → perubahan muncul (cache maks. 30 detik)
