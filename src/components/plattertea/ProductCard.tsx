@@ -1,14 +1,13 @@
 'use client'
 
 import { formatRupiah, type Product } from '@/lib/plattertea'
-import { waLink, WA_MESSAGES, useSettings } from '@/hooks/use-plattertea'
 import { useCartStore } from '@/hooks/use-cart'
 import { useToast } from '@/hooks/use-toast'
 import { ArrowRight, Plus, Check } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
-/** WhatsApp brand glyph (simple-icons path) — dipakai tombol chat cepat di card */
+/** WhatsApp brand glyph (simple-icons path) — dipakai tombol checkout WhatsApp di keranjang */
 export function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
@@ -58,11 +57,9 @@ interface ProductCardProps {
  * - badge FAVORIT emas pill (produk featured)
  * - nama besar + tag kategori pill di kanan
  * - deskripsi 2 baris
- * - harga besar + tombol chat WhatsApp bulat sage + tombol "Lihat Detail" pill hijau tua dengan panah
+ * - harga besar + tombol tambah keranjang bulat + tombol "Lihat Detail" pill hijau tua dengan panah
  */
 export function ProductCard({ product, onOpen, className }: ProductCardProps) {
-  const settings = useSettings()
-  const wa = waLink(settings.whatsapp, WA_MESSAGES.product(product.name))
   const { quickAdd, added } = useQuickAdd(product)
 
   return (
@@ -101,22 +98,12 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
           {product.shortDesc}
         </p>
 
-        {/* Harga + aksi — sesuai referensi: harga besar, lingkaran sage, pill hijau tua + panah */}
+        {/* Harga + aksi — harga besar, tombol tambah bulat, pill hijau tua + panah */}
         <div className="mt-auto flex items-center justify-between gap-1.5 pt-4">
           <p className="shrink-0 text-[16.5px] font-extrabold tracking-tight text-forest">
             {formatRupiah(product.price)}
           </p>
           <div className="flex shrink-0 items-center gap-1.5">
-            <a
-              href={wa}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sage-light text-forest/80 transition-all duration-200 hover:bg-forest hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
-              aria-label={`Tanya ${product.name} via WhatsApp`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <WhatsAppIcon className="h-[17px] w-[17px]" />
-            </a>
             <button
               type="button"
               onClick={(e) => {
@@ -152,8 +139,6 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
 
 /** Compact horizontal card used in mobile menu list — bahasa visual sama dgn kartu utama */
 export function ProductCardRow({ product, onOpen }: ProductCardProps) {
-  const settings = useSettings()
-  const wa = waLink(settings.whatsapp, WA_MESSAGES.product(product.name))
   const { quickAdd, added } = useQuickAdd(product)
 
   return (
@@ -182,15 +167,6 @@ export function ProductCardRow({ product, onOpen }: ProductCardProps) {
         </div>
         <p className="text-[13.5px] font-extrabold tracking-tight text-forest">{formatRupiah(product.price)}</p>
         <div className="mt-1 flex items-center gap-1.5">
-          <a
-            href={wa}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sage-light text-forest/80 transition-all duration-200 hover:bg-forest hover:text-cream"
-            aria-label={`Tanya ${product.name} via WhatsApp`}
-          >
-            <WhatsAppIcon className="h-3.5 w-3.5" />
-          </a>
           <button
             type="button"
             onClick={quickAdd}

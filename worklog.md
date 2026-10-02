@@ -643,3 +643,24 @@ Stage Summary:
 2. Warning a11y pre-existing radix DialogContent (minor)
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-k
+Agent: main (Z.ai Code)
+Task: Permintaan user — hapus tombol WhatsApp pada card menu (desktop & mobile)
+
+Work Log:
+- Hapus tombol WhatsApp bulat sage dari ProductCard (kartu grid desktop) dan ProductCardRow (baris horizontal mobile); bersihkan variabel wa + import waLink/WA_MESSAGES/useSettings yang tidak terpakai
+- WhatsAppIcon tetap diekspor dari ProductCard.tsx — masih dipakai tombol checkout WhatsApp di Cart drawer (fitur keranjang → WhatsApp TIDAK diubah, hanya tombol tanya-cepat di card yang dihapus)
+- Rapikan komentar usang (referensi "lingkaran sage" & "tombol chat cepat di card")
+- Verifikasi agent-browser: snapshot menu page — tidak ada lagi aria-label "Tanya ... via WhatsApp"; klik "+" → badge keranjang "1 item" (persist OK); kartu kini: harga + tombol tambah bulat + pill "Lihat Detail"; mobile 390px & desktop 1280px rapi, 0 console error
+- bun run lint lulus, dev.log bersih
+
+Stage Summary:
+- Card menu lebih bersih & fokus ke aksi utama (keranjang + detail); alur pemesanan tetap: keranjang → checkout WhatsApp dengan teks pesanan otomatis
+- Tidak ada perubahan backend/API/DB — murni UI card
+
+## Unresolved Issues / Next Priorities
+1. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat (GitHub token, kunci Supabase)
+2. Warning a11y pre-existing radix DialogContent (minor)
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
