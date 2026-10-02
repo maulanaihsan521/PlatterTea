@@ -207,6 +207,14 @@ export function CartSheet({ navigate }: CartSheetProps) {
                       alt={item.name}
                       loading="lazy"
                       className="h-full w-full object-cover"
+                      onError={(e) => {
+                        // Gambar lama tersimpan di localStorage (cth: path .png
+                        // sebelum migrasi WebP) → coba varian .webp, lalu sembunyikan
+                        // agar kotak putih rapi yang tampil, bukan ikon rusak.
+                        const el = e.currentTarget
+                        if (el.src.endsWith('.png')) el.src = el.src.replace(/\.png$/, '.webp')
+                        else el.style.visibility = 'hidden'
+                      }}
                     />
                   </div>
                   <div className="min-w-0 flex-1">

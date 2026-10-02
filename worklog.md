@@ -800,3 +800,32 @@ Stage Summary:
 2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-r
+Agent: main (Z.ai Code)
+Task: Pertanyaan user — kesiapan deploy ke Vercel free + Supabase free; sekalian fix 404 gambar lama di keranjang
+
+Work Log:
+- AUDIT KESIAPAN DEPLOY (tanpa perubahan besar — proyek sudah disiapkan sejak awal):
+  - Prisma schema = postgresql + DATABASE_URL (pooler 6543, pgbouncer=true & connection_limit ada) + DIRECT_URL (5432) ✓
+  - postinstall: prisma generate (output src/generated, gitignored) ✓
+  - Upload admin dual-mode: Supabase Storage (REST + header apikey) bila SUPABASE_URL+SERVICE_ROLE_KEY diset, fallback local disk hanya dev ✓ (public/uploads gitignored)
+  - Sharp resize 1600px WebP q82 — hemat storage free plan ✓
+  - CSP sudah whitelist *.supabase.co (img+connect) + Google Maps frame-src; produksi tanpa unsafe-eval ✓
+  - Auth custom scrypt+HMAC fail-closed (produksi tanpa AUTH_SECRET menolak boot) ✓
+  - Tanpa next/image remote, tanpa hardcoded localhost, bun.lock ada (Vercel auto-detect bun) ✓
+  - Keranjang = localStorage + checkout wa.me — tanpa tabel transaksi, aman serverless ✓
+- VERIFIKASI DB: tidak ada path .png tersisa di Product/Promotion/Category (migrasi WebP lengkap)
+- FIX MINOR: dev.log menunjukkan 404 /products/*.png — sumbernya item keranjang lama di localStorage user (tersimpan sebelum migrasi). Cart.tsx img diberi onError: .png → coba .webp → sembunyikan (kotak putih rapi). Lint lulus, compile OK.
+- Catatan arsitektur serverless: simple-cache (TTL 30s) & rate-limit in-memory = per-instance, bukan global — cukup utk skala landing page; DB Supabase sama dipakai dev & produksi (tanpa seed ulang)
+
+Stage Summary:
+- Proyek AMAN & SIAP deploy ke Vercel Hobby + Supabase Free: yang perlu dilakukan user hanya set env vars di Vercel (DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SITE_URL, ADMIN_EMAIL, ADMIN_PASSWORD kuat, AUTH_SECRET) + buat bucket publik "media" di Supabase Storage
+- PENTING pra-deploy: rotasi sb_secret & ghp_ token yang pernah terekspos di chat, gunakan password admin kuat (bukan plattertea123)
+- Fix kecil: fallback gambar keranjang utk localStorage lama (.png→.webp→hidden)
+
+## Unresolved Issues / Next Priorities
+1. Deploy: ikuti checklist env di atas; set NEXT_PUBLIC_SITE_URL ke domain vercel untuk OG absolut
+2. Rotasi kredensial yang pernah terekspos (sb_secret, ghp_) SEBELUM deploy
+3. Cek & sesuaikan konten FAQ di CMS bila ada yang menyebut cara pesan lama
+4. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
