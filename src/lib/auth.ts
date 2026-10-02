@@ -3,7 +3,20 @@ import { scryptSync, randomBytes, createHmac, timingSafeEqual } from 'crypto'
 import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 
-const SECRET = process.env.AUTH_SECRET || 'plattertea-secret-key-change-in-production'
+// ===== Fail-closed secret (ISO/IEC 27001 A.9 — kontrol akses) =====
+// Rahasia sesi TIDAK BOLEH punya fallback yang dikenal/di-commit ke repo —
+// siapa pun yang membaca repo bisa memalsukan session cookie admin.
+// - Produksi tanpa AUTH_SECRET → tolak boot (fail closed).
+// - Dev tanpa AUTH_SECRET → nilai acak per-proses: sesi hangus saat restart,
+//   tapi tidak dapat dipalsukan dari nilai yang bocor di repo.
+const ENV_SECRET = process.env.AUTH_SECRET || ''
+const SECRET = ENV_SECRET || randomBytes(32).toString('hex')
+if (process.env.NODE_ENV === 'production' && !ENV_SECRET) {
+  throw new Error(
+    'AUTH_SECRET wajib diset di environment produksi (minimal 32 byte acak, cth: openssl rand -hex 32).'
+  )
+}
+
 export const SESSION_COOKIE = 'pt_admin_session'
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7 // 7 days
 

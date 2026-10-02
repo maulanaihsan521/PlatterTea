@@ -2,7 +2,25 @@ import type { NextConfig } from "next";
 
 // Header keamanan (praktik ISO/IEC 27001 A.14 — keamanan dalam development &
 // A.13 — komunikasi) — dilindungi: klikjacking, sniffing, referer leak,
-// akses API kamera/lokasi/mikrofon tanpa izin eksplisit.
+// akses API kamera/lokasi/mikrofon tanpa izin eksplisit, XSS/CSP.
+const isDev = process.env.NODE_ENV !== "production";
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  // 'unsafe-inline' dibutuhkan bootstrap Next.js; 'unsafe-eval' hanya dev (HMR)
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://*.supabase.co",
+  "font-src 'self' data:",
+  "connect-src 'self' https://*.supabase.co",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  // hanya produksi (di dev bisa memaksa subresource http localhost jadi https)
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
+].join("; ");
+
 const securityHeaders = [
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -16,6 +34,7 @@ const securityHeaders = [
     key: "Strict-Transport-Security",
     value: "max-age=63072000; includeSubDomains; preload",
   },
+  { key: "Content-Security-Policy", value: contentSecurityPolicy },
 ];
 
 const nextConfig: NextConfig = {

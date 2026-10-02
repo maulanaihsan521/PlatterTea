@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowUp } from 'lucide-react'
+import { ArrowUp, MessageCircle } from 'lucide-react'
 import type { Route } from '@/lib/plattertea'
+import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
 import { cn } from '@/lib/utils'
 
 /** Mobile bottom navigation bar — per mockup: Home, Menu, Promo, About, Contact */
@@ -126,5 +127,38 @@ export function BackToTop() {
     >
       <ArrowUp className="h-5 w-5" />
     </button>
+  )
+}
+
+/**
+ * Tombol WhatsApp mengambang — CTA pemesanan selalu terjangkau satu jempol
+ * (sesuai aturan brand: semua pemesanan via WhatsApp). Lingkaran di mobile
+ * (di atas bottom-nav), memuai menampilkan label saat di-hover di desktop.
+ */
+export function FloatingWhatsApp() {
+  const settings = useSettings()
+  const wa = waLink(settings.whatsapp, WA_MESSAGES.order)
+
+  return (
+    <a
+      href={wa}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Pesan via WhatsApp"
+      title="Pesan via WhatsApp"
+      className="group fixed bottom-[92px] right-4 z-30 flex h-12 items-center rounded-full bg-forest text-cream shadow-[0_8px_24px_rgba(23,61,50,0.4)] ring-1 ring-gold/40 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(23,61,50,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold md:bottom-6 md:right-6 md:h-14"
+    >
+      <MessageCircle
+        className="mx-auto h-5.5 w-5.5 shrink-0 md:h-6 md:w-6"
+        strokeWidth={2}
+        aria-hidden="true"
+      />
+      <span
+        className="hidden max-w-0 overflow-hidden whitespace-nowrap pr-0 text-[13.5px] font-bold opacity-0 transition-all duration-300 md:group-hover:max-w-[150px] md:group-hover:pr-4 md:group-hover:pl-0.5 md:group-hover:opacity-100"
+        aria-hidden="true"
+      >
+        Pesan via WhatsApp
+      </span>
+    </a>
   )
 }

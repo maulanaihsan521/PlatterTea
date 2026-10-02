@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ProductCard, TeaCard } from '../ProductCard'
 import { MarketDaysBanner, OpenPOSection } from '../MarketDays'
 import { Leaf, LeafPair, Blob, Swoosh } from '../Decor'
@@ -451,6 +451,42 @@ const STEPS = [
 function HowToOrder() {
   const settings = useSettings()
   const wa = waLink(settings.whatsapp, WA_MESSAGES.order)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [active, setActive] = useState(0)
+  const [canLeft, setCanLeft] = useState(false)
+  const [canRight, setCanRight] = useState(true)
+
+  // Sinkron indikator titik + gradasi tepi dengan posisi scroll (mobile).
+  // Lebar langkah diukur dari jarak antar item — anti-glitch di semua lebar layar.
+  const syncTrack = useCallback(() => {
+    const el = trackRef.current
+    if (!el) return
+    const items = el.querySelectorAll<HTMLElement>('[data-step]')
+    if (items.length >= 2) {
+      const step = items[1].offsetLeft - items[0].offsetLeft
+      if (step > 0) {
+        setActive(Math.min(STEPS.length - 1, Math.max(0, Math.round(el.scrollLeft / step))))
+      }
+    }
+    setCanLeft(el.scrollLeft > 4)
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4)
+  }, [])
+
+  useEffect(() => {
+    syncTrack()
+    window.addEventListener('resize', syncTrack, { passive: true })
+    return () => window.removeEventListener('resize', syncTrack)
+  }, [syncTrack])
+
+  const gotoStep = (i: number) => {
+    const el = trackRef.current
+    if (!el) return
+    const items = el.querySelectorAll<HTMLElement>('[data-step]')
+    if (items.length >= 2) {
+      const step = items[1].offsetLeft - items[0].offsetLeft
+      el.scrollTo({ left: i * step, behavior: 'smooth' })
+    }
+  }
 
   return (
     <section className="relative overflow-hidden py-14 lg:py-20" aria-labelledby="cara-pesan">
@@ -472,21 +508,71 @@ function HowToOrder() {
           />
         </div>
 
-        {/* Steps — horizontal scroll on mobile, grid on desktop */}
-        <div className="no-scrollbar mt-9 flex gap-6 overflow-x-auto pb-2 lg:grid lg:grid-cols-5 lg:gap-3 lg:overflow-visible">
-          {STEPS.map(({ title, icon: Icon }, i) => (
-            <div key={i} className="relative flex w-[200px] shrink-0 flex-col items-center gap-3 text-center lg:w-auto">
-              {i < STEPS.length - 1 && (
-                <ArrowRight className="absolute left-[104%] top-6 hidden h-5 w-5 -translate-y-1/2 text-gold lg:block" />
-              )}
-              <span className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-forest/15 bg-white text-forest shadow-sm">
-                <Icon className="h-6 w-6" strokeWidth={1.8} />
-                <span className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-xs font-extrabold text-forest">
-                  {i + 1}
+        {/* Steps — horizontal scroll snap di mobile (dengan indikator titik +
+            gradasi tepi agar jelas bisa di-swipe & teks tak lagi terpotong),
+            grid 5 kolom di desktop */}
+        <div className="relative">
+          <div
+            ref={trackRef}
+            onScroll={syncTrack}
+            className="no-scrollbar mt-9 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [scroll-padding-left:1rem] sm:[scroll-padding-left:1.5rem] lg:grid lg:grid-cols-5 lg:gap-3 lg:overflow-visible"
+          >
+            {STEPS.map(({ title, icon: Icon }, i) => (
+              <div
+                key={i}
+                data-step
+                className="relative flex w-[200px] shrink-0 snap-start flex-col items-center gap-3 text-center lg:w-auto"
+              >
+                {i < STEPS.length - 1 && (
+                  <ArrowRight className="absolute left-[104%] top-6 hidden h-5 w-5 -translate-y-1/2 text-gold lg:block" />
+                )}
+                <span className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-forest/15 bg-white text-forest shadow-sm">
+                  <Icon className="h-6 w-6" strokeWidth={1.8} />
+                  <span className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-gold text-xs font-extrabold text-forest">
+                    {i + 1}
+                  </span>
                 </span>
-              </span>
-              <p className="text-[13px] font-semibold leading-snug text-forest/85">{title}</p>
-            </div>
+                <p className="text-[13px] font-semibold leading-snug text-forest/85">{title}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Gradasi tepi — penanda visual masih ada langkah di kiri/kanan (mobile) */}
+          <div
+            aria-hidden="true"
+            className={cn(
+              'pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-cream via-cream/70 to-transparent transition-opacity duration-300 lg:hidden',
+              canLeft ? 'opacity-100' : 'opacity-0'
+            )}
+          />
+          <div
+            aria-hidden="true"
+            className={cn(
+              'pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-cream via-cream/70 to-transparent transition-opacity duration-300 lg:hidden',
+              canRight ? 'opacity-100' : 'opacity-0'
+            )}
+          />
+        </div>
+
+        {/* Indikator titik langkah — bisa diklik utk lompat ke langkah (mobile) */}
+        <div
+          className="mt-4 flex justify-center gap-1.5 lg:hidden"
+          role="tablist"
+          aria-label="Pilih langkah cara pesan"
+        >
+          {STEPS.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              role="tab"
+              aria-selected={i === active}
+              aria-label={`Langkah ${i + 1} dari ${STEPS.length}`}
+              onClick={() => gotoStep(i)}
+              className={cn(
+                'h-2 rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold',
+                i === active ? 'w-7 bg-gold' : 'w-2 bg-forest/20 hover:bg-forest/35'
+              )}
+            />
           ))}
         </div>
 
