@@ -73,3 +73,13 @@ Dokumen ini memetakan pengendalian keamanan website PlatterTea terhadap
 - Password admin CMS (`admin@plattertea.id`) terekspos publik di 4 file (AdminLogin.tsx, seed.ts, create-admin.ts, seed-gallery.ts) + worklog.md.
 - **Remediasi**: (a) semua skrip seed/admin kini WAJIB env `ADMIN_EMAIL`/`ADMIN_PASSWORD` (min. 12 karakter, tanpa fallback hardcoded — seed melewati pembuatan admin bila env kosong); (b) hint "Demo:" di halaman login dihapus; (c) password asli **dirotasi** di database (hash scrypt salt baru); (d) worklog disanitasi; (e) history diganti ulang (orphan commit) & force-push agar blob lama tidak lagi dapat diakses dari ref.
 - **Tindak lanjut untuk pemilik**: rotasi GitHub token & password DB Supabase via dashboard (pernah dibagikan via chat); pertimbangkan repo private / branch protection.
+
+### Audit 2 — Remediasi Supabase Advisor: "RLS Disabled in Public" (10 CRITICAL)
+**Tanggal**: 2 Oktober 2026 · **Pemicu**: laporan Database Advisor di dashboard Supabase
+
+- **Temuan**: seluruh 10 tabel `public` dibuat `prisma db push` TANPA Row Level Security. Skema default Supabase memberi grant SELECT/INSERT/UPDATE/DELETE pada tabel baru ke role `anon` & `authenticated` → siapa pun dengan anon key dapat membaca bahkan MENULIS data (termasuk `AdminUser`, `PasswordResetToken`, `AdminAuditLog`) langsung via auto REST API PostgREST, mem-bypass lapisan API Next.js.
+- **Remediasi**: (1) `ALTER TABLE … ENABLE ROW LEVEL SECURITY` untuk 10 tabel — tanpa policy → anon/authenticated melihat nol baris; (2) `REVOKE ALL ON ALL TABLES/SEQUENCES IN SCHEMA public FROM anon, authenticated` (defense in depth); (3) verifikasi via `pg_class.relrowsecurity` (10/10 true) & `has_table_privilege` (10/10 tanpa grant).
+- **Aplikasi tidak terdampak**: Prisma terhubung sebagai role `postgres` (pemilik tabel → otomatis bypass RLS tanpa `FORCE`). Terverifikasi: `/api/products`, `/api/settings`, login CMS, dan homepage tetap normal.
+- **Catatan**: selama jeda antara migrasi ↔ remediasi ini, akses anon via Data API secara teknis mungkin. Konten publik bersifat non-sensitif; tabel admin kini terkunci. Rotasi password DB (poin catatan di atas) tetap disarankan.
+- **Jika suatu saat ingin memakai Supabase Data API/client di frontend**: buat policy RLS eksplisit per tabel + grant minimal, JANGAN menonaktifkan RLS.
+- **Hardening opsional di dashboard**: Settings → API → bisa menonaktifkan Data API bila memang tidak dipakai.

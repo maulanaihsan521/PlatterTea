@@ -434,3 +434,23 @@ Stage Summary:
 2. Grafik aktivitas bisa ditingkatkan: filter rentang (7/30 hari), tooltip kustom
 3. Notifikasi login-gagal via email/webhook (butuh mailer eksternal)
 4. User: rotasi GitHub token + password DB Supabase via dashboard (dari ronde audit)
+
+---
+Task ID: 12-c
+Agent: main (Z.ai Code)
+Task: Permintaan user — screenshot Drive berisi Supabase Database Advisor "10 issues CRITICAL: RLS Disabled in Public"
+
+Work Log:
+- IDENTIFIKASI: semua 10 tabel public (Category, Product, Promotion, GalleryItem, Testimonial, Faq, SiteSetting, AdminUser, AdminAuditLog, PasswordResetToken) dibuat prisma db push TANPA RLS; grant default Supabase ke anon/authenticated memungkinkan akses baca-tulis langsung via auto REST API (bypass API Next.js) — termasuk tabel sensitif hash password & token reset
+- REMEDIASI via script raw SQL sekali-pakai (dihapus setelah eksekusi): ENABLE ROW LEVEL SECURITY 10/10 tabel (tanpa policy → anon melihat nol baris) + REVOKE ALL TABLES & SEQUENCES dari anon, authenticated (defense in depth)
+- VERIFIKASI DB: pg_class.relrowsecurity = true 10/10; has_table_privilege anon/authenticated = false 10/10
+- VERIFIKASI APP: /api/products + /api/settings mengembalikan data, admin login 200, homepage 200 — Prisma (role postgres, pemilik tabel) otomatis bypass RLS, nol dampak
+- DOKUMENTASI: SECURITY.md Audit 2 (temuan, remediasi, verifikasi, panduan masa depan bila ingin pakai Data API: buat policy eksplisit, jangan matikan RLS; opsi hardening: matikan Data API di dashboard Supabase)
+
+Stage Summary:
+- 10 temuan CRITICAL Supabase Advisor tertangani tuntas: RLS aktif di semua tabel, grant anon/authenticated dicabut, aplikasi tetap berfungsi penuh
+- Permukaan serangan database kini terbatas pada koneksi kredensial (postgres via pooler) — auto REST API tidak lagi menyajikan data
+
+## Unresolved Issues / Next Priorities
+1. User: tetap disarankan rotasi password DB + GitHub token via dashboard (pernah lewat chat); opsional nonaktifkan Data API di Supabase Settings
+2. Pending lain dari ronde sebelumnya (touch drag reorder, SW offline LRU, dsb.)
