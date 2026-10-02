@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { handleAdmin, bad } from '@/lib/admin-helpers'
 import { maybeCleanupOldAuditLogs } from '@/lib/audit'
 
-const ACTIONS = ['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGIN_FAILED', 'LOGOUT', 'IMPORT', 'PASSWORD_RESET_REQUEST', 'PASSWORD_RESET', 'PASSWORD_RESET_FAILED', 'MEDIA_DELETE']
+const ACTIONS = ['CREATE', 'UPDATE', 'DELETE', 'LOGIN', 'LOGIN_FAILED', 'LOGOUT', 'IMPORT', 'PASSWORD_RESET_REQUEST', 'PASSWORD_RESET', 'PASSWORD_RESET_FAILED', 'PASSWORD_CHANGE', 'MEDIA_DELETE']
 const ENTITIES = ['Product', 'Category', 'Promotion', 'Testimonial', 'Faq', 'Gallery', 'Settings', 'User', 'Data', 'Auth', 'Media']
 
 /**

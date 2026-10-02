@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useToast } from '@/hooks/use-toast'
 import { useSettings } from '@/hooks/use-plattertea'
-import { Loader2, Save, RotateCcw, Download, Upload, DatabaseBackup } from 'lucide-react'
+import { Loader2, Save, RotateCcw, Download, Upload, DatabaseBackup, ShieldCheck } from 'lucide-react'
 
 interface FieldDef {
   key: string
@@ -145,6 +145,44 @@ export function SettingsManager() {
     setImporting(false)
   }
 
+  // ===== Keamanan Akun — ubah password sendiri (POST /api/admin/change-password) =====
+  const [pwCurrent, setPwCurrent] = useState('')
+  const [pwNew, setPwNew] = useState('')
+  const [pwConfirm, setPwConfirm] = useState('')
+  const [changingPw, setChangingPw] = useState(false)
+
+  const changePassword = async () => {
+    if (!pwCurrent || !pwNew || !pwConfirm) {
+      toast({ title: 'Lengkapi semua kolom password.', variant: 'destructive' })
+      return
+    }
+    if (pwNew.length < 10) {
+      toast({ title: 'Password baru minimal 10 karakter.', variant: 'destructive' })
+      return
+    }
+    if (pwNew !== pwConfirm) {
+      toast({ title: 'Konfirmasi password tidak cocok.', variant: 'destructive' })
+      return
+    }
+    setChangingPw(true)
+    const res = await adminFetch('/api/admin/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword: pwCurrent, newPassword: pwNew }),
+    })
+    setChangingPw(false)
+    if (res.ok) {
+      setPwCurrent('')
+      setPwNew('')
+      setPwConfirm('')
+      toast({
+        title: 'Password berhasil diganti',
+        description: 'Gunakan password baru pada login berikutnya. Aktivitas ini tercatat di log audit.',
+      })
+    } else {
+      toast({ title: 'Gagal mengganti password', description: res.error, variant: 'destructive' })
+    }
+  }
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -194,6 +232,59 @@ export function SettingsManager() {
           </div>
         </section>
       ))}
+
+      {/* Keamanan Akun — ubah password sendiri (semua role) */}
+      <section className="rounded-3xl border border-forest/10 bg-white p-5 shadow-[0_2px_12px_rgba(23,61,50,0.05)] sm:p-6">
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-sage-light text-forest">
+            <ShieldCheck className="h-5 w-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-[15px] font-extrabold text-forest">Keamanan Akun</h3>
+            <p className="mt-0.5 text-[12px] leading-relaxed text-forest/55">
+              Ganti password akun CMS Anda secara berkala. Minimal 10 karakter — kombinasi huruf,
+              angka, dan simbol lebih aman. Percobaan perubahan tercatat di log aktivitas.
+            </p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              <Field label="Password Saat Ini">
+                <TextInput
+                  type="password"
+                  autoComplete="current-password"
+                  value={pwCurrent}
+                  onChange={(e) => setPwCurrent(e.target.value)}
+                  placeholder="••••••••••"
+                />
+              </Field>
+              <Field label="Password Baru" hint="Minimal 10 karakter.">
+                <TextInput
+                  type="password"
+                  autoComplete="new-password"
+                  value={pwNew}
+                  onChange={(e) => setPwNew(e.target.value)}
+                  placeholder="••••••••••"
+                />
+              </Field>
+              <Field label="Konfirmasi Password Baru">
+                <TextInput
+                  type="password"
+                  autoComplete="new-password"
+                  value={pwConfirm}
+                  onChange={(e) => setPwConfirm(e.target.value)}
+                  placeholder="••••••••••"
+                />
+              </Field>
+            </div>
+            <Button
+              onClick={changePassword}
+              disabled={changingPw}
+              className="mt-4 h-10 rounded-full bg-forest px-5 text-[13px] font-bold text-cream hover:bg-forest-dark"
+            >
+              {changingPw ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+              Ganti Password
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* Backup & Restore — hanya bermakna untuk Super Admin (API menolak role lain) */}
       <section className="rounded-3xl border border-gold/30 bg-gold/5 p-5 sm:p-6">

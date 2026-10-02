@@ -408,3 +408,29 @@ Stage Summary:
 - bun run lint: clean; dev.log: bersih dari token/sekret
 - E2E UI: halaman #/admin tanpa hint demo; login dengan password baru (dari .env) → Dashboard tampil "Selamat sore"; password lama ditolak di level API
 - File junk "--clip-x" (screenshot testing) dihapus dari commit; script rotasi sementara dihapus; file temp /tmp dibersihkan
+
+---
+Task ID: 12-b
+Agent: main (Z.ai Code)
+Task: Permintaan user — "Review & Iteration Dashboard Admin" (QA CMS + perbaikan + fitur baru)
+
+Work Log:
+- QA agent-browser (login admin@plattertea.id, desktop 1280 & mobile 390): DITEMUKAN 2 BUG OVERFLOW — (1) Dashboard mobile scrollWidth 520 vs 390: grid `lg:grid-cols-[1fr_360px]` mengikuti min-content label audit panjang → diperbaiki `grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_360px]` + min-w-0 di kedua kartu; hardening sama diterapkan di HomeView/AboutView/MarketDays; (2) Settings mobile scrollWidth 1858(!): input value URL panjang (maps_embed) memaksa track grid melebar → FIX SISTEMIK di shared.tsx: Field wrapper + TextInput kini `min-w-0` (berlaku semua manager). Hasil: SEMUA section admin 390=390 tanpa overflow
+- SKELETON FIX: Skeleton shadcn memakai `bg-accent` yang di tema PlatterTea = emas #E8A126 → loading state tampil blok emas pekat di seluruh CMS → diganti `bg-forest/10` lembut
+- FITUR BARU 1 — Ubah Password dari CMS: API POST /api/admin/change-password (verifikasi password saat ini via timing-safe, min 10 karakter, wajib berbeda, audit PASSWORD_CHANGE sukses/gagal); UI kartu "Keamanan Akun" di Settings (3 field + validasi client + toast); aksi baru terdaftar di route audit (ACTIONS), AuditManager (badge/verb/filter) & dashboard activity icons; E2E: ganti→login baru 200→lama 401→kembalikan (password .env tetap valid)
+- FITUR BARU 2 — Grafik "Aktivitas 7 Hari Terakhir" di dashboard: /api/admin/stats diperluas `activity7d` (bucket harian zona WIB, Intl timeZone Asia/Jakarta, label Min-Sab); mini bar chart Tailwind murni (bar emas utk hari ini, sage utk hari lain, angka per bar, badge total aksi, role=img + aria-label, title tooltip per bar)
+- STYLING: maskot si Box (mascot-point.png, pt-float, drop-shadow) mengintip di kanan welcome banner — hidden < md agar mobile bersih; kartu stat Ringkasan Konten kini punya tile ikon beraksen warna (gold/sage/forest per kartu) + scale-110 saat hover + angka tabular-nums; judul banner max-w hanya di md+ (emoji 👋 tidak wrap lagi di mobile)
+- BUG DITEMUKAN & FIX: runtime error `tile is not defined` (destructure QUICK_LINKS.map lupa properti tile baru) — tertangkap cepat via screenshot agent-browser error overlay, diperbaiki, reload OK
+- QA akhir: lint clean; dev.log bersih; dashboard/settings/audit mobile+desktop render benar; chart 7 bar (19 aksi) tampil; toast validasi & sukses tampil; entri audit "mengganti password akunnya sendiri" muncul dengan filter baru
+
+Stage Summary:
+- CMS admin kini bebas overflow di semua section (mobile 390 & desktop 1280), skeleton berwarna brand yang lembut
+- Admin bisa ganti password sendiri dari CMS (aman: verifikasi password lama, audit trail lengkap) — melengkapi rotasi password pada ronde keamanan
+- Dashboard lebih hidup: maskot brand, grafik aktivitas 7 hari (WIB), kartu stat beraksen
+- Semua perubahan terbatas di #/admin — halaman publik hanya mendapat hardening minmax(0,1fr) tanpa perubahan visual
+
+## Unresolved Issues / Next Priorities
+1. Touch drag-and-drop reorder & SW offline LRU — pending dari ronde sebelumnya
+2. Grafik aktivitas bisa ditingkatkan: filter rentang (7/30 hari), tooltip kustom
+3. Notifikasi login-gagal via email/webhook (butuh mailer eksternal)
+4. User: rotasi GitHub token + password DB Supabase via dashboard (dari ronde audit)

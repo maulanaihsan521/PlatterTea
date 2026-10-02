@@ -20,6 +20,7 @@ export type AuditAction =
   | 'PASSWORD_RESET_REQUEST'
   | 'PASSWORD_RESET'
   | 'PASSWORD_RESET_FAILED'
+  | 'PASSWORD_CHANGE'
   | 'MEDIA_DELETE'
 
 export function logAudit(input: {

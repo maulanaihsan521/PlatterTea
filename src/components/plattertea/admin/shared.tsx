@@ -115,7 +115,7 @@ export function Field({
   className?: string
 }) {
   return (
-    <div className={cn('space-y-1.5', className)}>
+    <div className={cn('min-w-0 space-y-1.5', className)}>
       <Label className="text-[13px] font-bold text-forest">
         {label}
         {required && <span className="ml-0.5 text-destructive">*</span>}
@@ -127,7 +127,8 @@ export function Field({
 }
 
 export function TextInput(props: React.ComponentProps<typeof Input>) {
-  return <Input {...props} className={cn('h-10 rounded-xl border-forest/15 bg-white focus-visible:ring-gold/50', props.className)} />
+  // min-w-0: input dengan value URL panjang tidak memaksa grid/flex parent melebar (overflow mobile)
+  return <Input {...props} className={cn('h-10 min-w-0 rounded-xl border-forest/15 bg-white focus-visible:ring-gold/50', props.className)} />
 }
 
 export function TextArea(props: React.ComponentProps<typeof Textarea>) {

@@ -26,6 +26,7 @@ import {
   ShieldX,
   ShieldAlert,
   ShieldCheck,
+  Activity,
 } from 'lucide-react'
 
 interface Stats {
@@ -36,6 +37,7 @@ interface Stats {
   gallery: number
   testimonials: number
   faqs: number
+  activity7d?: { date: string; label: string; total: number }[]
 }
 
 interface RecentActivity {
@@ -58,6 +60,7 @@ const ACTIVITY_ICONS: Record<string, React.ComponentType<{ className?: string }>
   PASSWORD_RESET_REQUEST: KeyRound,
   PASSWORD_RESET: KeyRound,
   PASSWORD_RESET_FAILED: ShieldX,
+  PASSWORD_CHANGE: KeyRound,
 }
 
 const ACTIVITY_LABEL: Record<string, string> = {
@@ -71,6 +74,7 @@ const ACTIVITY_LABEL: Record<string, string> = {
   PASSWORD_RESET_REQUEST: 'membuat link reset password untuk',
   PASSWORD_RESET: 'mengganti password (via token reset) —',
   PASSWORD_RESET_FAILED: 'gagal reset password —',
+  PASSWORD_CHANGE: 'mengganti password akunnya sendiri',
 }
 
 const ENTITY_LABEL: Record<string, string> = {
@@ -96,13 +100,13 @@ function activityTime(iso: string): string {
   return `${Math.floor(h / 24)} hari lalu`
 }
 
-const QUICK_LINKS: { statsKey: keyof Stats; label: string; section: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { statsKey: 'totalProducts', label: 'Produk', section: 'products', icon: Package },
-  { statsKey: 'promotions', label: 'Promo Aktif', section: 'promotions', icon: BadgePercent },
-  { statsKey: 'gallery', label: 'Galeri', section: 'gallery', icon: Images },
-  { statsKey: 'testimonials', label: 'Testimoni', section: 'testimonials', icon: MessageSquareQuote },
-  { statsKey: 'faqs', label: 'FAQ', section: 'faqs', icon: HelpCircle },
-  { statsKey: 'draftProducts', label: 'Produk Draft', section: 'products', icon: FileClock },
+const QUICK_LINKS: { statsKey: keyof Stats; label: string; section: string; icon: React.ComponentType<{ className?: string }>; tile: string }[] = [
+  { statsKey: 'totalProducts', label: 'Produk', section: 'products', icon: Package, tile: 'bg-gold/20 text-gold-dark' },
+  { statsKey: 'promotions', label: 'Promo Aktif', section: 'promotions', icon: BadgePercent, tile: 'bg-sage-light text-forest' },
+  { statsKey: 'gallery', label: 'Galeri', section: 'gallery', icon: Images, tile: 'bg-forest/10 text-forest' },
+  { statsKey: 'testimonials', label: 'Testimoni', section: 'testimonials', icon: MessageSquareQuote, tile: 'bg-gold/15 text-gold-dark' },
+  { statsKey: 'faqs', label: 'FAQ', section: 'faqs', icon: HelpCircle, tile: 'bg-sage-light text-forest' },
+  { statsKey: 'draftProducts', label: 'Produk Draft', section: 'products', icon: FileClock, tile: 'bg-forest/[0.07] text-forest/70' },
 ]
 
 export function AdminDashboard({
@@ -157,8 +161,16 @@ export function AdminDashboard({
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-forest via-forest to-forest-light p-6 sm:p-8">
         <LeafPair className="absolute -right-6 -top-6 h-24 w-32 rotate-12 text-forest-light/25" />
         <Leaf className="absolute -bottom-3 right-24 h-10 w-16 -rotate-12 text-gold/20" />
+        {/* Maskot si Box mengintip dari kanan banner (sembunyi di layar sempit agar tidak ramai) */}
+        <img
+          src="/brand/mascot-point.png"
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          className="pointer-events-none absolute bottom-0 right-4 hidden h-24 w-auto object-contain drop-shadow-[0_6px_10px_rgba(0,0,0,0.25)] pt-float md:block lg:right-8 lg:h-28"
+        />
         <p className="font-hand text-2xl text-gold-light">{greeting},</p>
-        <h2 className="mt-0.5 text-xl font-extrabold text-cream sm:text-2xl">{userName} 👋</h2>
+        <h2 className="mt-0.5 text-xl font-extrabold text-cream sm:text-2xl md:max-w-[calc(100%-7rem)]">{userName} 👋</h2>
         <p className="mt-2 max-w-md text-[13.5px] leading-relaxed text-cream/65">
           Kelola menu, promo, dan konten website PlatterTea dari satu tempat. Semua perubahan
           langsung tampil di halaman publik.
@@ -193,7 +205,7 @@ export function AdminDashboard({
           </div>
         ) : (
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-            {QUICK_LINKS.map(({ statsKey, label, section, icon: Icon }) => (
+            {QUICK_LINKS.map(({ statsKey, label, section, icon: Icon, tile }) => (
               <button
                 key={label}
                 type="button"
@@ -202,10 +214,10 @@ export function AdminDashboard({
               >
                 <Card className="h-full rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.06)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_10px_24px_rgba(23,61,50,0.12)]">
                   <CardContent className="flex flex-col gap-2 p-4">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sage-light text-forest">
+                    <span className={cn('flex h-9 w-9 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110', tile)}>
                       <Icon className="h-4.5 w-4.5" />
                     </span>
-                    <p className="text-2xl font-extrabold tracking-tight text-forest">
+                    <p className="text-2xl font-extrabold tabular-nums tracking-tight text-forest">
                       {stats ? stats[statsKey] : '—'}
                     </p>
                     <p className="text-[11.5px] font-bold uppercase tracking-wide text-forest/50">{label}</p>
@@ -216,6 +228,53 @@ export function AdminDashboard({
           </div>
         )}
       </div>
+
+      {/* Aktivitas 7 hari — mini bar chart (data dari /api/admin/stats, bucket WIB) */}
+      <Card className="rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.05)]">
+        <CardContent className="p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="flex items-center gap-2 text-[15px] font-extrabold text-forest">
+              <Activity className="h-4.5 w-4.5 text-gold-dark" /> Aktivitas 7 Hari Terakhir
+            </h3>
+            {stats?.activity7d && (
+              <span className="rounded-full bg-sage-light px-3 py-1 text-[11.5px] font-extrabold tabular-nums text-forest">
+                {stats.activity7d.reduce((s, d) => s + d.total, 0)} aksi
+              </span>
+            )}
+          </div>
+          {stats?.activity7d ? (
+            <div className="mt-4 flex items-end gap-2 sm:gap-3" role="img" aria-label="Grafik jumlah aktivitas CMS per hari, tujuh hari terakhir">
+              {stats.activity7d.map((d, i) => {
+                const max = Math.max(...stats.activity7d!.map((x) => x.total), 1)
+                const h = Math.round((d.total / max) * 100)
+                const isToday = i === stats.activity7d!.length - 1
+                return (
+                  <div key={d.date} className="flex min-w-0 flex-1 flex-col items-center gap-1.5">
+                    <span className={cn('text-[10.5px] font-extrabold tabular-nums', d.total > 0 ? 'text-forest' : 'text-forest/30')}>
+                      {d.total}
+                    </span>
+                    <div className="flex h-20 w-full items-end overflow-hidden rounded-lg bg-sage-light/50 sm:h-24">
+                      <div
+                        className={cn(
+                          'w-full rounded-lg transition-all duration-500 pt-fade-up',
+                          isToday ? 'bg-gold' : 'bg-forest/60'
+                        )}
+                        style={{ height: `${d.total > 0 ? Math.max(h, 8) : 4}%` }}
+                        title={`${d.label}: ${d.total} aktivitas`}
+                      />
+                    </div>
+                    <span className={cn('text-[10.5px] font-bold', isToday ? 'text-gold-dark' : 'text-forest/45')}>
+                      {d.label}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          ) : (
+            <Skeleton className="mt-4 h-24 rounded-xl" />
+          )}
+        </CardContent>
+      </Card>
 
       {/* Security strip (Super Admin) — gagal login 24 jam */}
       {isSuperAdmin && failedLogins !== null && (
@@ -256,9 +315,9 @@ export function AdminDashboard({
         </button>
       )}
 
-      {/* Recent activity + info card */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-        <Card className="rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.05)]">
+      {/* Recent activity + info card — minmax(0,…) mencegah label panjang memaksa track melebar (overflow mobile) */}
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <Card className="min-w-0 rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.05)]">
           <CardContent className="p-5">
             <div className="flex items-center justify-between gap-3">
               <h3 className="flex items-center gap-2 text-[15px] font-extrabold text-forest">
@@ -326,7 +385,7 @@ export function AdminDashboard({
           </CardContent>
         </Card>
 
-        <Card className="h-fit rounded-2xl border-gold/25 bg-gold/[0.07]">
+        <Card className="h-fit min-w-0 rounded-2xl border-gold/25 bg-gold/[0.07]">
           <CardContent className="flex items-start gap-3 p-5">
             <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gold/20 text-gold-dark">
               <HelpCircle className="h-4.5 w-4.5" />

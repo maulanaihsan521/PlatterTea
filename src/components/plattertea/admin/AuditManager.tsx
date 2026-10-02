@@ -71,6 +71,7 @@ const ACTION_META: Record<
   PASSWORD_RESET_REQUEST: { label: 'Link Reset', icon: KeyRound, badge: 'bg-gold/20 text-gold-dark', dot: 'bg-gold' },
   PASSWORD_RESET: { label: 'Reset Password', icon: KeyRound, badge: 'bg-sage-light text-forest', dot: 'bg-sage' },
   PASSWORD_RESET_FAILED: { label: 'Reset Gagal', icon: ShieldX, badge: 'bg-destructive/10 text-destructive', dot: 'bg-destructive/70' },
+  PASSWORD_CHANGE: { label: 'Ganti Password', icon: KeyRound, badge: 'bg-sage-light text-forest', dot: 'bg-sage' },
   MEDIA_DELETE: { label: 'Hapus Media', icon: Trash2, badge: 'bg-destructive/10 text-destructive', dot: 'bg-destructive' },
 }
 
@@ -99,6 +100,7 @@ const ACTION_VERB: Record<string, string> = {
   PASSWORD_RESET_REQUEST: 'membuat link reset password untuk',
   PASSWORD_RESET: 'mengganti password (via token reset) —',
   PASSWORD_RESET_FAILED: 'gagal reset password —',
+  PASSWORD_CHANGE: 'mengganti password akunnya sendiri',
   MEDIA_DELETE: 'menghapus file media',
 }
 
@@ -111,6 +113,7 @@ const FILTERS: { key: string; label: string }[] = [
   { key: 'LOGIN_FAILED', label: 'Gagal Masuk' },
   { key: 'IMPORT', label: 'Import' },
   { key: 'PASSWORD_RESET', label: 'Reset Password' },
+  { key: 'PASSWORD_CHANGE', label: 'Ganti Password' },
   { key: 'MEDIA_DELETE', label: 'Media' },
 ]
 
