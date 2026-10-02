@@ -813,7 +813,8 @@ function PreFooterCTA({ navigate }: HomeViewProps) {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[10.5px] font-bold uppercase tracking-[0.14em] text-cream/45">Temukan kami</span>
-                  <span className="block truncate text-[13px] font-semibold text-cream/90">Booth — Telkom University Purwokerto</span>
+                  {/* wrap 2 baris (bukan truncate) agar alamat selalu terbaca jelas di layar sempit */}
+                  <span className="line-clamp-2 block text-[13px] font-semibold leading-snug text-cream/90">Booth — Telkom University Purwokerto</span>
                 </span>
                 <span className="shrink-0 rounded-full bg-gold/15 px-2.5 py-1 text-[11px] font-bold text-gold-light transition-colors duration-200 group-hover:bg-gold group-hover:text-forest">
                   Rute

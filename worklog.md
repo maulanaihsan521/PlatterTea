@@ -729,3 +729,22 @@ Stage Summary:
 2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-o
+Agent: main (Z.ai Code)
+Task: Laporan user (screenshot Drive) — ada elemen terlihat tertimpa di tampilan galeri + pastikan seluruh tampilan/tulisan tidak ada yang nabrak atau tidak jelas
+
+Work Log:
+- Unduh & telaah screenshot user: blob dekoratif beige di header section Galeri (AboutView) membentang hingga menimpa baris chip filter "Semua/Produk/Booth"
+- FIX 1 (galeri): Blob diperkecil & dinaikkan (h-44 w-44 -top-10 → h-36 w-36 -top-16) sehingga berhenti sebelum area chip — verifikasi desktop 1366 & mobile 390: chip bebas overlap
+- FIX 2 (teks tidak jelas): strip "Temukan kami — Booth Telkom University Purwokerto" di prefooter terpotong ellipsis "Telkom Univ…" (truncate) → diganti line-clamp-2 leading-snug (wrap 2 baris), verifikasi mobile: alamat terbaca utuh
+- SWEEP VISUAL SELURUH HALAMAN (desktop 1366 + mobile 390): Home (hero, showcase, tea collection, dark CTA, cara pesan + maskot, open PO timeline, testimoni, prefooter, footer sticky), Menu (chips + grid), Promo, About + Galeri (grid + lightbox), Contact (kartu + maps), FAQ (accordion + CTA) — tidak ditemukan overlap/teks tertutup lain; 0 console error; lint lulus; dev.log bersih
+
+Stage Summary:
+- Overlap di galeri (blob vs chip filter) diperbaiki sesuai laporan user; sweep menyeluruh menegaskan tidak ada tampilan lain yang nabrak atau tidak jelas
+
+## Unresolved Issues / Next Priorities
+1. Cek & sesuaikan konten FAQ di CMS bila ada yang menyebut cara pesan lama
+2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD

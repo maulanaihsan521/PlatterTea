@@ -186,7 +186,8 @@ export function AboutView({ navigate }: AboutViewProps) {
         <section className="relative overflow-x-clip py-10 lg:py-16" aria-labelledby="galeri">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="relative">
-              <Blob className="absolute -left-16 -top-10 h-44 w-44 text-beige/60" />
+              {/* Blob diperkecil & dinaikkan agar tidak menimpa baris chip filter di bawahnya */}
+              <Blob className="absolute -left-16 -top-16 h-36 w-36 text-beige/60" />
               <div className="relative">
                 <h2 id="galeri" className="text-2xl font-extrabold text-forest sm:text-3xl">
                   Galeri
