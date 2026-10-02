@@ -68,7 +68,7 @@ export function Navbar({ route, navigate }: NavbarProps) {
       >
         <nav
           aria-label="Navigasi utama"
-          className="mx-auto flex h-[72px] max-w-6xl items-center justify-between gap-4 px-4 sm:h-[96px] sm:px-6 lg:px-8"
+          className="mx-auto flex h-[72px] max-w-6xl items-center justify-between gap-4 px-4 sm:h-[84px] sm:px-6 lg:px-8"
         >
           <button
             type="button"
@@ -76,8 +76,8 @@ export function Navbar({ route, navigate }: NavbarProps) {
             className="flex min-h-[44px] items-center rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
             aria-label="PlatterTea — ke halaman utama"
           >
-            <LogoFullWhite height={54} fetchPriority="high" className={cn('drop-shadow-[0_2px_6px_rgba(23,61,50,0.18)]', onDark ? 'sm:!h-[72px]' : 'hidden sm:!h-[72px]')} />
-            <LogoFull height={54} fetchPriority="high" className={cn('drop-shadow-[0_2px_6px_rgba(23,61,50,0.12)]', onDark ? 'hidden sm:!h-[72px]' : 'sm:!h-[72px]')} />
+            <LogoFullWhite height={54} fetchPriority="high" className={cn('drop-shadow-[0_2px_6px_rgba(23,61,50,0.18)]', onDark ? 'sm:!h-[62px]' : 'hidden sm:!h-[62px]')} />
+            <LogoFull height={54} fetchPriority="high" className={cn('drop-shadow-[0_2px_6px_rgba(23,61,50,0.12)]', onDark ? 'hidden sm:!h-[62px]' : 'sm:!h-[62px]')} />
           </button>
 
           {/* Desktop nav */}
