@@ -542,3 +542,9 @@ Stage Summary:
 2. Warning a11y pre-existing radix DialogContent (minor)
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+
+### Verifikasi Push (Task 12-f)
+- Push sukses: 889eece..5c8bcb2 main → https://github.com/maulanaihsan521/PlatterTea (fast-forward, tanpa force)
+- Scan pra-push 4 lapis: file sensitif (0), pola token ghp_/sb_secret_/AKIA (0), nilai .env di tree (0 kebocoran; NEXT_PUBLIC_SITE_URL = localhost non-sensitif, admin@plattertea.id kini dihapus dari kode login → placeholder netral "nama@domain.id")
+- GIT_ASKPASS sementara di /tmp dihapus setelah push; token tidak pernah masuk repo/konfigurasi/worklog/cron
+- Catatan user: rotasi token GitHub classic ini disarankan segera (terekpos di chat) + aktifkan secret scanning/Dependabot di repo
