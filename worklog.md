@@ -554,3 +554,25 @@ Stage Summary:
 - Perilaku sandbox: dev server yang di-start dari sesi agent shell sering dimatikan platform antar-perintah — BUKAN bug aplikasi. Verifikasi terakhir saat hidup: semua route 200, API menyajikan data Supabase, CSS 243KB termuat, 0 error
 - Start server yang benar: `cd /home/z/my-project && env -u DATABASE_URL -u DIRECT_URL nohup setsid bun run dev </dev/null >/dev/null 2>&1 & disown` (jangan pakai pipe tee; jangan biarkan DATABASE_URL sqlite stale menimpa .env)
 - Remote origin tetap terpasang (URL saja, TANPA kredensial tersimpan) — push berikutnya butuh token baru dari user (rotasi token lama disarankan)
+---
+Task ID: 12-g
+Agent: main (Z.ai Code)
+Task: Permintaan user — "Pada mode mobile sudah pas, tapi pada mode desktop logo terlalu besar sehingga navbar-nya juga ikut membesar, kecilkan sedikit lagi. Lalu push. Cek database apakah sudah benar-benar terhubung ke Supabase, pastikan tidak ada error dan bug."
+
+Work Log:
+- LOGO DESKTOP DIKECILKAN (permintaan user): mobile TIDAK disentuh (54px logo / navbar 72px — sudah "pas" menurut user). Desktop: logo 72→62px, tinggi navbar sm 96→84px (rasio logo/nav ~74%, konsisten dengan mobile 75%). Satu-satunya file yang menyentuh tinggi navbar adalah Navbar.tsx (diverifikasi via grep) — tidak ada offset lain yang perlu diubah
+- VERIFIKASI VISUAL agent-browser: desktop 1280 — home (logo terang jelas, navbar proporsional), menu (logo putih di header hijau), scrolled (navbar cream + shadow, logo tetap 62px); mobile 390 — tanpa overflow (390=390), nav 72px, logo 54px tidak berubah. Terukur via getBoundingClientRect: desktop navH=84 logoH=62; mobile navH=72 logoH=54
+- CEK DATABASE SUPABASE (permintaan user, menyeluruh): (1) .env DATABASE_URL & DIRECT_URL mengarah ke Supabase pooler ap-southeast-1 (pgbouncer 6543 / direct 5432); (2) koneksi langsung Prisma via script bun: PostgreSQL 17.11, latensi ~2.2s cold start, hitung semua tabel — 8 produk, 3 kategori, 3 promo, 3 testimoni, 8 FAQ, 19 settings, 1 admin, 28 audit (gallery kosong = state data, bukan bug); (3) API publik: /api/settings, /api/products, /api/promotions, /api/testimonials, /api/faqs, /api/gallery, /api/products/[slug] semua 200 menyajikan data asli; /api/categories 404 BY DESIGN — kategori ter-embed di /api/products (diverifikasi: frontend tidak pernah memanggil /api/categories); (4) siklus admin penuh via cookie jar temp: login 200 (SUPER_ADMIN), /api/admin/stats 200 dgn data nyata, /api/admin/me 200, logout 200 — write path (audit login) juga menulis ke Supabase tanpa error
+- QA: console 0 error & 0 page error (hanya info React DevTools + HMR connected); dev.log bersih tanpa error Prisma/runtime; lint clean
+- PUSH: scan pra-push (file sensitif, pola ghp_/sb_secret_/password/connection-string pada objek yang akan dikirim) → bersih; push via GIT_ASKPASS temp di /tmp (token tidak pernah masuk repo/konfigurasi/worklog); helper dihapus setelah push; diverifikasi remote = lokal
+
+Stage Summary:
+- Navbar desktop kini proporsional: logo jelas tapi tidak lagi membesarkan navbar (84px); mobile tetap seperti yang user setujui
+- Database Supabase terkonfirmasi SEHAT end-to-end: koneksi langsung + seluruh API baca + siklus auth admin + write audit — tanpa error
+- Kriteria user terpenuhi: logo desktop dikecilkan, push dilakukan, database terverifikasi, 0 error/bug ditemukan
+
+## Unresolved Issues / Next Priorities
+1. User: rotasi token GitHub classic & kunci Supabase (pernah terekspos di chat) tetap disarankan
+2. Warning a11y pre-existing radix DialogContent (minor)
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
