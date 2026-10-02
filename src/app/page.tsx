@@ -2,7 +2,7 @@
 
 import { Navbar } from '@/components/plattertea/Navbar'
 import { Footer } from '@/components/plattertea/Footer'
-import { BackToTop, BottomNav, FloatingWhatsApp } from '@/components/plattertea/Floating'
+import { BackToTop, BottomNav } from '@/components/plattertea/Floating'
 import { HomeView } from '@/components/plattertea/views/HomeView'
 import { MenuView } from '@/components/plattertea/views/MenuView'
 import { ProductDetailView } from '@/components/plattertea/views/ProductDetailView'
@@ -95,7 +95,6 @@ function PlatterTeaApp() {
 
       {/* Overlays */}
       <BackToTop />
-      <FloatingWhatsApp />
       <BottomNav route={route} navigate={nav} />
       {route.view === 'home' && <InstallBanner />}
     </div>
