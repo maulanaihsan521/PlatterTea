@@ -27,22 +27,45 @@ const kaushan = Kaushan_Script({
   weight: ["400"],
 });
 
+// URL produksi — bisa dioverride via env NEXT_PUBLIC_SITE_URL (mis. saat pakai
+// domain sendiri). Fallback domain Vercel agar OG/metadata tetap absolut & benar
+// tanpa perlu env (penting untuk preview WhatsApp/Facebook/X).
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://plattertea.vercel.app";
+
 export const metadata: Metadata = {
-  // Base URL untuk OG/twitter image absolut (ganti via NEXT_PUBLIC_SITE_URL saat deploy)
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
-  title: "PlatterTea — Food & Tea | Mix, Sip, Enjoy!",
+  metadataBase: new URL(SITE_URL),
+  title: "PlatterTea — Food & Tea Purwokerto | Mix, Sip, Enjoy!",
   description:
-    "PlatterTea menghadirkan Mix Platter dan berbagai pilihan Tea dengan konsep yang fresh, praktis, dan menyenangkan.",
+    "Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan kekinian. Pesan mudah lewat keranjang online → WhatsApp. Mix, Sip, Enjoy!",
   keywords: [
     "PlatterTea",
     "Food & Tea",
     "Mix Platter",
-    "Tea",
-    "Camilan",
     "Es Teh",
-    "Combo",
+    "Camilan",
+    "Kuliner Purwokerto",
+    "Mix Platter Purwokerto",
+    "Es Teh Purwokerto",
+    "Telkom University Purwokerto",
+    "Minuman Kekinian",
+    "Menu PlatterTea",
+    "Booth Telkom University",
   ],
   authors: [{ name: "PlatterTea" }],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   manifest: "/manifest.webmanifest",
   applicationName: "PlatterTea",
   appleWebApp: {
@@ -55,18 +78,27 @@ export const metadata: Metadata = {
     apple: "/pwa/apple-touch-icon.png",
   },
   openGraph: {
-    title: "PlatterTea — Food & Tea | Mix, Sip, Enjoy!",
+    title: "PlatterTea — Food & Tea Purwokerto | Mix, Sip, Enjoy!",
     description:
-      "PlatterTea menghadirkan Mix Platter dan berbagai pilihan Tea dengan konsep yang fresh, praktis, dan menyenangkan.",
+      "Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan kekinian. Pesan mudah lewat keranjang online → WhatsApp.",
     siteName: "PlatterTea",
+    locale: "id_ID",
     type: "website",
-    images: ["/products/hero.webp"],
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "PlatterTea — Mix Platter & es teh kekinian. Mix, Sip, Enjoy!",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "PlatterTea — Food & Tea | Mix, Sip, Enjoy!",
+    title: "PlatterTea — Food & Tea Purwokerto | Mix, Sip, Enjoy!",
     description:
-      "PlatterTea menghadirkan Mix Platter dan berbagai pilihan Tea dengan konsep yang fresh, praktis, dan menyenangkan.",
+      "Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan kekinian. Pesan mudah lewat keranjang online → WhatsApp.",
+    images: ["/og-image.jpg"],
   },
 };
 
@@ -85,9 +117,12 @@ const localBusinessJsonLd = {
   name: "PlatterTea — Food & Tea",
   slogan: "Mix, Sip, Enjoy!",
   description:
-    "PlatterTea menghadirkan Mix Platter dan berbagai pilihan Tea dengan konsep yang fresh, praktis, dan menyenangkan.",
+    "Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan kekinian. Pesan mudah lewat keranjang online → WhatsApp.",
   telephone: "+6285175397747",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: SITE_URL,
+  image: [`${SITE_URL}/og-image.jpg`],
+  priceRange: "Rp8.000 - Rp25.000",
+  menu: `${SITE_URL}/#/menu`,
   address: {
     "@type": "PostalAddress",
     streetAddress: "Jl. D.I. Panjaitan No. 128 (Telkom University Purwokerto)",
