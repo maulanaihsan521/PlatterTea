@@ -850,3 +850,25 @@ Stage Summary:
 1. User: eksekusi deploy sesuai PANDUAN-DEPLOY.md (mulai dari Bagian 0 — rotasi kredensial)
 2. Setelah deploy: verifikasi bersama (checklist Bagian 4)
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+---
+Task ID: 12-t
+Agent: main (Z.ai Code)
+Task: Deploy dari akun Vercel baru — user beri token GitHub akun baru, minta repo ditambahkan ke sana; akun lama biarkan
+
+Work Log:
+- Klarifikasi kendala: GitHub App Vercel terpasang di GitHub maulanaihsan521 diklaim akun Vercel lama (masih dipakai auto-deploy repo lain) → akun Vercel baru tak bisa import via instalasi yang sama
+- Keputusan user: repo diduplikasi ke akun GitHub BARU (marketeens3-dot), akun lama tidak disentuh; akun Vercel baru akan dipasangkan dgn GitHub baru ini (instalasi App terpisah per akun GitHub — menyelesaikan batasan 1 instalasi = 1 akun Vercel)
+- Verifikasi token baru (classic, scope repo): login = marketeens3-dot, 0 repo
+- Buat repo PRIVATE marketeens3-dot/PlatterTea via API (201 Created, default main)
+- Git remote: origin (maulanaihsan521) → di-rename jadi "backup" (tetap ada, tidak dihapus); origin BARU = github.com/marketeens3-dot/PlatterTea.git
+- Push main ke repo baru via GIT_ASKPASS sementara + shred token; verifikasi ls-remote
+- Catatan keamanan utk user: token classic yg dikirim di chat sangat luas (admin:* semuanya) → setelah setup selesai sarankan ganti fine-grained token minimal + rotasi
+
+Stage Summary:
+- Sumber deploy pindah ke github.com/marketeens3-dot/PlatterTea (private, seluruh histori utuh)
+- Langkah berikutnya di sisi user: dari akun Vercel baru → Install Vercel App di GitHub akun marketeens3-dot (browser harus login GitHub sbg akun baru) → pilih repo PlatterTea → Import → env vars → Deploy
+
+## Unresolved Issues / Next Priorities
+1. Menemani user: instalasi GitHub App di akun baru + env vars + deploy pertama
+2. Pasca-deploy: verifikasi produksi + rotasi token
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal
