@@ -9,7 +9,8 @@ export async function GET() {
       where: { status: 'PUBLISHED' },
       orderBy: { sortOrder: 'asc' },
     })
-    return NextResponse.json({ success: true, data: testimonials })
+    // no-store: testimoni yang disetujui admin langsung terlihat oleh pengunjung
+    return NextResponse.json({ success: true, data: testimonials }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('GET /api/testimonials error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat testimoni.' }, { status: 500 })

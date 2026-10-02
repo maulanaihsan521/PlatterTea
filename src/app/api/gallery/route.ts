@@ -15,7 +15,8 @@ export async function GET(req: NextRequest) {
       orderBy: { sortOrder: 'asc' },
       ...(limit ? { take: parseInt(limit, 10) } : {}),
     })
-    return NextResponse.json({ success: true, data: items })
+    // no-store: perubahan galeri dari admin langsung terlihat oleh pengunjung
+    return NextResponse.json({ success: true, data: items }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('GET /api/gallery error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat galeri.' }, { status: 500 })

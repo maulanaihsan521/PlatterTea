@@ -3,9 +3,9 @@
 // ============ Gallery Lightbox — pratinjau foto galeri fullscreen ============
 
 import { useEffect, useCallback } from 'react'
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
-import { ChevronLeft, ChevronRight, Expand } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Expand, X } from 'lucide-react'
 import type { GalleryItem } from '@/lib/plattertea'
 import { cn } from '@/lib/utils'
 
@@ -62,11 +62,19 @@ export function GalleryLightbox({ items, index, onIndexChange }: GalleryLightbox
       <DialogContent
         className="max-w-4xl gap-0 overflow-hidden rounded-3xl border-forest/10 bg-cream p-0 sm:rounded-3xl"
         aria-label={`Foto galeri: ${item.title}`}
+        showCloseButton={false}
       >
         <DialogTitle className="sr-only">{item.title}</DialogTitle>
 
         {/* Gambar */}
         <div className="relative bg-forest/95">
+          {/* Tombol tutup kustom — X default Dialog tak terlihat di atas gambar gelap */}
+          <DialogClose
+            className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-cream/90 text-forest shadow-lg transition-all hover:scale-105 hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+            aria-label="Tutup galeri"
+          >
+            <X className="h-5 w-5" />
+          </DialogClose>
           <img
             src={item.image}
             alt={item.title}

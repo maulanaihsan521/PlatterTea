@@ -10,7 +10,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     })
 
     if (!product) {
-      return NextResponse.json({ success: false, error: 'Produk tidak ditemukan.' }, { status: 404 })
+      // no-store: 404 jangan di-cache — produk bisa saja dipublikasikan setelahnya
+      return NextResponse.json(
+        { success: false, error: 'Produk tidak ditemukan.' },
+        { status: 404, headers: { 'Cache-Control': 'no-store' } },
+      )
     }
 
     // related products (same category, exclude current)
@@ -20,7 +24,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       orderBy: { sortOrder: 'asc' },
     })
 
-    return NextResponse.json({ success: true, data: { product, related } })
+    return NextResponse.json(
+      { success: true, data: { product, related } },
+      { headers: { 'Cache-Control': 'no-store' } },
+    )
   } catch (error) {
     console.error('GET /api/products/[slug] error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat produk.' }, { status: 500 })

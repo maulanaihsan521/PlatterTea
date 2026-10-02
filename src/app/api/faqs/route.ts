@@ -7,7 +7,8 @@ export async function GET() {
       where: { status: 'PUBLISHED' },
       orderBy: { sortOrder: 'asc' },
     })
-    return NextResponse.json({ success: true, data: faqs })
+    // no-store: konten CMS harus selalu fresh di browser pengunjung setelah admin mengubahnya
+    return NextResponse.json({ success: true, data: faqs }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('GET /api/faqs error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat FAQ.' }, { status: 500 })

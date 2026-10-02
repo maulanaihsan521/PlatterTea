@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
     })
 
-    return NextResponse.json({ success: true, data: products })
+    // no-store: konten CMS harus selalu fresh di browser pengunjung setelah admin mengubahnya
+    return NextResponse.json({ success: true, data: products }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {
     console.error('GET /api/products error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat produk.' }, { status: 500 })

@@ -1,13 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { PageHeader } from '../PageHeader'
 import type { GalleryItem, Route } from '@/lib/plattertea'
 import { GalleryLightbox, GalleryZoomHint } from '../GalleryLightbox'
 import { useSettings } from '@/hooks/use-plattertea'
 import { Leaf, LeafPair, Blob } from '../Decor'
 import { Mascot } from '../Mascot'
-import { Skeleton } from '@/components/ui/skeleton'
 import { HeartHandshake, Leaf as LeafIcon, ChefHat, BadgeCheck, Smile, TrendingUp, Target, Rocket } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -24,15 +23,41 @@ const VALUES = [
   { icon: TrendingUp, label: 'Modern' },
 ]
 
-const GALLERY_CATS = [
-  { key: 'all', label: 'Semua' },
-  { key: 'produk', label: 'Produk' },
-  { key: 'booth', label: 'Booth' },
-  { key: 'event', label: 'Event' },
-]
+/** Label kategori galeri — urutan kanonik; kategori tak dikenal memakai nama mentahnya */
+const CAT_LABELS: Record<string, string> = {
+  produk: 'Produk',
+  booth: 'Booth',
+  event: 'Event',
+  bts: 'Behind the Scene',
+  brand: 'Brand',
+}
+const CAT_ORDER = ['produk', 'booth', 'event', 'bts', 'brand']
+
+/** Ambil item galeri PUBLISHED dari API — dipakai AboutView untuk memutuskan apakah section Galeri dirender */
+function useGalleryItems() {
+  const [items, setItems] = useState<GalleryItem[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+    fetch('/api/gallery', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((res) => {
+        if (mounted && res.success) setItems(res.data)
+      })
+      .catch(() => {})
+      .finally(() => mounted && setLoading(false))
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  return { items, loading }
+}
 
 export function AboutView({ navigate }: AboutViewProps) {
   const settings = useSettings()
+  const { items: galleryItems, loading: galleryLoading } = useGalleryItems()
   const missions = (settings.about_mission || '')
     .split('\n')
     .map((s) => s.trim())
@@ -155,64 +180,52 @@ export function AboutView({ navigate }: AboutViewProps) {
         </div>
       </section>
 
-      {/* Gallery */}
-      <section className="relative overflow-x-clip py-10 lg:py-16" aria-labelledby="galeri">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="relative">
-            <Blob className="absolute -left-16 -top-10 h-44 w-44 text-beige/60" />
+      {/* Gallery — section disembunyikan rapi saat belum ada foto (isi via Admin → Galeri)
+          sehingga halaman tidak menampilkan blok kosong yang terkesan belum selesai */}
+      {!galleryLoading && galleryItems.length > 0 && (
+        <section className="relative overflow-x-clip py-10 lg:py-16" aria-labelledby="galeri">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="relative">
-              <h2 id="galeri" className="text-2xl font-extrabold text-forest sm:text-3xl">
-                Galeri
-              </h2>
-              <p className="mt-2 text-[15px] text-forest/70">
-                Momen dan keseruan bersama PlatterTea.
-              </p>
+              <Blob className="absolute -left-16 -top-10 h-44 w-44 text-beige/60" />
+              <div className="relative">
+                <h2 id="galeri" className="text-2xl font-extrabold text-forest sm:text-3xl">
+                  Galeri
+                </h2>
+                <p className="mt-2 text-[15px] text-forest/70">
+                  Momen dan keseruan bersama PlatterTea.
+                </p>
+              </div>
             </div>
+            <GalleryGrid items={galleryItems} />
           </div>
-          <GalleryGrid />
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }
 
-/** Gallery grid with category filter (masonry-ish responsive) */
-export function GalleryGrid() {
-  const [items, setItems] = useState<GalleryItem[]>([])
-  const [loading, setLoading] = useState(true)
+/** Gallery grid with dynamic category filter — items di-pass dari AboutView */
+export function GalleryGrid({ items }: { items: GalleryItem[] }) {
   const [active, setActive] = useState('all')
   const [lightbox, setLightbox] = useState<number | null>(null)
 
-  useEffect(() => {
-    let mounted = true
-    fetch('/api/gallery')
-      .then((r) => r.json())
-      .then((res) => {
-        if (mounted && res.success) setItems(res.data)
-      })
-      .catch(() => {})
-      .finally(() => mounted && setLoading(false))
-    return () => {
-      mounted = false
-    }
-  }, [])
+  // Pill kategori dibangun dinamis HANYA dari kategori yang punya foto
+  // (termasuk bts/brand yang sebelumnya tidak muncul di pill)
+  const cats = useMemo(() => {
+    const present = CAT_ORDER.filter((c) => items.some((g) => g.category === c))
+    const extra = [...new Set(items.map((g) => g.category))].filter((c) => !CAT_ORDER.includes(c))
+    return [
+      { key: 'all', label: 'Semua' },
+      ...[...present, ...extra].map((c) => ({ key: c, label: CAT_LABELS[c] ?? c })),
+    ]
+  }, [items])
 
   const filtered = active === 'all' ? items : items.filter((g) => g.category === active)
-
-  if (loading) {
-    return (
-      <div className="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className={cn('rounded-2xl', i % 3 === 0 ? 'aspect-[3/4]' : 'aspect-square')} />
-        ))}
-      </div>
-    )
-  }
 
   return (
     <>
       <div className="no-scrollbar mt-6 flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="Kategori galeri">
-        {GALLERY_CATS.map((cat) => (
+        {cats.map((cat) => (
           <button
             key={cat.key}
             type="button"
@@ -232,12 +245,9 @@ export function GalleryGrid() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="mt-8 rounded-3xl bg-white p-12 text-center shadow-sm">
-          <div className="flex justify-center">
-            <Mascot pose="sit" width={110} animation="float" className="w-20" />
-          </div>
-          <p className="mt-1 text-forest/70">Gallery akan segera diperbarui.</p>
-        </div>
+        <p className="mt-8 text-center text-[15px] text-forest/60">
+          Belum ada foto pada kategori ini.
+        </p>
       ) : (
         <>
           <div className="pt-stagger mt-7 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
