@@ -685,3 +685,21 @@ Stage Summary:
 2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-m
+Agent: main (Z.ai Code)
+Task: Permintaan user — tampilkan maskot di samping tulisan "Cara Pesan" pada mode mobile
+
+Work Log:
+- HomeView.tsx (HowToOrder): tambah Mascot pose="point" width 56 + flip (tunjukan mengarah ke teks) + animation sway, diposisikan flex items-end justify-between di baris judul "Cara Pesan"; kelas w-14 shrink-0 xl:hidden agar hanya tampil < xl
+- Maskot floating besar xl (absolute -top-8 right-[2%]) tetap dipertahankan — di xl maskot kecil disembunyikan sehingga tidak dobel
+- Verifikasi agent-browser: mobile 390px maskot tampil di samping judul; tablet 768px DOM check — 1 maskot kecil visible (w≈57px), 1 floating hidden (w=0); xl 1366px hanya maskot besar; 0 console error; lint lulus; dev.log bersih
+
+Stage Summary:
+- Header "Cara Pesan" kini hidup dengan maskot di mobile/tablet; identitas visual konsisten di semua breakpoint tanpa maskot dobel
+
+## Unresolved Issues / Next Priorities
+1. Cek & sesuaikan konten FAQ di CMS bila ada yang menyebut cara pesan lama
+2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD

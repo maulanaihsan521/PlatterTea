@@ -516,11 +516,21 @@ function HowToOrder({ navigate }: HomeViewProps) {
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="pt-fade-up relative">
-          <h2 id="cara-pesan" className="text-2xl font-extrabold text-forest sm:text-3xl">
-            Cara Pesan
-          </h2>
+          <div className="flex items-end justify-between gap-2">
+            <h2 id="cara-pesan" className="text-2xl font-extrabold text-forest sm:text-3xl">
+              Cara Pesan
+            </h2>
+            {/* Maskot di samping judul, menunjuk ke teks — mobile & tablet (xl memakai maskot floating besar) */}
+            <Mascot
+              pose="point"
+              width={56}
+              flip
+              animation="sway"
+              className="w-14 shrink-0 xl:hidden"
+            />
+          </div>
           <p className="mt-2 text-[15px] text-forest/70">Mudah banget! Cukup 5 langkah — pesanan terkirim lewat WhatsApp:</p>
-          {/* Maskot menunjuk langkah-langkah — desktop saja */}
+          {/* Maskot floating menunjuk langkah-langkah — layar sangat lebar */}
           <Mascot
             pose="point"
             width={104}
