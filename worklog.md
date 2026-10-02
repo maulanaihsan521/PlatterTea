@@ -777,3 +777,26 @@ Stage Summary:
 2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-q
+Agent: main (Z.ai Code)
+Task: Feedback user — "font jadi tebal-tebal dan kontras, kembalikan ke seperti sebelumnya; hanya yang ditunjukkan yang diperbaiki"
+
+Work Log:
+- REVERT seluruh perubahan font/kontras pada elemen yang TIDAK ada di screenshot user (kembali ke nilai sebelum task 12-p):
+  - Subtitle section (BestSellers/Tea/Cara Pesan/Testimoni): font-medium forest/85 → forest/70
+  - FeatureStrip desc: forest/75 → forest/60; about_story: /85+medium → /75
+  - DarkCTA paragraf: cream/90 15.5px → cream/75 15px; promo card desc: /80+medium → /70
+  - Testimoni role: /70+medium → /60; AboutPreview: cream/85-90 → cream/70-75
+  - ProductCard desc: /70+medium → /55; AboutView visi & FAQ CTA: cream/85 → cream/75
+- DIPERTAHANKAN (yang user tunjukkan / bukan soal font): hero subtitle tetap forest penuh+medium (screenshot 1), "Mix, Sip, Enjoy!" DarkCTA tetap shadow+bold (screenshot 3), fix z-index dekorasi vs teks (root-cause tulisan pudar, bukan perubahan gaya), fix overflow tombol ProductCard (layout)
+- Verifikasi visual mobile 390: hero, Kenalan (kembali lembut), kartu produk (desc lembut, tombol 1 baris), DarkCTA (heading jelas + paragraf normal) — sesuai permintaan; lint lulus
+
+Stage Summary:
+- Font & kontras kembali seperti semula di semua elemen yang tidak dilaporkan user; hanya perbaikan pada elemen yang ditunjukkan screenshot yang dipertahankan
+
+## Unresolved Issues / Next Priorities
+1. Cek & sesuaikan konten FAQ di CMS bila ada yang menyebut cara pesan lama
+2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD

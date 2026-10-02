@@ -99,7 +99,7 @@ export function FaqView({ navigate }: FaqViewProps) {
             <LeafPair flip className="pointer-events-none absolute -bottom-4 -left-3 h-14 w-20 text-forest-light/50" />
             <LeafPair className="pointer-events-none absolute -right-4 -top-3 h-14 w-20 text-forest-light/50" />
             <p className="font-script text-3xl text-gold-light">Masih ada pertanyaan?</p>
-            <p className="mt-2 text-[14px] text-cream/85">Hubungi kami via WhatsApp</p>
+            <p className="mt-2 text-[14px] text-cream/75">Hubungi kami via WhatsApp</p>
             <a
               href={wa}
               target="_blank"

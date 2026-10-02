@@ -135,7 +135,7 @@ function FeatureStrip() {
             <p className="text-[12.5px] font-semibold leading-snug text-forest/90 sm:text-[13.5px]">
               {title}
               <br />
-              <span className="text-forest/75">{desc}</span>
+              <span className="text-forest/60">{desc}</span>
             </p>
           </div>
         ))}
@@ -156,7 +156,7 @@ function BrandIntro({ navigate }: HomeViewProps) {
           <h2 id="kenalan" className="text-2xl font-extrabold text-forest sm:text-3xl lg:text-[32px]">
             Kenalan dengan PlatterTea
           </h2>
-          <p className="mt-4 max-w-lg text-[15px] font-medium leading-relaxed text-forest/85 sm:text-base">
+          <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-forest/75 sm:text-base">
             {settings.about_story}
           </p>
           <button
@@ -236,7 +236,7 @@ function ProductShowcase({ navigate }: HomeViewProps) {
           <h2 id="menu-plattertea" className="text-2xl font-extrabold text-forest sm:text-3xl">
             Menu PlatterTea
           </h2>
-          <p className="mt-2 text-[15px] font-medium text-forest/85">
+          <p className="mt-2 text-[15px] text-forest/70">
             Pilihan makanan dan minuman untuk menemani harimu.
           </p>
         </div>
@@ -340,7 +340,7 @@ function TeaCollection({ navigate }: HomeViewProps) {
           <h2 id="tea-collection" className="text-2xl font-extrabold text-forest sm:text-3xl">
             Tea Collection
           </h2>
-          <p className="mt-2 text-[15px] font-medium text-forest/85">
+          <p className="mt-2 text-[15px] text-forest/70">
             Pilihan teh favorit dengan rasa yang menyegarkan.
           </p>
         </div>
@@ -366,7 +366,7 @@ function TeaCollection({ navigate }: HomeViewProps) {
               {featuredPromo.subtitle && (
                 <p className="mt-1 text-[15px] font-bold text-forest/80">{featuredPromo.subtitle}</p>
               )}
-              <p className="mt-2 line-clamp-2 text-[13.5px] font-medium leading-relaxed text-forest/80">
+              <p className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed text-forest/70">
                 {featuredPromo.description}
               </p>
               <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
@@ -409,7 +409,7 @@ function DarkCTA({ navigate }: HomeViewProps) {
               <h2 id="dark-cta" className="font-script text-3xl leading-snug text-cream sm:text-4xl">
                 Camilan Lezat, Teh Segar, Satu Pilihan.
               </h2>
-              <p className="mt-4 max-w-md text-[15.5px] leading-relaxed text-cream/90">
+              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-cream/75">
                 PlatterTea menghadirkan kombinasi makanan dan minuman dalam satu paket pengalaman
                 yang praktis, lezat, dan mudah dinikmati.
               </p>
@@ -531,7 +531,7 @@ function HowToOrder({ navigate }: HomeViewProps) {
               className="w-14 shrink-0 xl:hidden"
             />
           </div>
-          <p className="mt-2 text-[15px] font-medium text-forest/85">Mudah banget! Cukup 5 langkah — pesanan terkirim lewat WhatsApp:</p>
+          <p className="mt-2 text-[15px] text-forest/70">Mudah banget! Cukup 5 langkah — pesanan terkirim lewat WhatsApp:</p>
           {/* Maskot floating menunjuk langkah-langkah — layar sangat lebar */}
           <Mascot
             pose="point"
@@ -667,7 +667,7 @@ function Testimonials() {
             <h2 id="testimoni" className="text-2xl font-extrabold text-forest sm:text-3xl">
               Apa Kata Mereka?
             </h2>
-            <p className="mt-2 text-[15px] font-medium text-forest/85">Cerita nyata dari pelanggan setia kami.</p>
+            <p className="mt-2 text-[15px] text-forest/70">Cerita nyata dari pelanggan setia kami.</p>
           </div>
           <button
             type="button"
@@ -702,7 +702,7 @@ function Testimonials() {
                   </span>
                   <div>
                     <figcaption className="text-[14.5px] font-bold text-forest">{t.name}</figcaption>
-                    {t.role && <p className="text-xs font-medium text-forest/70">{t.role}</p>}
+                    {t.role && <p className="text-xs text-forest/60">{t.role}</p>}
                   </div>
                   <span className="ml-auto flex gap-0.5" aria-label={`Rating ${t.rating} dari 5`}>
                     {Array.from({ length: 5 }).map((_, i) => (
@@ -757,7 +757,7 @@ function PreFooterCTA({ navigate }: HomeViewProps) {
           <div className="relative grid gap-6 bg-forest p-7 sm:p-9 lg:grid-cols-2 lg:items-center lg:gap-10">
             <div>
               <h2 className="text-xl font-extrabold text-cream sm:text-2xl">Kenalan Lebih Dekat</h2>
-              <p className="mt-2.5 text-[14px] leading-relaxed text-cream/85">
+              <p className="mt-2.5 text-[14px] leading-relaxed text-cream/75">
                 Ingin tahu lebih banyak tentang PlatterTea? Yuk baca cerita di balik brand makanan
                 dan minuman yang siap menemani harimu.
               </p>
@@ -773,7 +773,7 @@ function PreFooterCTA({ navigate }: HomeViewProps) {
 
             <div className="min-w-0 border-t border-white/10 pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
               <p className="text-[15px] font-bold text-cream">Ingin tahu lebih lanjut?</p>
-              <p className="mt-1.5 text-[13.5px] text-cream/85">
+              <p className="mt-1.5 text-[13.5px] text-cream/70">
                 Hubungi kami melalui WhatsApp untuk info produk, promo, dan Open PO.
               </p>
               <div className="mt-4 flex items-center gap-2.5">

@@ -94,7 +94,7 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
             </span>
           )}
         </div>
-        <p className="mt-1.5 line-clamp-2 text-[13px] font-medium leading-relaxed text-forest/70">
+        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-forest/55">
           {product.shortDesc}
         </p>
 

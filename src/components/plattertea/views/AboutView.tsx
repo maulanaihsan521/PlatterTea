@@ -155,7 +155,7 @@ export function AboutView({ navigate }: AboutViewProps) {
                 <Target className="h-6 w-6" />
               </span>
               <h3 className="mt-4 text-xl font-extrabold text-cream">Visi Kami</h3>
-              <p className="mt-3 text-[14.5px] leading-relaxed text-cream/85">
+              <p className="mt-3 text-[14.5px] leading-relaxed text-cream/75">
                 {settings.about_vision}
               </p>
             </div>
