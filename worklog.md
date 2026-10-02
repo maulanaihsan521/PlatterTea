@@ -548,3 +548,9 @@ Stage Summary:
 - Scan pra-push 4 lapis: file sensitif (0), pola token ghp_/sb_secret_/AKIA (0), nilai .env di tree (0 kebocoran; NEXT_PUBLIC_SITE_URL = localhost non-sensitif, admin@plattertea.id kini dihapus dari kode login → placeholder netral "nama@domain.id")
 - GIT_ASKPASS sementara di /tmp dihapus setelah push; token tidak pernah masuk repo/konfigurasi/worklog/cron
 - Catatan user: rotasi token GitHub classic ini disarankan segera (terekpos di chat) + aktifkan secret scanning/Dependabot di repo
+
+### Catatan Operasional untuk Agent Berikutnya (Task 12-f)
+- Cron webDevReview 15 menit AKTIF (job_id 430770) — instruksinya sudah mencakup: cek server, start jika mati, QA, styling, fitur, worklog
+- Perilaku sandbox: dev server yang di-start dari sesi agent shell sering dimatikan platform antar-perintah — BUKAN bug aplikasi. Verifikasi terakhir saat hidup: semua route 200, API menyajikan data Supabase, CSS 243KB termuat, 0 error
+- Start server yang benar: `cd /home/z/my-project && env -u DATABASE_URL -u DIRECT_URL nohup setsid bun run dev </dev/null >/dev/null 2>&1 & disown` (jangan pakai pipe tee; jangan biarkan DATABASE_URL sqlite stale menimpa .env)
+- Remote origin tetap terpasang (URL saja, TANPA kredensial tersimpan) — push berikutnya butuh token baru dari user (rotasi token lama disarankan)
