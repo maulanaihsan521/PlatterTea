@@ -872,3 +872,26 @@ Stage Summary:
 1. Menemani user: instalasi GitHub App di akun baru + env vars + deploy pertama
 2. Pasca-deploy: verifikasi produksi + rotasi token
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal
+---
+Task ID: 12-u
+Agent: main (Z.ai Code)
+Task: Verifikasi deployment produksi https://plattertea.vercel.app
+
+Work Log:
+- Debug "No Production Deployment": deployment pertama belum pernah jalan → push commit trigger kosong
+- Deployment BLOCKED: author commit = maulanaihsan521@users.noreply (akun lama); Hobby+repo private mewajibkan author punya akses Vercel → git config user.email diganti marketeens3@gmail.com (permanen) + push trigger f4ce6a0 → build sukses
+- VERIFIKASI PRODUKSI (agent-browser + curl): HTTP 200, server Vercel; CSP produksi aktif (tanpa unsafe-eval, ada upgrade-insecure-requests); HSTS + Permissions-Policy ok; aset statik immutable (build produksi asli)
+- API produksi → Supabase tersambung: /api/settings & /api/products mengembalikan data nyata (env vars terbukti benar: DATABASE_URL/DIRECT_URL/SUPABASE_URL/KEY/AUTH_SECRET)
+- Konsol browser: buffer lama memuat noise HMR sesi dev sebelumnya → console --clear + reload = NOL error/warning
+- E2E produksi: home render sempurna (hero/CTA/maskot/bottom-nav/PWA banner); menu 8 produk + chips; quick-add 2 produk → badge "2 item"; cart sheet: Platter Only 15rb + Tea Only 8rb = TOTAL Rp23.000 benar, gambar termuat; halaman login admin (#/admin) tampil rapi
+- Sisa langkah user: (1) set NEXT_PUBLIC_SITE_URL=https://plattertea.vercel.app + Redeploy, (2) region Singapore (opsional), (3) GANTI PASSWORD ADMIN via Keamanan Akun (KRITIS — plattertea123 aktif di produksi), (4) rotasi sb_secret + token GitHub yang terekspos di chat
+
+Stage Summary:
+- WEBSITE LIVE & TERVERIFIKASI di https://plattertea.vercel.app — deploy Vercel Hobby + Supabase Free sukses
+- Deploy pipeline: push main (marketeens3-dot/PlatterTea) → auto-deploy; identitas commit marketeens3@gmail.com
+- Worklog, vercel.json, PANDUAN-DEPLOY.md ikut ter-deploy di repo baru
+
+## Unresolved Issues / Next Priorities
+1. User: set NEXT_PUBLIC_SITE_URL + Redeploy; ganti password admin; rotasi kredensial chat
+2. User: cek FAQ di CMS (konten lama soal cara pesan bila ada)
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (mailer)
