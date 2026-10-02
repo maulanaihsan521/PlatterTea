@@ -2,7 +2,10 @@
 
 import { formatRupiah, type Product } from '@/lib/plattertea'
 import { waLink, WA_MESSAGES, useSettings } from '@/hooks/use-plattertea'
-import { ArrowRight } from 'lucide-react'
+import { useCartStore } from '@/hooks/use-cart'
+import { useToast } from '@/hooks/use-toast'
+import { ArrowRight, Plus, Check } from 'lucide-react'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
 /** WhatsApp brand glyph (simple-icons path) — dipakai tombol chat cepat di card */
@@ -12,6 +15,35 @@ export function WhatsAppIcon({ className }: { className?: string }) {
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
     </svg>
   )
+}
+
+/** Hook kecil: tambah produk ke keranjang + umpan balik toast & centang sesaat */
+function useQuickAdd(product: Product) {
+  const add = useCartStore((s) => s.add)
+  const openCart = useCartStore((s) => s.openCart)
+  const { toast } = useToast()
+  const [added, setAdded] = useState(false)
+
+  const quickAdd = () => {
+    add(
+      {
+        productId: product.id,
+        slug: product.slug,
+        name: product.name,
+        price: product.price,
+        image: product.mainImage,
+      },
+      1
+    )
+    setAdded(true)
+    setTimeout(() => setAdded(false), 1200)
+    toast({
+      title: 'Masuk keranjang',
+      description: `${product.name} ditambahkan — buka keranjang untuk pesan via WhatsApp.`,
+    })
+  }
+
+  return { quickAdd, added, openCart }
 }
 
 interface ProductCardProps {
@@ -31,6 +63,7 @@ interface ProductCardProps {
 export function ProductCard({ product, onOpen, className }: ProductCardProps) {
   const settings = useSettings()
   const wa = waLink(settings.whatsapp, WA_MESSAGES.product(product.name))
+  const { quickAdd, added } = useQuickAdd(product)
 
   return (
     <article
@@ -86,6 +119,23 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
             </a>
             <button
               type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                quickAdd()
+              }}
+              className={cn(
+                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest',
+                added
+                  ? 'bg-gold text-forest shadow-[0_2px_10px_rgba(232,161,38,0.45)]'
+                  : 'bg-forest text-cream hover:-translate-y-0.5 hover:bg-gold hover:text-forest'
+              )}
+              aria-label={`Tambah ${product.name} ke keranjang`}
+              title="Tambah ke keranjang"
+            >
+              {added ? <Check className="h-4.5 w-4.5" strokeWidth={2.5} /> : <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />}
+            </button>
+            <button
+              type="button"
               onClick={() => onOpen(product.slug)}
               className="inline-flex min-h-[36px] shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-forest px-3 py-2 text-[11.5px] font-bold text-cream transition-colors duration-200 hover:bg-forest-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
               aria-label={`Lihat detail ${product.name}`}
@@ -104,6 +154,7 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
 export function ProductCardRow({ product, onOpen }: ProductCardProps) {
   const settings = useSettings()
   const wa = waLink(settings.whatsapp, WA_MESSAGES.product(product.name))
+  const { quickAdd, added } = useQuickAdd(product)
 
   return (
     <article className="group flex items-stretch gap-3.5 overflow-hidden rounded-[18px] bg-white p-2.5 shadow-[0_2px_12px_rgba(23,61,50,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_24px_rgba(23,61,50,0.12)]">
@@ -140,6 +191,20 @@ export function ProductCardRow({ product, onOpen }: ProductCardProps) {
           >
             <WhatsAppIcon className="h-3.5 w-3.5" />
           </a>
+          <button
+            type="button"
+            onClick={quickAdd}
+            className={cn(
+              'flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all duration-200',
+              added
+                ? 'bg-gold text-forest shadow-[0_2px_10px_rgba(232,161,38,0.45)]'
+                : 'bg-forest text-cream hover:bg-gold hover:text-forest'
+            )}
+            aria-label={`Tambah ${product.name} ke keranjang`}
+            title="Tambah ke keranjang"
+          >
+            {added ? <Check className="h-4 w-4" strokeWidth={2.5} /> : <Plus className="h-4 w-4" strokeWidth={2.5} />}
+          </button>
           <button
             type="button"
             onClick={() => onOpen(product.slug)}

@@ -13,6 +13,7 @@ import { FaqView } from '@/components/plattertea/views/FaqView'
 import { AdminView } from '@/components/plattertea/admin/AdminView'
 import { DocumentMeta } from '@/components/plattertea/DocumentMeta'
 import { InstallBanner } from '@/components/plattertea/InstallApp'
+import { CartSheet } from '@/components/plattertea/Cart'
 import { useHashRoute, SettingsProvider } from '@/hooks/use-plattertea'
 import { routeToHash, type Route } from '@/lib/plattertea'
 
@@ -97,6 +98,8 @@ function PlatterTeaApp() {
       <BackToTop />
       <BottomNav route={route} navigate={nav} />
       {route.view === 'home' && <InstallBanner />}
+      {/* Keranjang → checkout WhatsApp (global, semua halaman publik) */}
+      <CartSheet navigate={nav} />
     </div>
   )
 }

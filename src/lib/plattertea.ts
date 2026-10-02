@@ -148,3 +148,45 @@ export function promoHighlight(title: string): string | null {
   if (t.includes('PLATTERTEA COMBO')) return 'Rp21.000'
   return null
 }
+
+// ============ Pesanan Keranjang → WhatsApp ============
+
+export interface OrderLine {
+  name: string
+  price: number
+  qty: number
+}
+
+export interface OrderMeta {
+  customerName?: string
+  note?: string
+}
+
+/**
+ * Susun teks pesanan otomatis dari isi keranjang — dikirim sebagai
+ * prefill chat WhatsApp sehingga admin langsung tahu isi pesanan.
+ * Murni fungsi (mudah diuji); format rapi & tanpa karakter berbahaya.
+ */
+export function buildWaOrderMessage(items: OrderLine[], meta: OrderMeta = {}): string {
+  const lines: string[] = []
+  lines.push('Halo PlatterTea! 👋')
+  lines.push('Saya mau pesan:')
+  lines.push('')
+  items.forEach((item, idx) => {
+    const sub = item.price * item.qty
+    lines.push(`${idx + 1}. ${item.name} (${formatRupiah(item.price)}) x${item.qty} = ${formatRupiah(sub)}`)
+  })
+  lines.push('')
+  lines.push(`Total: ${formatRupiah(items.reduce((n, i) => n + i.price * i.qty, 0))}`)
+
+  const name = (meta.customerName || '').trim()
+  const note = (meta.note || '').trim()
+  if (name || note) {
+    lines.push('')
+    if (name) lines.push(`Nama: ${name}`)
+    if (note) lines.push(`Catatan: ${note}`)
+  }
+  lines.push('')
+  lines.push('Terima kasih!')
+  return lines.join('\n')
+}

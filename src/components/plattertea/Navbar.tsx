@@ -5,8 +5,10 @@ import { LogoFull, LogoFullWhite } from './Logo'
 import { SearchOverlay } from './SearchOverlay'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
 import type { Route } from '@/lib/plattertea'
-import { Menu, Search, X, Home, UtensilsCrossed, Tag, Info, Phone, CircleHelp, Instagram, MessageCircle, Music2, Images } from 'lucide-react'
+import { Menu, Search, X, Home, UtensilsCrossed, Tag, Info, Phone, CircleHelp, Instagram, MessageCircle, Music2, Images, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { CartButton } from './Cart'
+import { useCartStore, useCartCount } from '@/hooks/use-cart'
 
 interface NavbarProps {
   route: Route
@@ -30,6 +32,8 @@ export function Navbar({ route, navigate }: NavbarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const settings = useSettings()
+  const openCart = useCartStore((s) => s.openCart)
+  const cartCount = useCartCount()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -108,7 +112,7 @@ export function Navbar({ route, navigate }: NavbarProps) {
             ))}
           </ul>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             <button
               type="button"
               className={cn(
@@ -123,12 +127,22 @@ export function Navbar({ route, navigate }: NavbarProps) {
               <Search className="h-5 w-5" />
             </button>
 
+            <CartButton
+              className={cn(
+                onDark
+                  ? 'text-cream/75 hover:bg-white/10 hover:text-cream'
+                  : 'text-forest/70 hover:bg-forest/5 hover:text-forest'
+              )}
+            />
+
             <a
               href={wa}
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
-                'inline-flex min-h-[44px] items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold shadow-[0_4px_16px_rgba(23,61,50,0.25)] transition-all duration-200 sm:inline-flex',
+                // disembunyikan di mobile — ruang navbar untuk keranjang; WA tetap
+                // 1-tap via BottomNav (Contact), drawer, dan tombol di kartu produk
+                'hidden min-h-[44px] items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold shadow-[0_4px_16px_rgba(23,61,50,0.25)] transition-all duration-200 sm:inline-flex',
                 onDark
                   ? 'bg-gold text-forest hover:-translate-y-0.5 hover:bg-gold-light'
                   : 'bg-forest text-cream hover:bg-forest-dark hover:shadow-[0_6px_20px_rgba(23,61,50,0.35)]'
@@ -205,6 +219,24 @@ export function Navbar({ route, navigate }: NavbarProps) {
               >
                 <Search className="h-5 w-5" />
                 Cari Produk
+              </button>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setDrawerOpen(false)
+                  openCart()
+                }}
+                className="flex min-h-[48px] w-full items-center gap-3 rounded-xl px-4 py-3 text-[15px] font-semibold text-cream/85 transition-colors duration-200 hover:bg-white/10 hover:text-cream"
+              >
+                <ShoppingBag className="h-5 w-5" />
+                <span className="flex-1 text-left">Keranjang</span>
+                {cartCount > 0 && (
+                  <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-gold px-1.5 text-[11px] font-extrabold text-forest">
+                    {cartCount}
+                  </span>
+                )}
               </button>
             </li>
             {[

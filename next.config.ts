@@ -13,6 +13,9 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob: https://*.supabase.co",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co",
+  // frame-src: Google Maps embed di halaman Kontak (iframe maps_embed) —
+  // tanpa ini iframe jatuh ke default-src 'self' dan diblokir browser
+  "frame-src https://www.google.com https://maps.google.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

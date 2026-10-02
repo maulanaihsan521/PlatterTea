@@ -600,3 +600,26 @@ Stage Summary:
 2. Warning a11y pre-existing radix DialogContent (minor) — muncul di beberapa dialog
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Foto lama (ber-artefak teks) tersisa sebagai file yatim di Supabase Storage — bisa dibersihkan via Admin → Media
+---
+Task ID: 12-i
+Agent: main (Z.ai Code)
+Task: Permintaan user — (1) "saya tidak bisa login admin", (2) "pada bagian maps ada bug", (3) "buatkan fitur keranjang: jika sudah masuk keranjang bisa pesan langsung ke WhatsApp dan text chat yang dikirim WhatsApp otomatis sesuai dengan yang dipesan"
+
+Work Log:
+- BUG MAPS DITEMUKAN & DIPERBAIKI (akar masalah): CSP di next.config.ts tidak punya directive frame-src → iframe Google Maps di halaman Kontak jatuh ke default-src 'self' dan DIBLOKIR browser (bug muncul sejak CSP dipasang pada iterasi keamanan). FIX: frame-src https://www.google.com https://maps.google.com (prinsip least-privilege — hanya host embed yang dipakai). Diverifikasi: header CSP aktif via curl, iframe terukur 504x300 dan PETA TAMPIL (pin Telkom University Purwokerto, kartu alamat, rating) via screenshot agent-browser; 0 console error
+- LOGIN ADMIN: TIDAK ADA BUG PADA SISTEM — diverifikasi berlapis: (a) API login 401 utk kredensial salah (normal), (b) API login 200 SUPER_ADMIN dengan kredensial seed dari .env (ADMIN_EMAIL/ADMIN_PASSWORD), (c) login via UI agent-browser end-to-end → dashboard "Selamat malam, Admin PlatterTea" tampil, 0 console error. Penyebab user tidak bisa login kemungkinan besar: password seed belum diketahui (ada di .env) ATAU terkunci sementara 15 menit setelah 5x gagal (rate-limit by design, in-memory, reset saat server restart). Saran: login dengan kredensial di .env lalu segera ganti password via fitur yang tersedia di CMS
+- FITUR KERANJANG → CHECKOUT WHATSAPP (baru, lengkap): (a) store Zustand persist localStorage plattertea-cart-v1 (src/hooks/use-cart.ts): add/remove/setQty/increment/decrement/clear, MAX_QTY_PER_ITEM=20, isOpen ephemeral via partialize, useCartCount aman-SSR via useSyncExternalStore (tanpa setState dalam effect — lolos aturan react-hooks/set-state-in-effect); (b) komponen Cart.tsx: AddToCartButton (di cards), CartButton (navbar + badge emas), CartSheet global (mobile: bottom-sheet max-h-88vh, desktop: drawer kanan 420px) dengan stepper qty, subtotal per item, total live, input Nama & Catatan opsional (dibatasi 60/200 char), tombol "Pesan via WhatsApp" emas + hint, state kosong dengan CTA "Lihat Menu", tombol Kosongkan; (c) buildWaOrderMessage di lib/plattertea.ts — teks pesanan otomatis: nomor urut, nama item, harga satuan, qty, subtotal per baris, TOTAL, Nama/Catatan bila diisi; (d) integrasi: page.tsx (CartSheet global semua halaman publik, admin dikecualikan), Navbar (tombol keranjang desktop+mobile + item "Keranjang" dengan badge di drawer), ProductCard & ProductCardRow (tombol + dengan umpan balik centang emas + toast), ProductDetailView (stepper qty 1-20 + tombol Keranjang dengan total harga + CTA WhatsApp "Tanya/Pesan Langsung"); pill "Hubungi Kami" navbar disembunyikan di mobile (redundan dgn BottomNav/drawer/kartu — memberi ruang tombol keranjang)
+- E2E VERIFIKASI KERANJANG (agent-browser): tambah 2x Platter Only + 1x Tea Only → sheet "3 item", subtotal Rp30.000 + Rp8.000, TOTAL Rp38.000 benar; isi Nama "Budi" + Catatan "Pedas level 2 ya" → intercept window.open → URL wa.me/6285175397747?text=... TERKONFIRMASI berisi pesanan lengkap otomatis ("Halo PlatterTea! 👋 Saya mau pesan: 1. Platter Only (Rp15.000) x2 = Rp30.000 2. Tea Only (Rp8.000) x1 = Rp8.000 Total: Rp38.000 Nama: Budi Catatan: Pedas level 2 ya Terima kasih!"); stepper + di sheet → total live Rp46.000; persistensi: setelah reload badge tetap "3 item" (localStorage); Kosongkan → state kosong + CTA Lihat Menu; mobile 390 = 390 tanpa overflow, desktop drawer rapi; 0 console error; lint clean; sheet.tsx diberi opsi showCloseButton (tombol tutup kustom brand, pola sama dgn lightbox galeri)
+- QA total: home/menu/detail/kontak/admin mobile 390 & desktop 1280 tanpa overflow, 0 error console, dev.log bersih (hanya notice HMR), lint clean
+
+Stage Summary:
+- Maps kontak kembali berfungsi (perbaikan CSP frame-src) — peta tampak utuh di semua ukuran layar
+- Login admin terbukti sehat end-to-end; kredensial seed ada di .env; kunci sementara 15 menit adalah proteksi brute-force yang bekerja normal
+- Fitur keranjang tuntas: pilih menu → keranjang → 1 tap "Pesan via WhatsApp" → chat WhatsApp terisi otomatis persis isi pesanan (nama, qty, subtotal, total, nama pemesan, catatan)
+- localStorage menyimpan isi keranjang antar kunjungan; UI mengikuti palet Forest/Cream/Gold, aksesibel (aria-label lengkap, role dialog, live region total)
+
+## Unresolved Issues / Next Priorities
+1. User: ganti password admin setelah login pertama + rotasi kredensial yang pernah terekspos di chat
+2. Warning a11y pre-existing radix DialogContent (minor)
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD

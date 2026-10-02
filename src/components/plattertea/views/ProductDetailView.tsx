@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react'
 import type { Product, Route } from '@/lib/plattertea'
 import { formatRupiah } from '@/lib/plattertea'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
-import { ArrowLeft, MessageCircle, CheckCircle2, Users, Tag, ArrowRight, Share2, Check } from 'lucide-react'
+import { useCartStore, MAX_QTY_PER_ITEM } from '@/hooks/use-cart'
+import { useToast } from '@/hooks/use-toast'
+import { ArrowLeft, MessageCircle, CheckCircle2, Users, Tag, ArrowRight, Share2, Check, Plus, Minus, ShoppingBag } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DocumentMeta } from '../DocumentMeta'
 import { LeafPair } from '../Decor'
@@ -30,6 +32,12 @@ export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
   const product = entry && entry !== 'notfound' ? entry.product : null
   const related = entry && entry !== 'notfound' ? entry.related : []
   const settings = useSettings()
+  const { toast } = useToast()
+  const add = useCartStore((s) => s.add)
+  const openCart = useCartStore((s) => s.openCart)
+  const [qty, setQty] = useState(1)
+  // Catatan: qty tidak perlu reset manual saat pindah produk — <main> di
+  // page.tsx memakai key={routeToHash(route)} sehingga view remount per rute.
 
   useEffect(() => {
     let mounted = true
@@ -197,35 +205,96 @@ export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
                 </dl>
               </div>
 
-              {/* CTA: WhatsApp + Share */}
-              <div className="mt-7 flex items-center gap-2.5">
+              {/* CTA: qty + keranjang + WhatsApp + share */}
+              <div className="mt-7">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {/* Stepper jumlah */}
+                  <div
+                    className="flex items-center gap-1 rounded-full bg-white p-1.5 shadow-[0_2px_10px_rgba(23,61,50,0.08)]"
+                    role="group"
+                    aria-label="Atur jumlah pesanan"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setQty((q) => Math.max(1, q - 1))}
+                      disabled={qty <= 1}
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-cream text-forest transition-colors hover:bg-sage-light disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Kurangi jumlah"
+                    >
+                      <Minus className="h-4 w-4" strokeWidth={2.5} />
+                    </button>
+                    <span className="min-w-8 text-center text-[15px] font-extrabold tabular-nums text-forest" aria-live="polite">
+                      {qty}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQty((q) => Math.min(MAX_QTY_PER_ITEM, q + 1))}
+                      disabled={qty >= MAX_QTY_PER_ITEM}
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-cream text-forest transition-colors hover:bg-sage-light disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Tambah jumlah"
+                    >
+                      <Plus className="h-4 w-4" strokeWidth={2.5} />
+                    </button>
+                  </div>
+
+                  {/* Tambah ke keranjang */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      add(
+                        {
+                          productId: product.id,
+                          slug: product.slug,
+                          name: product.name,
+                          price: product.price,
+                          image: product.mainImage,
+                        },
+                        qty
+                      )
+                      toast({
+                        title: 'Masuk keranjang',
+                        description: `${qty} × ${product.name} ditambahkan — buka keranjang untuk pesan.`,
+                      })
+                      openCart()
+                    }}
+                    className="inline-flex min-h-[52px] flex-1 items-center justify-center gap-2 rounded-full border-2 border-forest bg-white px-5 py-3 text-[14px] font-bold text-forest transition-all duration-200 hover:-translate-y-0.5 hover:bg-forest hover:text-cream sm:flex-none"
+                  >
+                    <ShoppingBag className="h-5 w-5" />
+                    Keranjang
+                    <span className="text-[13px] font-extrabold tabular-nums text-gold-dark">{formatRupiah(product.price * qty)}</span>
+                  </button>
+
+                  {/* Bagikan */}
+                  <button
+                    type="button"
+                    onClick={share}
+                    className={cn(
+                      'flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold',
+                      shared
+                        ? 'border-gold bg-gold/15 text-gold-dark'
+                        : 'border-forest/20 bg-white text-forest hover:border-forest/40 hover:bg-sage-light'
+                    )}
+                    aria-label="Bagikan produk ini"
+                    title="Bagikan produk ini"
+                  >
+                    {shared ? <Check className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
+                  </button>
+                </div>
+
+                {/* Pesan langsung via WhatsApp */}
                 <a
                   href={wa}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-[52px] flex-1 items-center justify-center gap-2 rounded-full bg-forest px-6 py-3.5 text-[15px] font-bold text-cream shadow-[0_8px_24px_rgba(23,61,50,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-forest-dark sm:flex-none sm:px-8"
+                  className="mt-2.5 inline-flex min-h-[52px] w-full items-center justify-center gap-2 rounded-full bg-forest px-6 py-3.5 text-[15px] font-bold text-cream shadow-[0_8px_24px_rgba(23,61,50,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-forest-dark"
                 >
                   <MessageCircle className="h-5 w-5" />
-                  Pesan via WhatsApp
+                  Tanya / Pesan Langsung via WhatsApp
                 </a>
-                <button
-                  type="button"
-                  onClick={share}
-                  className={cn(
-                    'flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-2 transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold',
-                    shared
-                      ? 'border-gold bg-gold/15 text-gold-dark'
-                      : 'border-forest/20 bg-white text-forest hover:border-forest/40 hover:bg-sage-light'
-                  )}
-                  aria-label="Bagikan produk ini"
-                  title="Bagikan produk ini"
-                >
-                  {shared ? <Check className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
-                </button>
+                {shared && (
+                  <p className="mt-2 text-[12px] font-semibold text-gold-dark">Link produk disalin — siap dibagikan! 🎉</p>
+                )}
               </div>
-              {shared && (
-                <p className="mt-2 text-[12px] font-semibold text-gold-dark">Link produk disalin — siap dibagikan! 🎉</p>
-              )}
             </div>
           </div>
         </div>
