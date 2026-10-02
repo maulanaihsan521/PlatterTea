@@ -454,3 +454,34 @@ Stage Summary:
 ## Unresolved Issues / Next Priorities
 1. User: tetap disarankan rotasi password DB + GitHub token via dashboard (pernah lewat chat); opsional nonaktifkan Data API di Supabase Settings
 2. Pending lain dari ronde sebelumnya (touch drag reorder, SW offline LRU, dsb.)
+
+---
+Task ID: 12-d
+Agent: main (Z.ai Code)
+Task: User mengirim kredensial Supabase (project URL + secret key format baru) → aktivasi Supabase Storage untuk media CMS + lanjutan review & iterasi Dashboard Admin
+
+Work Log:
+- ENV: SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY diisi dari kunci rahasia yang dikirim user — disimpan HANYA di .env (gitignored); tidak pernah masuk kode, worklog, cron, atau git
+- PROBE STORAGE API: kunci rahasia format baru DITOLAK Storage ("Invalid Compact JWS") bila hanya mengirim Authorization Bearer — WAJIB header `apikey` juga; PostgREST 200; bucket awalnya kosong → bucket PUBLIC "media" dibuat via REST; E2E curl upload→public fetch→list→delete sukses (catatan: objek terhapus masih 200 via CDN ±1 jam — cache, bukan bug)
+- BUG FIX 1: upload & media route lama hanya kirim Bearer → 403 dengan kunci baru; fix via helper headers apikey+Bearer
+- BUG FIX 2: listStorage lama hanya listing root — file ber-folder (YYYY/MM/uuid.webp, hasil upload route) TAK TERLIHAT di Media Manager karena Storage API mem-folder prefix; fix: listing rekursif BFS per folder + rekonstruksi full key (src/lib/storage.ts listStorageMedia)
+- REFAKTOR: semua akses Storage terpusat di src/lib/storage.ts (storageEnabled, storageHeaders, storageObjectUrl, storagePublicUrl, listStorageMedia, deleteStorageObject, IMAGE_EXT, tipe MediaFile) — dipakai route upload, media, stats
+- FITUR BARU 1: grafik "Aktivitas CMS" dapat toggle rentang 7/30 hari (stats API menerima ?days=; bucket harian WIB; rentang 30 hari: tanpa angka per bar, label tiap 5 bar + bar pertama/terakhir, tinggi bar lebih pendek; skeleton saat pindah rentang)
+- FITUR BARU 2: kartu "Penyimpanan Media" di dashboard — badge mode (Supabase Storage / Disk lokal dev), jumlah file, total ukuran (formatBytes), penjelasan, tombol Kelola Media; data dari stats API (media.mode/count/bytes, cache memori 60 detik agar tidak memanggil Storage tiap load)
+- FITUR KECIL: quick action "Unggah Media" di welcome banner; ikon+verb audit MEDIA_DELETE (dashboard & AuditManager filter sudah ada dari ronde lalu); MediaManager menampilkan basename utk key ber-folder (title tetap full key)
+- STYLING: stat card hover border gold/35 + active:scale-98, legenda mini chart (kotak gold = hari ini, forest = hari lain), badge mode sage/gold, toggle rentang pill forest/cream
+- E2E agent-browser (desktop 1280 & mobile 390): login → dashboard render penuh (chart 7↔30 berfungsi, kartu storage "0 file + Supabase Storage", strip keamanan, aktivitas) → upload via API dgn session cookie (HTTP 201, PNG→WebP 70→94 B, key 2026/10/…) → file MUNCUL di Media Manager (bug listing terbukti fixed) → hapus via UI (dialog konfirmasi → toast "File media dihapus" → bucket kembali []) → entri audit "menghapus file media" tampil di Aktivitas Terbaru; overflow 390=390 & 1280=1280 di semua section; console bersih (hanya warning pre-existing radix DialogContent)
+- SECURITY: scan staged diff utk pola kredensial → bersih (komentar kode berpola nama kunci dihilangkan); commit 650e466; remote belum dipasang ulang — push menunggu user
+- lint clean; dev.log tanpa error runtime
+
+Stage Summary:
+- Supabase Storage AKTIF: foto CMS kini tersimpan permanen di cloud (bucket public "media", auto-konversi WebP, CDN) — prasyarat deploy Vercel terpenuhi
+- Dua bug storage tuntas (header apikey utk kunci baru + listing rekursif ber-folder); akses Storage kini satu pintu di src/lib/storage.ts
+- Dashboard makin fungsional: grafik 7/30 hari, kartu status penyimpanan, quick action unggah media
+- Media lama di public/uploads (dev) tidak otomatis pindah ke Storage — konten lama tetap tampil dari /uploads; unggahan BARU masuk Storage
+
+## Unresolved Issues / Next Priorities
+1. Push ke GitHub menunggu remote dipasang ulang + token baru dari user (pasca-audit: token tidak disimpan di repo/config)
+2. Migrasi media lama public/uploads → Storage (opsional, skrip sekali-jalan bila dibutuhkan)
+3. Warning a11y pre-existing radix "Missing Description for DialogContent" (minor)
+4. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
