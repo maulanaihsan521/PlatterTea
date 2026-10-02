@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { getOrLoad } from '@/lib/simple-cache'
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,11 +16,13 @@ export async function GET(req: NextRequest) {
       where.featured = true
     }
 
-    const products = await db.product.findMany({
-      where,
-      include: { category: true },
-      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
-    })
+    const products = await getOrLoad(`api:products:${category || 'all'}:${featured || 'any'}`, () =>
+      db.product.findMany({
+        where,
+        include: { category: true },
+        orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
+      })
+    )
 
     // no-store: konten CMS harus selalu fresh di browser pengunjung setelah admin mengubahnya
     return NextResponse.json({ success: true, data: products }, { headers: { 'Cache-Control': 'no-store' } })

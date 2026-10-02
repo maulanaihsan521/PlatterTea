@@ -94,16 +94,16 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
             </span>
           )}
         </div>
-        <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-forest/55">
+        <p className="mt-1.5 line-clamp-2 text-[13px] font-medium leading-relaxed text-forest/70">
           {product.shortDesc}
         </p>
 
-        {/* Harga + aksi — harga besar, tombol tambah bulat, pill hijau tua + panah */}
-        <div className="mt-auto flex items-center justify-between gap-1.5 pt-4">
+        {/* Harga + aksi — harga besar, tombol tambah bulat, pill hijau tua + panah (wrap pada kartu sempit) */}
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-1.5 gap-y-2 pt-4">
           <p className="shrink-0 text-[16.5px] font-extrabold tracking-tight text-forest">
             {formatRupiah(product.price)}
           </p>
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="ml-auto flex shrink-0 items-center gap-1.5">
             <button
               type="button"
               onClick={(e) => {

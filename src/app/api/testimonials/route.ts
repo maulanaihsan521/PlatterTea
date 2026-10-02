@@ -2,13 +2,16 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { logAudit } from '@/lib/audit'
 import { checkPublicLimit, requestIp } from '@/lib/rate-limit'
+import { getOrLoad } from '@/lib/simple-cache'
 
 export async function GET() {
   try {
-    const testimonials = await db.testimonial.findMany({
-      where: { status: 'PUBLISHED' },
-      orderBy: { sortOrder: 'asc' },
-    })
+    const testimonials = await getOrLoad('api:testimonials', () =>
+      db.testimonial.findMany({
+        where: { status: 'PUBLISHED' },
+        orderBy: { sortOrder: 'asc' },
+      })
+    )
     // no-store: testimoni yang disetujui admin langsung terlihat oleh pengunjung
     return NextResponse.json({ success: true, data: testimonials }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {

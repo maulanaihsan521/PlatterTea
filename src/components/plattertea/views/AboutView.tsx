@@ -72,7 +72,7 @@ export function AboutView({ navigate }: AboutViewProps) {
 
       {/* Nilai Kami */}
       <section className="relative py-12 lg:py-16" aria-labelledby="nilai">
-        <LeafPair className="absolute left-[4%] top-10 h-14 w-20 -rotate-12 text-forest-light/30" />
+        <LeafPair className="pointer-events-none absolute left-[4%] top-10 h-14 w-20 -rotate-12 text-forest-light/30" />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <h2 id="nilai" className="text-2xl font-extrabold text-forest sm:text-3xl">
             Nilai Kami
@@ -96,7 +96,7 @@ export function AboutView({ navigate }: AboutViewProps) {
       {/* Ekspresi Maskot — brand board */}
       {/* overflow-x-clip: blob dekoratif -right-20 jangan melebar keluar viewport (bug mobile: header tampak tidak full-width) */}
       <section className="relative overflow-x-clip py-8 lg:py-14" aria-labelledby="maskot">
-        <Blob className="absolute -right-20 top-24 h-64 w-64 text-beige/60" />
+        <Blob className="pointer-events-none absolute -right-20 top-24 h-64 w-64 text-beige/60" />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-8 lg:grid-cols-[1fr_440px] lg:gap-14">
             <div className="pt-fade-up order-2 lg:order-1">
@@ -128,7 +128,7 @@ export function AboutView({ navigate }: AboutViewProps) {
             </div>
             <div className="relative order-1 lg:order-2">
               <div className="relative mx-auto max-w-[480px]">
-                <Blob className="absolute -inset-4 text-beige/80" />
+                <Blob className="pointer-events-none absolute -inset-4 text-beige/80" />
                 <img
                   src="/brand/mascot-group.png"
                   alt="Keluarga maskot PlatterTea — karakter gelas teh dan platter box"
@@ -150,19 +150,19 @@ export function AboutView({ navigate }: AboutViewProps) {
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Vision */}
             <div className="relative overflow-hidden rounded-[28px] bg-forest p-7 shadow-[0_16px_40px_rgba(15,46,38,0.3)] sm:p-9">
-              <Leaf className="absolute -right-4 -top-2 h-14 w-24 rotate-12 text-forest-light/50" />
+              <Leaf className="pointer-events-none absolute -right-4 -top-2 h-14 w-24 rotate-12 text-forest-light/50" />
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/20 text-gold">
                 <Target className="h-6 w-6" />
               </span>
               <h3 className="mt-4 text-xl font-extrabold text-cream">Visi Kami</h3>
-              <p className="mt-3 text-[14.5px] leading-relaxed text-cream/75">
+              <p className="mt-3 text-[14.5px] leading-relaxed text-cream/85">
                 {settings.about_vision}
               </p>
             </div>
 
             {/* Mission */}
             <div className="relative overflow-hidden rounded-[28px] bg-white p-7 shadow-[0_2px_20px_rgba(23,61,50,0.08)] sm:p-9">
-              <LeafPair flip className="absolute -bottom-3 -right-3 h-14 w-20 text-sage-light" />
+              <LeafPair flip className="pointer-events-none absolute -bottom-3 -right-3 h-14 w-20 text-sage-light" />
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sage-light text-forest">
                 <Rocket className="h-6 w-6" />
               </span>
@@ -187,7 +187,7 @@ export function AboutView({ navigate }: AboutViewProps) {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="relative">
               {/* Blob diperkecil & dinaikkan agar tidak menimpa baris chip filter di bawahnya */}
-              <Blob className="absolute -left-16 -top-16 h-36 w-36 text-beige/60" />
+              <Blob className="pointer-events-none absolute -left-16 -top-16 h-36 w-36 text-beige/60" />
               <div className="relative">
                 <h2 id="galeri" className="text-2xl font-extrabold text-forest sm:text-3xl">
                   Galeri

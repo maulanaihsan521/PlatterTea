@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { getOrLoad } from '@/lib/simple-cache'
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,11 +11,13 @@ export async function GET(req: NextRequest) {
     const where: Record<string, unknown> = { status: 'PUBLISHED' }
     if (category && category !== 'all') where.category = category
 
-    const items = await db.galleryItem.findMany({
-      where,
-      orderBy: { sortOrder: 'asc' },
-      ...(limit ? { take: parseInt(limit, 10) } : {}),
-    })
+    const items = await getOrLoad(`api:gallery:${category || 'all'}:${limit || 'any'}`, () =>
+      db.galleryItem.findMany({
+        where,
+        orderBy: { sortOrder: 'asc' },
+        ...(limit ? { take: parseInt(limit, 10) } : {}),
+      })
+    )
     // no-store: perubahan galeri dari admin langsung terlihat oleh pengunjung
     return NextResponse.json({ success: true, data: items }, { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) {

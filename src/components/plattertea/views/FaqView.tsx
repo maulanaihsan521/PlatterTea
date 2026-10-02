@@ -48,7 +48,7 @@ export function FaqView({ navigate }: FaqViewProps) {
       />
 
       <section className="relative pb-28 pt-12 lg:pb-20">
-        <LeafPair className="absolute left-[4%] top-12 h-14 w-20 -rotate-12 text-forest-light/25" />
+        <LeafPair className="pointer-events-none absolute left-[4%] top-12 h-14 w-20 -rotate-12 text-forest-light/25" />
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           {/* Maskot berbisik — pembuka FAQ yang playful */}
           {!loading && faqs.length > 0 && (
@@ -96,10 +96,10 @@ export function FaqView({ navigate }: FaqViewProps) {
 
           {/* Bottom CTA card */}
           <div className="relative mt-10 overflow-hidden rounded-[28px] bg-forest p-8 text-center shadow-[0_16px_40px_rgba(15,46,38,0.3)] sm:p-9">
-            <LeafPair flip className="absolute -bottom-4 -left-3 h-14 w-20 text-forest-light/50" />
-            <LeafPair className="absolute -right-4 -top-3 h-14 w-20 text-forest-light/50" />
+            <LeafPair flip className="pointer-events-none absolute -bottom-4 -left-3 h-14 w-20 text-forest-light/50" />
+            <LeafPair className="pointer-events-none absolute -right-4 -top-3 h-14 w-20 text-forest-light/50" />
             <p className="font-script text-3xl text-gold-light">Masih ada pertanyaan?</p>
-            <p className="mt-2 text-[14px] text-cream/75">Hubungi kami via WhatsApp</p>
+            <p className="mt-2 text-[14px] text-cream/85">Hubungi kami via WhatsApp</p>
             <a
               href={wa}
               target="_blank"

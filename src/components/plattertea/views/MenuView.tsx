@@ -52,7 +52,7 @@ export function MenuView({ navigate }: MenuViewProps) {
       />
 
       <section className="relative pb-28 pt-10 lg:pb-20">
-        <Leaf className="absolute right-[5%] top-8 h-12 w-20 rotate-12 text-forest-light/30" />
+        <Leaf className="pointer-events-none absolute right-[5%] top-8 h-12 w-20 rotate-12 text-forest-light/30" />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           {/* Filter pills — sticky di bawah navbar saat scroll */}
           <div className="sticky top-[64px] z-20 -mx-4 bg-cream/85 px-4 py-2.5 backdrop-blur-md sm:top-[80px] sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">

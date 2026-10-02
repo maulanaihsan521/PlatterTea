@@ -748,3 +748,32 @@ Stage Summary:
 2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-p
+Agent: main (Z.ai Code)
+Task: Review & Iteration — laporan user (3 screenshot Drive "Tulisan Tidak jelas"): tulisan home mode mobile tidak jelas + pastikan website tidak berat + QA menyeluruh
+
+Work Log:
+- Unduh 3 screenshot dari Google Drive user: (1) hero subtitle abu redup di cream, (2) "Good Food Good Mood" (bagian gambar hero), (3) "Mix, Sip, Enjoy!" gold samar di atas hijau DarkCTA
+- FIX 1 (hero): subtitle text-forest/75 15.5px → text-forest penuh (mobile) + font-medium + 16.5px (sm+: /90); pixel-verify #1E4338, kontras ~9:1 (AAA)
+- FIX 2 (DarkCTA "Mix, Sip, Enjoy!"): gold-light 24px semibold → 26px bold + text-shadow ganda gelap (0 1px 2px + 0 3px 10px rgba(15,46,38,.65)) → jelas di atas hijau & gambar; sm: 30px
+- FIX 3 (BUG ROOT-CAUSE — "Teh" pudar di heading DarkCTA): dekorasi LeafPair absolute menimpa teks heading (DOM order dekorasi > konten) → konten diberi relative z-10 + dekorasi pointer-events-none di DarkCTA, Hero, BrandIntro, promo card, HowToOrder; pola sama di-sweep ke Menu/Promo/About/Contact/FAQ
+- FIX 4 (konsistensi keterbacaan): subtitle section forest/70→/85+medium (BestSellers/Tea/Cara Pesan/Testimoni), about_story /75→/85, kartu produk desc /55→/70+medium, DarkCTA & AboutPreview & FAQ CTA cream/70-75→/85-90, FeatureStrip desc /60→/75
+- FIX 5 (bug layout ProductCard): baris harga+aksi semua shrink-0 → tombol "Lihat Detail" overflow terpotong di kartu sempit (harga 5 digit, 4 kolom) → container flex-wrap + grup ml-auto; desc kartu /55→/70
+- QA Home penuh mobile 390 (12 screenshot semua section) & desktop 1440 (hero, cara pesan + maskot xl, footer sticky) — semua teks jelas, footer benar
+- QA fungsional: quick-add 3 produk (localStorage ✓), Cart sheet (qty stepper, total Rp44.000 ✓), checkout intercept window.open → teks WA order lengkap item+total ✓, detail produk ✓, Promo/About/Contact (maps)/FAQ ✓, admin login plattertea123 → dashboard ✓
+- dev.log: 2 error "Fast Refresh full reload" = noise HMR lama (bukan runtime error; semua request 200)
+- PERFORMA: aset public total 1.5MB (max file 107KB, semua WebP/PNG teroptimasi), lazy-load sudah lengkap di bawah fold, DOMContentLoaded 799ms; bottleneck = API read (settings 543-1200ms round-trip Supabase)
+- PERF FIX: src/lib/simple-cache.ts (TTL 30s, store globalThis agar singleton lintas bundel) + getOrLoad di 6 API publik (settings/products/promotions/testimonials/faqs/gallery, key per-kombinasi filter) + auto-invalidation via Prisma $extends query middleware ($use dihapus di Prisma 6) pada 7 model konten
+- Hasil ukur: settings 543ms → 5ms (cached, ~100x); E2E invalidation: warm 8ms → admin PUT 200 → fresh 193ms → re-cached 7ms ✓
+
+Stage Summary:
+- 5 bug/UX diperbaiki: subtitle hero redup, gold-on-green samar, dekorasi menimpa teks heading (root-cause), desc kartu terlalu pudar, overflow tombol di ProductCard
+- Website jauh lebih ringan: API publik ter-cache 30s dengan auto-invalidate saat admin menyimpan; aset & lazy-load sudah optimal
+- Verifikasi menyeluruh: lint lulus, 0 console error, semua view + admin E2E OK
+
+## Unresolved Issues / Next Priorities
+1. Cek & sesuaikan konten FAQ di CMS bila ada yang menyebut cara pesan lama
+2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD

@@ -76,7 +76,7 @@ export function ContactView({ navigate }: ContactViewProps) {
       />
 
       <section className="relative pb-28 pt-12 lg:pb-20">
-        <LeafPair className="absolute right-[5%] top-10 h-14 w-20 rotate-12 text-forest-light/25" />
+        <LeafPair className="pointer-events-none absolute right-[5%] top-10 h-14 w-20 rotate-12 text-forest-light/25" />
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
             {/* Contact list */}
@@ -185,8 +185,8 @@ export function ContactView({ navigate }: ContactViewProps) {
 
               {/* Big CTA card */}
               <div className="relative overflow-hidden rounded-[28px] bg-forest p-8 text-center shadow-[0_16px_40px_rgba(15,46,38,0.3)] sm:px-28 sm:py-10 lg:px-36">
-                <LeafPair flip className="absolute -bottom-4 -left-3 h-16 w-24 text-forest-light/50" />
-                <LeafPair className="absolute -right-4 -top-3 h-16 w-24 text-forest-light/50" />
+                <LeafPair flip className="pointer-events-none absolute -bottom-4 -left-3 h-16 w-24 text-forest-light/50" />
+                <LeafPair className="pointer-events-none absolute -right-4 -top-3 h-16 w-24 text-forest-light/50" />
                 {/* Maskot jempol — tim kami siap membantu */}
                 <Mascot
                   pose="thumbs"

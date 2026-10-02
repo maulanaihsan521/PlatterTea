@@ -25,13 +25,13 @@ function Hero({ navigate }: HomeViewProps) {
   return (
     <section className="relative overflow-hidden pt-24 sm:pt-28 lg:pt-32" aria-label="Pembuka">
       {/* organic background decorations */}
-      <Blob className="absolute -left-24 top-24 h-72 w-72 text-beige/70" />
-      <Blob className="absolute -right-32 top-40 h-96 w-96 text-beige/60" />
-      <Leaf className="absolute left-[6%] top-40 h-14 w-24 -rotate-12 text-forest-light/70 sm:left-[10%] sm:top-44" />
-      <Leaf flip className="absolute bottom-10 left-[38%] hidden h-12 w-20 rotate-6 text-gold/60 lg:block" />
-      <LeafPair className="absolute right-[4%] top-28 h-20 w-28 rotate-12 text-forest-light/60" />
+      <Blob className="pointer-events-none absolute -left-24 top-24 h-72 w-72 text-beige/70" />
+      <Blob className="pointer-events-none absolute -right-32 top-40 h-96 w-96 text-beige/60" />
+      <Leaf className="pointer-events-none absolute left-[6%] top-40 h-14 w-24 -rotate-12 text-forest-light/70 sm:left-[10%] sm:top-44" />
+      <Leaf flip className="pointer-events-none absolute bottom-10 left-[38%] hidden h-12 w-20 rotate-6 text-gold/60 lg:block" />
+      <LeafPair className="pointer-events-none absolute right-[4%] top-28 h-20 w-28 rotate-12 text-forest-light/60" />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 sm:px-6 lg:grid-cols-2 lg:gap-6 lg:px-8 lg:pb-20">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 sm:px-6 lg:grid-cols-2 lg:gap-6 lg:px-8 lg:pb-20">
         {/* Text */}
         <div className="pt-fade-up text-center lg:text-left">
           <div className="relative inline-block">
@@ -41,7 +41,7 @@ function Hero({ navigate }: HomeViewProps) {
             <Swoosh className="absolute -bottom-3 left-1/2 h-5 w-56 -translate-x-1/2 text-gold lg:left-8 lg:w-64" />
           </div>
 
-          <p className="mx-auto mt-7 max-w-md text-[15.5px] leading-relaxed text-forest/75 sm:text-base lg:mx-0 lg:text-lg">
+          <p className="mx-auto mt-7 max-w-md text-[16.5px] font-medium leading-relaxed text-forest sm:text-lg sm:text-forest/90 lg:mx-0 lg:text-lg">
             {settings.hero_subtitle}
           </p>
 
@@ -135,7 +135,7 @@ function FeatureStrip() {
             <p className="text-[12.5px] font-semibold leading-snug text-forest/90 sm:text-[13.5px]">
               {title}
               <br />
-              <span className="text-forest/60">{desc}</span>
+              <span className="text-forest/75">{desc}</span>
             </p>
           </div>
         ))}
@@ -150,13 +150,13 @@ function BrandIntro({ navigate }: HomeViewProps) {
   const settings = useSettings()
   return (
     <section className="relative overflow-hidden py-16 lg:py-24" aria-labelledby="kenalan">
-      <LeafPair className="absolute left-2 top-16 h-16 w-24 -rotate-12 text-forest-light/50" />
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
+      <LeafPair className="pointer-events-none absolute left-2 top-16 h-16 w-24 -rotate-12 text-forest-light/50" />
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8">
         <div className="pt-fade-up order-2 lg:order-1">
           <h2 id="kenalan" className="text-2xl font-extrabold text-forest sm:text-3xl lg:text-[32px]">
             Kenalan dengan PlatterTea
           </h2>
-          <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-forest/75 sm:text-base">
+          <p className="mt-4 max-w-lg text-[15px] font-medium leading-relaxed text-forest/85 sm:text-base">
             {settings.about_story}
           </p>
           <button
@@ -236,7 +236,7 @@ function ProductShowcase({ navigate }: HomeViewProps) {
           <h2 id="menu-plattertea" className="text-2xl font-extrabold text-forest sm:text-3xl">
             Menu PlatterTea
           </h2>
-          <p className="mt-2 text-[15px] text-forest/70">
+          <p className="mt-2 text-[15px] font-medium text-forest/85">
             Pilihan makanan dan minuman untuk menemani harimu.
           </p>
         </div>
@@ -340,7 +340,7 @@ function TeaCollection({ navigate }: HomeViewProps) {
           <h2 id="tea-collection" className="text-2xl font-extrabold text-forest sm:text-3xl">
             Tea Collection
           </h2>
-          <p className="mt-2 text-[15px] text-forest/70">
+          <p className="mt-2 text-[15px] font-medium text-forest/85">
             Pilihan teh favorit dengan rasa yang menyegarkan.
           </p>
         </div>
@@ -356,8 +356,9 @@ function TeaCollection({ navigate }: HomeViewProps) {
           {/* Featured promo card — gold gradient per mockup */}
           {featuredPromo && (
             <aside className="relative flex flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-gold-light via-gold to-gold-dark p-6 shadow-[0_12px_36px_rgba(232,161,38,0.35)] sm:p-7">
-              <Leaf className="absolute -right-4 -top-2 h-14 w-24 rotate-12 text-white/25" />
-              <LeafPair flip className="absolute -bottom-4 -left-2 h-16 w-24 text-white/20" />
+              <Leaf className="pointer-events-none absolute -right-4 -top-2 h-14 w-24 rotate-12 text-white/25" />
+              <LeafPair flip className="pointer-events-none absolute -bottom-4 -left-2 h-16 w-24 text-white/20" />
+              <div className="relative z-10 flex flex-1 flex-col">
               <p className="font-hand text-xl font-bold text-forest/90">Promo Spesial</p>
               <h3 className="mt-2 text-2xl font-extrabold tracking-tight text-forest sm:text-[28px]">
                 {featuredPromo.title}
@@ -365,7 +366,7 @@ function TeaCollection({ navigate }: HomeViewProps) {
               {featuredPromo.subtitle && (
                 <p className="mt-1 text-[15px] font-bold text-forest/80">{featuredPromo.subtitle}</p>
               )}
-              <p className="mt-2 line-clamp-2 text-[13.5px] leading-relaxed text-forest/70">
+              <p className="mt-2 line-clamp-2 text-[13.5px] font-medium leading-relaxed text-forest/80">
                 {featuredPromo.description}
               </p>
               <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">
@@ -383,6 +384,7 @@ function TeaCollection({ navigate }: HomeViewProps) {
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
+              </div>
             </aside>
           )}
         </div>
@@ -398,16 +400,16 @@ function DarkCTA({ navigate }: HomeViewProps) {
     <section className="relative py-10 lg:py-16" aria-labelledby="dark-cta">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-[32px] bg-forest px-6 py-10 shadow-[0_20px_50px_rgba(15,46,38,0.35)] sm:px-10 lg:px-14 lg:py-14">
-          <Leaf className="absolute -left-6 bottom-6 h-16 w-28 rotate-12 text-forest-light/50" />
-          <LeafPair className="absolute right-[30%] top-4 h-14 w-20 text-forest-light/40" />
-          <LeafPair flip className="absolute -right-6 -top-6 h-24 w-32 text-forest-light/40" />
+          <Leaf className="pointer-events-none absolute -left-6 bottom-6 h-16 w-28 rotate-12 text-forest-light/50" />
+          <LeafPair className="pointer-events-none absolute right-[30%] top-4 h-14 w-20 text-forest-light/40" />
+          <LeafPair flip className="pointer-events-none absolute -right-6 -top-6 h-24 w-32 text-forest-light/40" />
 
-          <div className="grid items-center gap-8 lg:grid-cols-2">
+          <div className="relative z-10 grid items-center gap-8 lg:grid-cols-2">
             <div>
               <h2 id="dark-cta" className="font-script text-3xl leading-snug text-cream sm:text-4xl">
                 Camilan Lezat, Teh Segar, Satu Pilihan.
               </h2>
-              <p className="mt-4 max-w-md text-[15px] leading-relaxed text-cream/75">
+              <p className="mt-4 max-w-md text-[15.5px] leading-relaxed text-cream/90">
                 PlatterTea menghadirkan kombinasi makanan dan minuman dalam satu paket pengalaman
                 yang praktis, lezat, dan mudah dinikmati.
               </p>
@@ -428,7 +430,7 @@ function DarkCTA({ navigate }: HomeViewProps) {
                 loading="lazy"
                 className="w-full rounded-[24px] object-cover shadow-[0_16px_44px_rgba(0,0,0,0.35)]"
               />
-              <p className="absolute -top-4 right-2 rotate-6 font-hand text-2xl font-semibold text-gold-light">
+              <p className="absolute -top-5 right-1 rotate-6 font-hand text-[26px] font-bold text-gold-light [text-shadow:0_1px_2px_rgba(15,46,38,0.85),0_3px_10px_rgba(15,46,38,0.6)] sm:text-3xl">
                 Mix, Sip, Enjoy!
               </p>
             </div>
@@ -511,10 +513,10 @@ function HowToOrder({ navigate }: HomeViewProps) {
 
   return (
     <section className="relative overflow-hidden py-14 lg:py-20" aria-labelledby="cara-pesan">
-      <Leaf className="absolute left-[8%] top-8 h-12 w-20 -rotate-12 text-forest-light/40" />
-      <LeafPair flip className="absolute bottom-10 right-[6%] h-16 w-24 text-gold/30" />
+      <Leaf className="pointer-events-none absolute left-[8%] top-8 h-12 w-20 -rotate-12 text-forest-light/40" />
+      <LeafPair flip className="pointer-events-none absolute bottom-10 right-[6%] h-16 w-24 text-gold/30" />
 
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="pt-fade-up relative">
           <div className="flex items-end justify-between gap-2">
             <h2 id="cara-pesan" className="text-2xl font-extrabold text-forest sm:text-3xl">
@@ -529,7 +531,7 @@ function HowToOrder({ navigate }: HomeViewProps) {
               className="w-14 shrink-0 xl:hidden"
             />
           </div>
-          <p className="mt-2 text-[15px] text-forest/70">Mudah banget! Cukup 5 langkah — pesanan terkirim lewat WhatsApp:</p>
+          <p className="mt-2 text-[15px] font-medium text-forest/85">Mudah banget! Cukup 5 langkah — pesanan terkirim lewat WhatsApp:</p>
           {/* Maskot floating menunjuk langkah-langkah — layar sangat lebar */}
           <Mascot
             pose="point"
@@ -665,7 +667,7 @@ function Testimonials() {
             <h2 id="testimoni" className="text-2xl font-extrabold text-forest sm:text-3xl">
               Apa Kata Mereka?
             </h2>
-            <p className="mt-2 text-[15px] text-forest/70">Cerita nyata dari pelanggan setia kami.</p>
+            <p className="mt-2 text-[15px] font-medium text-forest/85">Cerita nyata dari pelanggan setia kami.</p>
           </div>
           <button
             type="button"
@@ -700,7 +702,7 @@ function Testimonials() {
                   </span>
                   <div>
                     <figcaption className="text-[14.5px] font-bold text-forest">{t.name}</figcaption>
-                    {t.role && <p className="text-xs text-forest/60">{t.role}</p>}
+                    {t.role && <p className="text-xs font-medium text-forest/70">{t.role}</p>}
                   </div>
                   <span className="ml-auto flex gap-0.5" aria-label={`Rating ${t.rating} dari 5`}>
                     {Array.from({ length: 5 }).map((_, i) => (
@@ -738,8 +740,8 @@ function PreFooterCTA({ navigate }: HomeViewProps) {
         <div className="grid overflow-hidden rounded-[32px] shadow-[0_20px_50px_rgba(15,46,38,0.25)] lg:grid-cols-[340px_1fr]">
           {/* mascot side — panel maskot keluarga PlatterTea */}
           <div className="relative flex min-h-[240px] items-center justify-center overflow-hidden bg-gradient-to-br from-sage-light via-beige to-cream-dark p-7 lg:min-h-full lg:p-10">
-            <Blob className="absolute -left-10 -top-10 h-40 w-40 text-white/50" />
-            <Blob className="absolute -bottom-12 -right-10 h-44 w-44 text-forest/5" />
+            <Blob className="pointer-events-none absolute -left-10 -top-10 h-40 w-40 text-white/50" />
+            <Blob className="pointer-events-none absolute -bottom-12 -right-10 h-44 w-44 text-forest/5" />
             <img
               src="/brand/mascot-group.png"
               alt="Keluarga maskot PlatterTea — karakter gelas teh dan platter box"
@@ -755,7 +757,7 @@ function PreFooterCTA({ navigate }: HomeViewProps) {
           <div className="relative grid gap-6 bg-forest p-7 sm:p-9 lg:grid-cols-2 lg:items-center lg:gap-10">
             <div>
               <h2 className="text-xl font-extrabold text-cream sm:text-2xl">Kenalan Lebih Dekat</h2>
-              <p className="mt-2.5 text-[14px] leading-relaxed text-cream/75">
+              <p className="mt-2.5 text-[14px] leading-relaxed text-cream/85">
                 Ingin tahu lebih banyak tentang PlatterTea? Yuk baca cerita di balik brand makanan
                 dan minuman yang siap menemani harimu.
               </p>
@@ -771,7 +773,7 @@ function PreFooterCTA({ navigate }: HomeViewProps) {
 
             <div className="min-w-0 border-t border-white/10 pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
               <p className="text-[15px] font-bold text-cream">Ingin tahu lebih lanjut?</p>
-              <p className="mt-1.5 text-[13.5px] text-cream/70">
+              <p className="mt-1.5 text-[13.5px] text-cream/85">
                 Hubungi kami melalui WhatsApp untuk info produk, promo, dan Open PO.
               </p>
               <div className="mt-4 flex items-center gap-2.5">

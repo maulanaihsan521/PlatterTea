@@ -64,8 +64,8 @@ export function PromoView({ navigate }: PromoViewProps) {
       />
 
       <section className="relative pb-12 pt-10 lg:pb-16">
-        <Leaf className="absolute left-[6%] top-10 h-10 w-16 -rotate-12 text-gold/30" />
-        <LeafPair flip className="absolute bottom-16 right-[4%] h-14 w-20 text-forest-light/30" />
+        <Leaf className="pointer-events-none absolute left-[6%] top-10 h-10 w-16 -rotate-12 text-gold/30" />
+        <LeafPair flip className="pointer-events-none absolute bottom-16 right-[4%] h-14 w-20 text-forest-light/30" />
 
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           {loading ? (
@@ -89,9 +89,9 @@ export function PromoView({ navigate }: PromoViewProps) {
               {/* Featured promo — big gold card per mockup */}
               {featured && (
                 <article className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-gold-light via-gold to-gold-dark p-7 shadow-[0_16px_44px_rgba(232,161,38,0.4)] sm:p-10">
-                  <Leaf className="absolute -right-5 -top-3 h-20 w-32 rotate-12 text-white/25" />
-                  <LeafPair flip className="absolute -bottom-5 -left-3 h-24 w-32 text-white/20" />
-                  <div className="relative grid items-center gap-8 lg:grid-cols-2">
+                  <Leaf className="pointer-events-none absolute -right-5 -top-3 h-20 w-32 rotate-12 text-white/25" />
+                  <LeafPair flip className="pointer-events-none absolute -bottom-5 -left-3 h-24 w-32 text-white/20" />
+                  <div className="relative z-10 grid items-center gap-8 lg:grid-cols-2">
                     <div>
                       <span className="font-hand text-2xl font-bold text-forest/90">Promo Spesial</span>
                       <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-forest sm:text-4xl">
