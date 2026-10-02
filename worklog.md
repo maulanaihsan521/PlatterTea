@@ -485,3 +485,31 @@ Stage Summary:
 2. Migrasi media lama public/uploads → Storage (opsional, skrip sekali-jalan bila dibutuhkan)
 3. Warning a11y pre-existing radix "Missing Description for DialogContent" (minor)
 4. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+
+---
+Task ID: 12-e
+Agent: main (Z.ai Code)
+Task: Laporan user — screenshot Drive bug tampilan handphone (section "Cara Pesan"); Review & Iteration web + admin; pastikan tidak ada bug; cek keamanan ISO/IEC 27001 & 25010; push dengan aman
+
+Work Log:
+- ANALISIS SCREENSHOT: teks langkah tampak "lih menu favoritmu" — kode sebenarnya benar ("Pilih menu favoritmu"); akar masalah = baris langkah mobile overflow-x-auto dengan scrollbar disembunyikan, TANPA scroll-snap & TANPA indikator → teks terpotong tepi layar saat ter-scroll sedikit dan pengguna tak tahu bisa swipe
+- BUG FIX (HomeView HowToOrder): scroll-snap-x mandatory + snap-start per langkah + scroll-padding-left (1rem/1.5rem); indikator TITIK interaktif (klik = lompat ke langkah, aria tablist/tab/selected, lebar langkah diukur dari antar-item → anti-glitch); gradasi tepi kiri/kanan dari-cream sebagai affordance (muncul/hilang sesuai posisi scroll); desktop tetap grid 5 kolom + panah emas + titik tersembunyi
+- KEAMANAN ISO 27001 — TEMUAN KRITIS: AUTH_SECRET punya fallback hardcoded yang tercantum di repo → siapa pun bisa MEMALSUKAN session cookie admin (auth bypass). FIX: fallback dihapus; produksi tanpa AUTH_SECRET = MENOLAK boot (fail closed); dev tanpa env = kunci acak per-proses; AUTH_SECRET acak 32-byte (openssl rand -hex 32) diset di .env — hanya di .env
+- KEAMANAN — CSP: next.config.ts kini mengirim Content-Security-Policy (default-src self; script-src self+inline; img/font/connect supabase+self; object-src none; frame-ancestors self; base-uri self; form-action self; unsafe-eval & upgrade-insecure-requests hanya dev/prod masing-masing) — diverifikasi aktif via curl -I
+- KEAMANAN — review menyeluruh (sudah ada dari ronde lalu, dikonfirmasi kembali): rate-limit login server-side (5 gagal/10 mnt → lockout 15 mnt + audit), reset token SHA-256 single-use kedaluwarsa 30 mnt + transaksional, cookie httpOnly/sameSite/secure-prod, scrypt hashing, RLS Supabase aktif, security headers (XFO/nosniff/Referrer/Permissions/HSTS)
+- FITUR BARU (ISO 25010 usability): FloatingWhatsApp — CTA WhatsApp mengambang (mobile: lingkaran di atas bottom-nav kanan; desktop: bawah-kanan, memuai menampilkan label "Pesan via WhatsApp" saat hover), link dibangun dari settings.whatsapp + template pesanan
+- QA agent-browser: mobile 390 — Cara Pesan: teks utuh, titik ke-4 diklik → track scroll 656px ke langkah 4 + titik aktif berganti; keenam halaman publik (home/menu/promo/about/contact/faq) 390=390 tanpa overflow & console bersih; desktop 1280 — grid 5 langkah benar, titik display:none, tombol WA mengambang tampil; admin — login ulang sukses dgn secret baru (sesi lama hangus = bukti rotasi bekerja), dashboard/settings/audit/media/user 1280 & 390 tanpa overflow, console 0 error
+- PUSH: tidak ada kredensial di sistem (gh tidak terpasang, tanpa token env/credential helper — sesuai kebijakan pasca-audit) → commit lokal 7ac6034 menunggu token baru dari user; scan rahasia 2 lapis (semua nilai .env di-grep ke staged diff + pola token/connection-string) = BERSIH
+- lint clean; dev.log tanpa error runtime
+
+Stage Summary:
+- Bug laporan user tuntas: "Cara Pesan" mobile kini scroll-snap + titik indikator + gradasi — teks tidak pernah terpotong lagi, affordance swipe jelas
+- Celah kritis AUTH-SERVICE: fallback secret hardcoded dihapus (fail-closed) + CSP header baru — permukaan serangan sesi admin tertutup
+- CTA WhatsApp mengambang menutup kesenjangan konversi: pemesanan selalu 1 tap dari posisi mana pun
+- Kredensial push tidak tersimpan di mana pun — push menunggu token user
+
+## Unresolved Issues / Next Priorities
+1. PUSH: user memberikan token GitHub fine-grained (lalu rotasi setelah dipakai) → pasang remote sementara via GIT_ASKPASS sekali-pakai, push, hapus helper + remote
+2. Set AUTH_SECRET di Vercel (Environment Variables) sebelum deploy produksi — app menolak boot tanpanya (by design)
+3. Warning a11y radix DialogContent (minor, pre-existing)
+4. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (mailer)
