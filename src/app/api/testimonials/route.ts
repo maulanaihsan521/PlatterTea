@@ -61,8 +61,8 @@ export async function POST(req: Request) {
     const name = sanitize(body.name, 40)
     const role = sanitize(body.role, 40)
     const content = sanitize(body.content, 300)
-    const ratingRaw = body.rating
-    const rating = Number.isInteger(ratingRaw) && ratingRaw >= 1 && ratingRaw <= 5 ? (ratingRaw as number) : 0
+    const ratingRaw = Number(body.rating)
+    const rating = Number.isInteger(ratingRaw) && ratingRaw >= 1 && ratingRaw <= 5 ? ratingRaw : 0
 
     const errors: string[] = []
     if (name.length < 2) errors.push('Nama wajib diisi (2–40 karakter).')

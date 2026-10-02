@@ -13,6 +13,7 @@ interface AdminUser {
   email: string
   name: string
   role: string
+  status: string
 }
 
 export function AdminLogin({ onLogin }: { onLogin: (u: AdminUser) => void }) {

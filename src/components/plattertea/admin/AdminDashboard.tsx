@@ -256,7 +256,7 @@ export function AdminDashboard({
                       <Icon className="h-4.5 w-4.5" />
                     </span>
                     <p className="text-2xl font-extrabold tabular-nums tracking-tight text-forest">
-                      {stats ? stats[statsKey] : '—'}
+                      {stats ? ((stats[statsKey] as string | number | undefined) ?? '—') : '—'}
                     </p>
                     <p className="text-[11.5px] font-bold uppercase tracking-wide text-forest/50">{label}</p>
                   </CardContent>

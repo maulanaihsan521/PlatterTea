@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { PageHeader } from '../PageHeader'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
+import type { Route } from '@/lib/plattertea'
 import { MessageCircle, Mail, MapPin, Clock, Instagram, Music2, ArrowRight, Navigation, ExternalLink, Copy, Check } from 'lucide-react'
 import { LeafPair } from '../Decor'
 import { Mascot } from '../Mascot'

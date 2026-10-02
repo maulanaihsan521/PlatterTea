@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: { id: user.id, email: user.email, name: user.name, role: user.role },
+      data: { id: user.id, email: user.email, name: user.name, role: user.role, status: user.status },
     })
   } catch (error) {
     console.error('POST /api/admin/login error:', error)

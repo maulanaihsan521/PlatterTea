@@ -956,3 +956,30 @@ Stage Summary:
 - URL admin produksi resmi: https://plattertea.vercel.app/#/P578Admin
 - Keamanan API tidak berubah (session middleware tetap melindungi /api/admin/*) — perubahan ini obscurity layer URL saja
 - Catatan utk user: bookmark lama #/admin tidak berlaku; token reset password via Super Admin otomatis pakai URL baru
+
+---
+Task ID: 12-y
+Agent: main (Z.ai Code)
+Task: Review & Iteration menyeluruh — pastikan tidak ada bug dan error
+
+Work Log:
+- AUDIT STATIS: lint bersih; tsc --noEmit menemukan 42 baris error (sebagian noise folder non-app) — SEMUA diperbaiki:
+  1. BUG VISUAL: LeafPair tidak punya prop flip (5 pemakaian diabaikan runtime) → tambah flip mirip Leaf (scaleX(-1))
+  2. BUG RUNTIME 500: POST /api/admin/users crash "me is not defined" → handler kini async (me) dari handleSuperAdmin
+  3. BUG RUNTIME CRASH: UserManager generate reset-link "adminFetch is not defined" → import dari ./shared (RESTORE: reset-link POST 200, link pakai slug baru #/P578Admin/reset/)
+  4. BUG PESAN WA: redirect server WhatsApp wa.me merusak emoji 4-byte 👋/🙌 jadi U+FFFD (terbukti via curl Location header: %F0%9F%91%8B → %EF%BF%BD) → hapus emoji dari buildWaOrderMessage & WA_MESSAGES.openPO (template clipboard aman, dipertahankan); re-test checkout: pesan bersih ✓
+  5. TIPE: import/route.ts upsert ×6 pakai Prisma.*Unchecked*Input cast; upload Buffer<ArrayBufferLike> + catch Error union + writeFile Uint8Array; testimonials rating Number(); SearchOverlay shouldFilter diteruskan ke Command (ui/command.tsx); AdminDashboard stats cast; ContactView/FaqView import Route; login API + AdminLogin kirim/terima status
+  6. TSCONFIG: exclude examples/, skills/, mini-services/ (non-app) → tsc exit 0 total
+- QA API (curl+browser): POST /api/admin/users 201 (dulu 500); reset-link 200 (dulu crash); DELETE user 200; upload JPEG→WebP→Supabase 200 + DELETE media oke; login/session oke
+- QA BROWSER E2E: home/menu/produk/promo/about/contact/faq render + console 0 error; keranjang add→badge 1→sheet→checkout WA teks bersih tanpa karakter rusak; admin nav + deep-link + hapus user; mobile 390px: tanpa horizontal overflow, bottom bar fixed, footer tepat di dasar dokumen
+- DB bersih: user QA test & file media test dihapus (bucket Supabase terverifikasi)
+
+Stage Summary:
+- tsc 0 error, lint 0, console 0 error, semua alur kritis lulus — production-ready
+- 3 bug runtime nyata diperbaiki (buat user 500, reset-link crash, pesan WA karakter rusak)
+- Pesan WA checkout kini polos & profesional (tanpa risiko karakter pengganti)
+
+## Unresolved Issues / Next Priorities
+1. User: ganti password admin produksi (masih plattertea123) + rotasi token
+2. Opsional: Google Business Profile + Search Console
+3. Backlog lama: touch drag reorder, SW offline LRU, notifikasi login-gagal

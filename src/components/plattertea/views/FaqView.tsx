@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { PageHeader } from '../PageHeader'
-import type { Faq } from '@/lib/plattertea'
+import type { Faq, Route } from '@/lib/plattertea'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
 import { MessageCircle, Plus } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'

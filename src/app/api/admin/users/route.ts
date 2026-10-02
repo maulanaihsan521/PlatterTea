@@ -30,7 +30,8 @@ export async function GET() {
 
 /** POST /api/admin/users — tambah admin user baru (SUPER_ADMIN only) */
 export async function POST(req: NextRequest) {
-  return handleSuperAdmin(async () => {
+  // (me) wajib — dipakai sebagai actor logAudit di bawah
+  return handleSuperAdmin(async (me) => {
     const body = await readJson(req)
     const email = str(body.email).toLowerCase()
     const name = str(body.name)

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useResource, Field, TextInput } from './shared'
+import { useResource, Field, TextInput, adminFetch } from './shared'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'

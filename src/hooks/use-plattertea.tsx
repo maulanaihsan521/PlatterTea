@@ -118,7 +118,8 @@ export const WA_MESSAGES = {
   order: 'Halo PlatterTea! Saya mau pesan menu. Boleh bantu?',
   marketdays: 'Halo PlatterTea! Saya mau tanya soal promo Spesial Market Days.',
   openPO:
-    'Halo PlatterTea! Saya mau Open PO untuk Market Days 🙌\n\nNama: \nPesanan: \nVarian Tea: \nJumlah: \n\n(Ambil di booth saat Market Days ya. Terima kasih!)',
+    // Tanpa emoji — redirect wa.me merusak emoji 4-byte (jadi karakter pengganti).
+    'Halo PlatterTea! Saya mau Open PO untuk Market Days.\n\nNama: \nPesanan: \nVarian Tea: \nJumlah: \n\n(Ambil di booth saat Market Days ya. Terima kasih!)',
 }
 
 // Format pesanan Open PO — ditampilkan di website sebagai panduan

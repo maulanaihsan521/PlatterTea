@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Prisma } from '@/generated/prisma'
 import { db } from '@/lib/db'
 import { handleSuperAdmin, bad } from '@/lib/admin-helpers'
 import { logAudit } from '@/lib/audit'
@@ -58,7 +59,11 @@ export async function POST(req: NextRequest) {
     for (const row of d.categories ?? []) {
       if (!row.id) continue
       const { id, ...rest } = parseDates(row, ['createdAt', 'updatedAt']) as { id: string } & Record<string, unknown>
-      await db.category.upsert({ where: { id }, create: { id, ...(rest as object) }, update: rest })
+      await db.category.upsert({
+        where: { id },
+        create: { id, ...rest } as Prisma.CategoryUncheckedCreateInput,
+        update: rest as Prisma.CategoryUncheckedUpdateInput,
+      })
       result.categories++
     }
 
@@ -71,35 +76,55 @@ export async function POST(req: NextRequest) {
         const catExists = await db.category.findUnique({ where: { id: catId }, select: { id: true } })
         if (!catExists) rest.categoryId = null
       }
-      await db.product.upsert({ where: { id }, create: { id, ...(rest as object) }, update: rest })
+      await db.product.upsert({
+        where: { id },
+        create: { id, ...rest } as Prisma.ProductUncheckedCreateInput,
+        update: rest as Prisma.ProductUncheckedUpdateInput,
+      })
       result.products++
     }
 
     for (const row of d.promotions ?? []) {
       if (!row.id) continue
       const { id, ...rest } = parseDates(row, ['createdAt', 'updatedAt', 'startDate', 'endDate']) as { id: string } & Record<string, unknown>
-      await db.promotion.upsert({ where: { id }, create: { id, ...(rest as object) }, update: rest })
+      await db.promotion.upsert({
+        where: { id },
+        create: { id, ...rest } as Prisma.PromotionUncheckedCreateInput,
+        update: rest as Prisma.PromotionUncheckedUpdateInput,
+      })
       result.promotions++
     }
 
     for (const row of d.galleryItems ?? []) {
       if (!row.id) continue
       const { id, ...rest } = parseDates(row, ['createdAt', 'updatedAt']) as { id: string } & Record<string, unknown>
-      await db.galleryItem.upsert({ where: { id }, create: { id, ...(rest as object) }, update: rest })
+      await db.galleryItem.upsert({
+        where: { id },
+        create: { id, ...rest } as Prisma.GalleryItemUncheckedCreateInput,
+        update: rest as Prisma.GalleryItemUncheckedUpdateInput,
+      })
       result.galleryItems++
     }
 
     for (const row of d.testimonials ?? []) {
       if (!row.id) continue
       const { id, ...rest } = parseDates(row, ['createdAt', 'updatedAt']) as { id: string } & Record<string, unknown>
-      await db.testimonial.upsert({ where: { id }, create: { id, ...(rest as object) }, update: rest })
+      await db.testimonial.upsert({
+        where: { id },
+        create: { id, ...rest } as Prisma.TestimonialUncheckedCreateInput,
+        update: rest as Prisma.TestimonialUncheckedUpdateInput,
+      })
       result.testimonials++
     }
 
     for (const row of d.faqs ?? []) {
       if (!row.id) continue
       const { id, ...rest } = parseDates(row, ['createdAt', 'updatedAt']) as { id: string } & Record<string, unknown>
-      await db.faq.upsert({ where: { id }, create: { id, ...(rest as object) }, update: rest })
+      await db.faq.upsert({
+        where: { id },
+        create: { id, ...rest } as Prisma.FaqUncheckedCreateInput,
+        update: rest as Prisma.FaqUncheckedUpdateInput,
+      })
       result.faqs++
     }
 

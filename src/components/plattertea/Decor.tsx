@@ -38,9 +38,23 @@ export function Leaf({
   )
 }
 
-export function LeafPair({ className, style }: { className?: string; style?: React.CSSProperties }) {
+export function LeafPair({
+  className,
+  style,
+  flip = false,
+}: {
+  className?: string
+  style?: React.CSSProperties
+  flip?: boolean
+}) {
   return (
-    <svg viewBox="0 0 120 90" fill="none" aria-hidden="true" className={cn('pointer-events-none select-none', className)} style={style}>
+    <svg
+      viewBox="0 0 120 90"
+      fill="none"
+      aria-hidden="true"
+      className={cn('pointer-events-none select-none', className)}
+      style={{ transform: flip ? 'scaleX(-1)' : undefined, ...style }}
+    >
       <path d="M112 84C86 84 44 76 26 40c26-12 66-4 82 24 2 6 3 13 4 20z" fill="currentColor" />
       <path d="M84 42c10 16 6 34-10 42-10-18-4-36 10-42z" fill="currentColor" opacity="0.85" />
     </svg>

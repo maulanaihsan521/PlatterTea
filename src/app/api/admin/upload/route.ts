@@ -54,7 +54,8 @@ export async function POST(req: NextRequest) {
     // kecil — penting untuk free plan Vercel + Supabase). Jika sharp gagal
     // mem-parse, file bukan gambar sah → ditolak (proteksi ekstra di luar
     // Content-Type yang mudah dipalsukan).
-    let outBuffer = raw
+    // Buffer<ArrayBufferLike>: hasil sharp.toBuffer() memakai ArrayBufferLike
+    let outBuffer: Buffer<ArrayBufferLike> = raw
     let outName: string
     let outType: string
     let width = 0
@@ -88,14 +89,15 @@ export async function POST(req: NextRequest) {
     let url: string
     if (storageEnabled()) {
       // Mode produksi (Vercel): simpan ke Supabase Storage — filesystem read-only.
-      url = await uploadToSupabase(outBuffer, key, outType).catch((err: Error) => err)
-      if (url instanceof Error) return bad(url.message, 502)
+      const uploaded = await uploadToSupabase(outBuffer, key, outType).catch((err: Error) => err)
+      if (uploaded instanceof Error) return bad(uploaded.message, 502)
+      url = uploaded
     } else {
       // Mode dev: simpan ke public/uploads lokal (struktur flat agar kompatibel
       // dengan listing & deteksi pemakaian yang ada).
       const dir = path.join(process.cwd(), 'public', 'uploads')
       await mkdir(dir, { recursive: true })
-      await writeFile(path.join(dir, outName), outBuffer)
+      await writeFile(path.join(dir, outName), new Uint8Array(outBuffer))
       url = `/uploads/${outName}`
     }
 

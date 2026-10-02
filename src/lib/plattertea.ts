@@ -170,7 +170,9 @@ export interface OrderMeta {
  */
 export function buildWaOrderMessage(items: OrderLine[], meta: OrderMeta = {}): string {
   const lines: string[] = []
-  lines.push('Halo PlatterTea! 👋')
+  // Tanpa emoji: redirect server WhatsApp (wa.me) merusak emoji 4-byte
+  // menjadi karakter pengganti (U+FFFD) — teks polos selalu aman.
+  lines.push('Halo PlatterTea!')
   lines.push('Saya mau pesan:')
   lines.push('')
   items.forEach((item, idx) => {
