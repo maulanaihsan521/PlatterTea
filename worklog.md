@@ -895,3 +895,25 @@ Stage Summary:
 1. User: set NEXT_PUBLIC_SITE_URL + Redeploy; ganti password admin; rotasi kredensial chat
 2. User: cek FAQ di CMS (konten lama soal cara pesan bila ada)
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (mailer)
+---
+Task ID: 12-v
+Agent: main (Z.ai Code)
+Task: Review & Iteration SEO + pasang OG image brand (gambar upload user) untuk share WhatsApp/sosmed
+
+Work Log:
+- AUDIT SEO awal: metadata dasar ada, tapi og:image live = http://localhost:3000/products/hero.webp (metadataBase fallback localhost — NEXT_PUBLIC_SITE_URL belum diset di Vercel) → preview share rusak; robots.txt tanpa Sitemap; tanpa canonical/robots meta/og:locale
+- OG IMAGE BARU: upload user (1672x941 PNG 2MB) → crop/resize sharp 1200x630 (rasio 1.91:1 standar OG) JPEG mozjpeg q85 → public/og-image.jpg 147KB (aman utk WhatsApp <300KB) — semua elemen brand utuh (logo, maskot, produk, banner)
+- LAYOUT.TSX: (1) SITE_URL fallback https://plattertea.vercel.app — OG absolut benar walau env belum diset; env NEXT_PUBLIC_SITE_URL tetap bisa override utk custom domain; (2) title +lokasi "Purwokerto" (local SEO); (3) description baru dgn lokasi + CTA keranjang→WA (~157 char); (4) keywords +12 lokal (Kuliner Purwokerto, Es Teh Purwokerto, Telkom University Purwokerto, dst); (5) alternates.canonical "/"; (6) robots index/follow + googleBot max-image-preview:large & max-snippet:-1 ( Discover preview besar); (7) og:locale id_ID; (8) og:image {url,width,height,alt} 1200x630; (9) twitter:card large + twitter:image
+- JSON-LD FoodEstablishment ditambah: image (OG), priceRange Rp8.000-Rp25.000, menu (#/menu)
+- BARU: src/app/sitemap.ts (single canonical URL, SPA hash-routing); robots.txt + "Sitemap:" pointer
+- DEPLOY & VERIFIKASI LIVE: og:image = https://plattertea.vercel.app/og-image.jpg (absolut ✓, file 200 image/jpeg 147KB ✓), og:image:width/height/alt ✓, canonical ✓, robots meta index,follow ✓, sitemap.xml ✓, robots.txt sitemap pointer ✓, JSON-LD FoodEstablishment+priceRange ✓; render home tak berubah, konsol bersih
+
+Stage Summary:
+- SEO produksi lulus: OG image brand terpasang utk WA/FB/X, metadata lokal Purwokerto lengkap, sitemap+robots+canonical+JSON-LD aktif
+- Fix kritis: og:image localhost → domain produksi absolut
+- Per-view meta dinamis (DocumentMeta.tsx) tetap bekerja di atas metadata statis
+
+## Unresolved Issues / Next Priorities
+1. User: tes share link di WA (cache OG lama bisa 24h; pakai wa.me langsung dengan URL baru utk bypass)
+2. Opsional: Google Business Profile + Search Console (submit sitemap) utk indexing lokal
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal
