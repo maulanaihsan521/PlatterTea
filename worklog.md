@@ -829,3 +829,24 @@ Stage Summary:
 2. Rotasi kredensial yang pernah terekspos (sb_secret, ghp_) SEBELUM deploy
 3. Cek & sesuaikan konten FAQ di CMS bila ada yang menyebut cara pesan lama
 4. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+---
+Task ID: 12-s
+Agent: main (Z.ai Code)
+Task: Permintaan user — "buatkan saya panduannya" (panduan deploy Vercel + Supabase free)
+
+Work Log:
+- Verifikasi detail auth untuk akurasi panduan: login admin memverifikasi ke hash scrypt di DB (adminUser.passwordHash) — ADMIN_PASSWORD env TIDAK dipakai kode login; fitur ganti password ada di Admin → Pengaturan → Keamanan Akun (min 10 karakter) → password DB berlaku di dev & Vercel sekaligus
+- NEXT_PUBLIC_SITE_URL dibaca saat build (metadataBase OG + LocalBusiness di layout.tsx), fallback localhost:3000 → wajib update + redeploy setelah tahu domain final
+- Buat vercel.json: framework nextjs + buildCommand "next build" (lewati cp standalone yang hanya untuk self-host; output standalone aman diabaikan Vercel)
+- Buat PANDUAN-DEPLOY.md (Indonesia, 7 bagian): (0) rotasi kredensial terekspos + password kuat + AUTH_SECRET, (1) bucket "media" + kumpul env, (2) import Vercel + region sin1 + env vars tabel, (3) domain + NEXT_PUBLIC_SITE_URL redeploy, (4) checklist verifikasi (login→ganti password→upload test→edit konten→mobile), (5) troubleshooting, (6) batas free tier & perawatan, lampiran catatan teknis
+- JSON divalidasi; commit & push (2 commit: fix keranjang dari 12-r + docs deploy)
+
+Stage Summary:
+- Panduan deploy lengkap tersedia di PANDUAN-DEPLOY.md; vercel.json committed
+- Temuan penting terdokumentasi: password admin = DB hash (bukan env), ada UI ganti password; AUTH_SECRET fail-closed di produksi
+- Menunggu user mengeksekusi deploy; tawarkan bantuan verifikasi pasca-deploy
+
+## Unresolved Issues / Next Priorities
+1. User: eksekusi deploy sesuai PANDUAN-DEPLOY.md (mulai dari Bagian 0 — rotasi kredensial)
+2. Setelah deploy: verifikasi bersama (checklist Bagian 4)
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
