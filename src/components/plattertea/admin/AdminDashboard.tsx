@@ -67,6 +67,7 @@ const ACTIVITY_ICONS: Record<string, React.ComponentType<{ className?: string }>
   PASSWORD_RESET_FAILED: ShieldX,
   PASSWORD_CHANGE: KeyRound,
   MEDIA_DELETE: Trash2,
+  TESTIMONI_SUBMIT: MessageSquareQuote,
 }
 
 const ACTIVITY_LABEL: Record<string, string> = {
@@ -82,6 +83,7 @@ const ACTIVITY_LABEL: Record<string, string> = {
   PASSWORD_RESET_FAILED: 'gagal reset password —',
   PASSWORD_CHANGE: 'mengganti password akunnya sendiri',
   MEDIA_DELETE: 'menghapus file media',
+  TESTIMONI_SUBMIT: 'mengirim testimoni sebagai',
 }
 
 const ENTITY_LABEL: Record<string, string> = {

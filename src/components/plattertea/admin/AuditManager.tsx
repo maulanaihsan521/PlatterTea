@@ -34,6 +34,7 @@ import {
   Eraser,
   Inbox,
   KeyRound,
+  MessageSquareQuote,
 } from 'lucide-react'
 
 interface AuditItem {
@@ -73,6 +74,7 @@ const ACTION_META: Record<
   PASSWORD_RESET_FAILED: { label: 'Reset Gagal', icon: ShieldX, badge: 'bg-destructive/10 text-destructive', dot: 'bg-destructive/70' },
   PASSWORD_CHANGE: { label: 'Ganti Password', icon: KeyRound, badge: 'bg-sage-light text-forest', dot: 'bg-sage' },
   MEDIA_DELETE: { label: 'Hapus Media', icon: Trash2, badge: 'bg-destructive/10 text-destructive', dot: 'bg-destructive' },
+  TESTIMONI_SUBMIT: { label: 'Testimoni Masuk', icon: MessageSquareQuote, badge: 'bg-gold/20 text-gold-dark', dot: 'bg-gold' },
 }
 
 const ENTITY_LABEL: Record<string, string> = {
@@ -102,6 +104,7 @@ const ACTION_VERB: Record<string, string> = {
   PASSWORD_RESET_FAILED: 'gagal reset password —',
   PASSWORD_CHANGE: 'mengganti password akunnya sendiri',
   MEDIA_DELETE: 'menghapus file media',
+  TESTIMONI_SUBMIT: 'mengirim testimoni sebagai',
 }
 
 const FILTERS: { key: string; label: string }[] = [
@@ -115,6 +118,7 @@ const FILTERS: { key: string; label: string }[] = [
   { key: 'PASSWORD_RESET', label: 'Reset Password' },
   { key: 'PASSWORD_CHANGE', label: 'Ganti Password' },
   { key: 'MEDIA_DELETE', label: 'Media' },
+  { key: 'TESTIMONI_SUBMIT', label: 'Testimoni Masuk' },
 ]
 
 // Waktu relatif Bahasa Indonesia

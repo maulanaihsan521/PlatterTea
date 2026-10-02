@@ -3,11 +3,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ProductCard, TeaCard } from '../ProductCard'
 import { MarketDaysBanner, OpenPOSection } from '../MarketDays'
+import { TestimonialForm } from '../TestimonialForm'
 import { Leaf, LeafPair, Blob, Swoosh } from '../Decor'
 import { Mascot } from '../Mascot'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
 import { formatRupiah, promoHighlight, type Product, type Promotion, type Testimonial, type Route } from '@/lib/plattertea'
-import { ArrowRight, MessageCircle, Star, HandPlatter, BadgePercent, ShieldCheck, Clock, CheckCircle2, Instagram, Music2, UtensilsCrossed, ClipboardList, MapPin } from 'lucide-react'
+import { ArrowRight, MessageCircle, Star, HandPlatter, BadgePercent, ShieldCheck, Clock, CheckCircle2, Instagram, Music2, UtensilsCrossed, ClipboardList, MapPin, PenLine } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -598,6 +599,7 @@ function HowToOrder() {
 function Testimonials() {
   const [items, setItems] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
+  const [formOpen, setFormOpen] = useState(false)
 
   useEffect(() => {
     let mounted = true
@@ -615,12 +617,23 @@ function Testimonials() {
 
   return (
     <section className="relative py-10 lg:py-16" aria-labelledby="testimoni">
+      <TestimonialForm open={formOpen} onOpenChange={setFormOpen} />
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="pt-fade-up">
-          <h2 id="testimoni" className="text-2xl font-extrabold text-forest sm:text-3xl">
-            Apa Kata Mereka?
-          </h2>
-          <p className="mt-2 text-[15px] text-forest/70">Cerita nyata dari pelanggan setia kami.</p>
+        <div className="pt-fade-up flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 id="testimoni" className="text-2xl font-extrabold text-forest sm:text-3xl">
+              Apa Kata Mereka?
+            </h2>
+            <p className="mt-2 text-[15px] text-forest/70">Cerita nyata dari pelanggan setia kami.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setFormOpen(true)}
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-full border-2 border-forest/15 bg-white px-5 py-2 text-[13.5px] font-bold text-forest shadow-[0_2px_10px_rgba(23,61,50,0.06)] transition-all duration-200 hover:-translate-y-0.5 hover:border-gold/50 hover:text-forest-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold active:scale-98"
+          >
+            <PenLine className="h-4 w-4 text-gold-dark" aria-hidden="true" />
+            Tulis Testimoni
+          </button>
         </div>
 
         {loading ? (

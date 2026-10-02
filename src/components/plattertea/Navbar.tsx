@@ -76,8 +76,8 @@ export function Navbar({ route, navigate }: NavbarProps) {
             className="flex min-h-[44px] items-center rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
             aria-label="PlatterTea — ke halaman utama"
           >
-            <LogoFullWhite height={44} className={onDark ? 'sm:!h-[54px]' : 'hidden sm:!h-[54px]'} />
-            <LogoFull height={44} className={onDark ? 'hidden sm:!h-[54px]' : 'sm:!h-[54px]'} />
+            <LogoFullWhite height={46} fetchPriority="high" className={onDark ? 'sm:!h-[60px]' : 'hidden sm:!h-[60px]'} />
+            <LogoFull height={46} fetchPriority="high" className={onDark ? 'hidden sm:!h-[60px]' : 'sm:!h-[60px]'} />
           </button>
 
           {/* Desktop nav */}
@@ -182,7 +182,7 @@ export function Navbar({ route, navigate }: NavbarProps) {
           aria-label="Menu navigasi"
         >
           <div className="flex items-center justify-between">
-            <LogoFullWhite height={42} />
+            <LogoFullWhite height={48} />
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}

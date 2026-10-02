@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
-import { Plus, Pencil, Trash2, Loader2, Star } from 'lucide-react'
+import { Plus, Pencil, Trash2, Loader2, Star, Check, MessageSquareQuote } from 'lucide-react'
 
 const EMPTY = { name: '', role: '', photo: '', content: '', rating: 5, status: 'PUBLISHED', sortOrder: 0 }
 
@@ -105,6 +105,27 @@ export function TestimonialManager() {
 
   const set = <K extends keyof typeof EMPTY>(key: K, value: (typeof EMPTY)[K]) => setForm((f) => ({ ...f, [key]: value }))
 
+  const pending = items.filter((t) => t.status === 'DRAFT')
+
+  /** Setujui testimoni pengunjung — langsung tampil publik. */
+  const approve = async (t: Testimonial) => {
+    const res = await update(t.id, {
+      name: t.name,
+      role: t.role || '',
+      photo: t.photo || '',
+      content: t.content,
+      rating: t.rating,
+      status: 'PUBLISHED',
+      sortOrder: t.sortOrder,
+    })
+    if (res.ok) {
+      toast({ title: `Testimoni ${t.name} disetujui — kini tampil publik` })
+      void refresh()
+    } else {
+      toast({ title: 'Gagal menyetujui', description: res.error, variant: 'destructive' })
+    }
+  }
+
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -112,9 +133,17 @@ export function TestimonialManager() {
           <h2 className="text-lg font-extrabold text-forest">Testimoni</h2>
           <p className="text-[12.5px] text-forest/55">Ulasan pelanggan yang tampil di beranda.</p>
         </div>
-        <Button onClick={openCreate} className="h-10 rounded-full bg-forest px-4 text-[13px] font-bold text-cream hover:bg-forest-dark">
-          <Plus className="h-4 w-4" /> Tambah Testimoni
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {pending.length > 0 && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/15 px-3.5 py-2 text-[12px] font-bold text-gold-dark" title="Kiriman pengunjung menunggu ditinjau">
+              <MessageSquareQuote className="h-3.5 w-3.5" aria-hidden="true" />
+              {pending.length} menunggu tinjau
+            </span>
+          )}
+          <Button onClick={openCreate} className="h-10 rounded-full bg-forest px-4 text-[13px] font-bold text-cream hover:bg-forest-dark">
+            <Plus className="h-4 w-4" /> Tambah Testimoni
+          </Button>
+        </div>
       </div>
 
       {loading ? (
@@ -142,6 +171,15 @@ export function TestimonialManager() {
                 <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-forest/60">“{t.content}”</p>
               </div>
               <div className="flex shrink-0 items-center gap-2 self-end sm:self-center">
+                {t.status === 'DRAFT' && (
+                  <Button
+                    size="sm"
+                    onClick={() => approve(t)}
+                    className="h-9 rounded-full bg-gold px-3.5 text-xs font-bold text-forest hover:bg-gold-light"
+                  >
+                    <Check className="h-3.5 w-3.5" /> Setujui
+                  </Button>
+                )}
                 <Button
                   size="sm"
                   variant="outline"

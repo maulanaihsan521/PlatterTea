@@ -22,6 +22,7 @@ export type AuditAction =
   | 'PASSWORD_RESET_FAILED'
   | 'PASSWORD_CHANGE'
   | 'MEDIA_DELETE'
+  | 'TESTIMONI_SUBMIT'
 
 export function logAudit(input: {
   actor?: AuditActor | null

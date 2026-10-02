@@ -77,6 +77,39 @@ export function clearRateLimit(key: string): void {
   store.delete(key)
 }
 
+// ===== Sliding window generik (endpoint publik, cth. kirim testimoni) =====
+const pubStore = new Map<string, number[]>()
+
+export interface PublicLimitResult {
+  allowed: boolean
+  retryAfterSec: number
+}
+
+/**
+ * Cek apakah aksi publik masih dalam jatah: maks `max` kali per `windowMs`
+ * per kunci (biasanya IP). Bersih-bersih entri lama berjalan hemat di sini.
+ */
+export function checkPublicLimit(key: string, max: number, windowMs: number): PublicLimitResult {
+  const now = Date.now()
+  const hits = (pubStore.get(key) || []).filter((t) => now - t < windowMs)
+
+  if (hits.length >= max) {
+    pubStore.set(key, hits)
+    return { allowed: false, retryAfterSec: Math.ceil((windowMs - (now - hits[0])) / 1000) }
+  }
+
+  hits.push(now)
+  pubStore.set(key, hits)
+
+  // housekeeping: cegah Map tumbuh tanpa batas
+  if (pubStore.size > 5000) {
+    for (const [k, v] of pubStore) {
+      if (v.every((t) => now - t >= windowMs)) pubStore.delete(k)
+    }
+  }
+  return { allowed: true, retryAfterSec: 0 }
+}
+
 /** Ekstrak IP dari request (proxy-aware untuk Caddy/gateway lokal). */
 export function requestIp(req: Request): string {
   const fwd = req.headers.get('x-forwarded-for')

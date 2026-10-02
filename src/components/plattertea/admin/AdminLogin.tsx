@@ -117,7 +117,7 @@ export function AdminLogin({ onLogin }: { onLogin: (u: AdminUser) => void }) {
               type="email"
               autoComplete="email"
               required
-              placeholder="admin@plattertea.id"
+              placeholder="nama@domain.id"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="h-11 rounded-xl border-forest/15 focus-visible:ring-gold/50"

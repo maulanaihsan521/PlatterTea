@@ -5,10 +5,11 @@ import { cn } from '@/lib/utils'
 interface LogoProps {
   className?: string
   height?: number
+  fetchPriority?: 'high' | 'low' | 'auto'
 }
 
 /** Full PlatterTea logo (mark + wordmark + FOOD & TEA) — color version */
-export function LogoFull({ className, height = 44 }: LogoProps) {
+export function LogoFull({ className, height = 44, fetchPriority }: LogoProps) {
   return (
      
     <img
@@ -16,13 +17,14 @@ export function LogoFull({ className, height = 44 }: LogoProps) {
       alt="PlatterTea — Food & Tea"
       className={cn('object-contain select-none', className)}
       style={{ height, width: 'auto' }}
+      fetchPriority={fetchPriority}
       draggable={false}
     />
   )
 }
 
 /** Full PlatterTea logo — cream/white version for dark backgrounds */
-export function LogoFullWhite({ className, height = 44 }: LogoProps) {
+export function LogoFullWhite({ className, height = 44, fetchPriority }: LogoProps) {
   return (
      
     <img
@@ -30,6 +32,7 @@ export function LogoFullWhite({ className, height = 44 }: LogoProps) {
       alt="PlatterTea — Food & Tea"
       className={cn('object-contain select-none', className)}
       style={{ height, width: 'auto' }}
+      fetchPriority={fetchPriority}
       draggable={false}
     />
   )
