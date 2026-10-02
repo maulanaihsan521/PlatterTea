@@ -60,7 +60,7 @@ export const metadata: Metadata = {
       "PlatterTea menghadirkan Mix Platter dan berbagai pilihan Tea dengan konsep yang fresh, praktis, dan menyenangkan.",
     siteName: "PlatterTea",
     type: "website",
-    images: ["/products/hero.png"],
+    images: ["/products/hero.webp"],
   },
   twitter: {
     card: "summary_large_image",

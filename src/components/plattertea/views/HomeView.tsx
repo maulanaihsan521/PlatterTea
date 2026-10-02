@@ -72,7 +72,7 @@ function Hero({ navigate }: HomeViewProps) {
             <div className="pt-blob absolute inset-0 -z-0 translate-y-4 scale-105 bg-cream-dark" />
             { }
             <img
-              src="/products/hero.png"
+              src="/products/hero.webp"
               alt="PlatterTea Mix Platter dan Teh Segar"
               className="relative z-10 w-full rounded-[32px] object-cover shadow-[0_24px_60px_rgba(23,61,50,0.18)]"
               fetchPriority="high"
@@ -174,7 +174,7 @@ function BrandIntro({ navigate }: HomeViewProps) {
             <Blob className="absolute -inset-6 text-beige/80" />
             { }
             <img
-              src="/products/brand-intro.png"
+              src="/products/brand-intro.webp"
               alt="Produk PlatterTea"
               loading="lazy"
               className="relative w-full rounded-[28px] object-cover shadow-[0_16px_44px_rgba(23,61,50,0.16)]"
@@ -423,7 +423,7 @@ function DarkCTA({ navigate }: HomeViewProps) {
             <div className="relative mx-auto max-w-[460px]">
               { }
               <img
-                src="/products/plattertea-combo.png"
+                src="/products/plattertea-combo.webp"
                 alt="PlatterTea Combo"
                 loading="lazy"
                 className="w-full rounded-[24px] object-cover shadow-[0_16px_44px_rgba(0,0,0,0.35)]"

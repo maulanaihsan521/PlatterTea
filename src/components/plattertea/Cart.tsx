@@ -203,7 +203,7 @@ export function CartSheet({ navigate }: CartSheetProps) {
                 <li key={item.productId} className="flex gap-3 py-3.5">
                   <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-white shadow-[0_2px_8px_rgba(23,61,50,0.08)]">
                     <img
-                      src={item.image || '/products/tea-only.png'}
+                      src={item.image || '/products/tea-only.webp'}
                       alt={item.name}
                       loading="lazy"
                       className="h-full w-full object-cover"

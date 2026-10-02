@@ -121,7 +121,7 @@ export function MarketDaysBanner({ navigate }: MarketDaysProps) {
               />
               <div className="relative w-full max-w-[240px]">
                 <img
-                  src="/products/plattertea-combo.png"
+                  src="/products/plattertea-combo.webp"
                   alt="PlatterTea Combo — promo Spesial Market Days"
                   loading="lazy"
                   className="w-full rounded-[20px] object-cover shadow-[0_14px_36px_rgba(15,46,38,0.35)]"

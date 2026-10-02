@@ -77,7 +77,7 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
           </span>
         )}
         <img
-          src={product.mainImage || '/products/tea-only.png'}
+          src={product.mainImage || '/products/tea-only.webp'}
           alt={product.name}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
@@ -150,7 +150,7 @@ export function ProductCardRow({ product, onOpen }: ProductCardProps) {
           </span>
         )}
         <img
-          src={product.mainImage || '/products/tea-only.png'}
+          src={product.mainImage || '/products/tea-only.webp'}
           alt={product.name}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
@@ -208,7 +208,7 @@ export function TeaCard({ product, onOpen }: ProductCardProps) {
       {/* Gambar edge-to-edge (baris grid bisa stretch di samping kartu promo) */}
       <div className="relative min-h-[120px] flex-1 w-full overflow-hidden bg-cream">
         <img
-          src={product.mainImage || '/products/tea-only.png'}
+          src={product.mainImage || '/products/tea-only.webp'}
           alt={product.name}
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"

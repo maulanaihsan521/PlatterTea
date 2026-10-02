@@ -149,7 +149,7 @@ export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
               <div className="pt-blob absolute -inset-5 bg-beige/70" />
               { }
               <img
-                src={product.mainImage || '/products/tea-only.png'}
+                src={product.mainImage || '/products/tea-only.webp'}
                 alt={product.name}
                 className="relative aspect-square w-full rounded-[32px] object-cover shadow-[0_20px_50px_rgba(23,61,50,0.18)]"
               />
@@ -317,7 +317,7 @@ export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
                 <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-cream">
                   { }
                   <img
-                    src={p.mainImage || '/products/tea-only.png'}
+                    src={p.mainImage || '/products/tea-only.webp'}
                     alt={p.name}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

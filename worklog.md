@@ -703,3 +703,29 @@ Stage Summary:
 2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-n
+Agent: main (Z.ai Code)
+Task: Review & Iteration menyeluruh + pastikan tidak ada bug/error + website tidak berat (performa)
+
+Work Log:
+- Baseline: bun run lint lulus; dev.log bersih (2 baris Fast Refresh reload = log historis saat edit berlangsung, bukan error runtime)
+- AUDIT PERFORMA (dampak terbesar ditemukan pada aset):
+  1. Logo brand PNG terlalu besar: logo.png 766KB + logo-white.png 571KB + logo-mark.png 324KB + logo-mark-white.png 222KB (= 1.65MB) dimuat hampir di semua halaman → kompres sharp (resize 512/320px + palette PNG-8 q90) → 48+26+26+15 = 115KB (-93%), kualitas terverifikasi tajam via screenshot
+  2. Foto produk PNG 1024-1344px total 1.19MB → palette PNG-8 justru memperbesar (2.48MB) → ROLLBACK, lalu konversi WebP q82 + resize 800px (hero 1024px) → 620KB (-48%). 11 file .webp dibuat, PNG lama dihapus (backup di /tmp)
+  3. Migrasi referensi: 8 row Product.mainImage + 3 row Promotion.image di DB (script Prisma, path .png→.webp) + 6 file kode (ProductCard fallback ×3, ProductDetailView ×2, Cart, HomeView ×3, MarketDays, layout.tsx OG image)
+- Hasil ukur (performance API, fresh reload): gambar 1.21MB → 806KB; load 1.37s → 0.99s (dev mode, termasuk compile; produksi lebih ringan lagi). public/ 3.8MB → 1.5MB. Sisa PNG hanya logo/favicon/PWA (~170KB, wajar)
+- QA E2E tanpa bug baru: Menu grid 8 produk WebP tampil (broken: NONE); detail produk (stepper, tombol keranjang, WA); cart sheet (stepper min disabled, nama/catatan, persist lintas navigasi, Kosongkan); checkout WA → window.open wa.me dengan teks otomatis benar (Tea Only x1 = Rp8.000); Contact maps iframe render (CSP OK); FAQ accordion + maskot; footer & bottom-nav OK
+- QA Admin: login plattertea123 → Dashboard (stats + warning keamanan tampil — percobaan gagal berasal dari pengujian sendiri), modul Produk (list/checkbox/reorder), Pengaturan (form + Simpan Semua), logout OK
+- 0 console error di seluruh alur; bun run lint lulus
+
+Stage Summary:
+- Website jauh lebih ringan: penghematan total ~2.5MB per load pertama; aset brand & produk kini teroptimasi (WebP/PNG quantized), tanpa perubahan visual
+- Catatan: script dev React/devtools besar (~1.5MB) hanya di dev; production build otomatis lebih kecil
+- Backup aset asli: /tmp/brand-backup, /tmp/products-backup (sementara, tidak di-commit)
+
+## Unresolved Issues / Next Priorities
+1. Cek & sesuaikan konten FAQ di CMS bila ada yang menyebut cara pesan lama
+2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
