@@ -576,3 +576,27 @@ Stage Summary:
 2. Warning a11y pre-existing radix DialogContent (minor)
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-h
+Agent: main (Z.ai Code)
+Task: Pertanyaan user — "mengapa bagian gallery kosong?" → investigasi, isi galeri dengan foto default brand, dan perbaiki UX/bug terkait
+
+Work Log:
+- AKAR MASALAH: tabel GalleryItem = 0 baris — sistem bekerja normal (API & UI OK) tapi belum ada foto yang ditambahkan via Admin → Galeri. Halaman About menampilkan kartu "Gallery akan segera diperbarui" + pill filter yang tidak berguna saat kosong
+- ISI GALERI (8 foto default brand via z-ai image generation, palet Forest/Cream/Gold): 4 produk (Mix Platter, Es Teh, Combo, Yakult Tea), 2 booth (Market Days, Dapur Keliling), 1 event (Seru Bersama), 1 bts (Di Balik Dapur). 2 foto pertama memiliki artefak teks AI → di-regenerasi dengan prompt anti-teks → di-PUT ulang. Semua di-upload ke Supabase Storage via /api/admin/upload (login admin, kredensial tidak pernah disimpan) lalu dibuat via POST /api/admin/gallery (status PUBLISHED, sortOrder 1-8, ter-audit)
+- BUG CACHE DITEMUKAN & DIPERBAIKI (kebenaran data ISO 25010): 6 API konten publik (settings/products/products-[slug]/promotions/testimonials/faqs/gallery) tidak mengirim Cache-Control → browser meng-cache respons secara heuristik → perubahan admin TIDAK tampil bagi pengunjung (terbukti: setelah PUT foto baru, browser masih menampilkan foto lama). FIX: header 'Cache-Control: no-store' pada semua respons sukses (dan 404 produk detail agar produk baru tak pernah 404 basi) + fetch client galeri { cache: 'no-store' }. Diverifikasi via curl -I di 7 endpoint
+- UX GALERI DIPERBAIKI: (1) section Galeri di About kini disembunyikan rapi saat belum ada foto (fetch diangkat ke AboutView; bukan lagi kartu kosong yang terkesan belum selesai); (2) pill kategori dibangun DINAMIS hanya dari kategori yang punya foto — bug lama: foto bts/brand tidak punya pill filter meski tampil di "Semua"; label "Behind the Scene" ditambahkan; (3) note kecil "Belum ada foto pada kategori ini" untuk hasil filter kosong
+- BUG LIGHTBOX DIPERBAIKI: tombol X bawaan Dialog hampir tak terlihat (X gelap di atas gambar hijau tua — dibuktikan via zoom screenshot) → diganti DialogClose kustom krem kontras (h-11, bg-cream/90, konsisten dgn tombol panah) via showCloseButton={false}
+- E2E VERIFIKASI: desktop — 8 foto tampil, 5 pill (Semua/Produk/Booth/Event/Behind the Scene), filter BTS = 1 foto, lightbox buka + counter + ArrowRight×2 = "3 / 8", Escape & tombol X menutup; mobile 390 — grid 2 kolom, tanpa overflow (390=390), pill scroll horizontal; console 0 error (hanya warning a11y radix pre-existing); lint clean; dev.log bersih
+- Catatan teknis: PATCH /api/admin/gallery/[id] tidak ada — route hanya PUT (frontend admin memang pakai PUT); skrip seed awal salah asumsi PATCH sudah dikoreksi
+
+Stage Summary:
+- Jawaban atas pertanyaan user: galeri kosong karena belum ada data — kini terisi 8 foto default brand yang konsisten, dan admin bisa mengelola (tambah/ubah/hapus/reorder) via Admin → Galeri kapan pun
+- Bug cache no-store: perubahan CMS kini langsung terlihat oleh semua pengunjung di seluruh konten (bukan hanya galeri)
+- 3 perbaikan UX: section galeri tersembunyi saat kosong, pill kategori dinamis, tombol tutup lightbox kontras
+
+## Unresolved Issues / Next Priorities
+1. User: rotasi token GitHub classic & kunci Supabase tetap disarankan
+2. Warning a11y pre-existing radix DialogContent (minor) — muncul di beberapa dialog
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Foto lama (ber-artefak teks) tersisa sebagai file yatim di Supabase Storage — bisa dibersihkan via Admin → Media
