@@ -228,7 +228,8 @@ export function MediaManager() {
               </div>
               <div className="px-3 py-2.5">
                 <p className="truncate text-[11.5px] font-bold text-forest" title={f.name}>
-                  {f.name}
+                  {/* File Storage ber-folder (YYYY/MM/…) — tampilkan nama file saja */}
+                  {f.name.split('/').pop() || f.name}
                 </p>
                 <p className="text-[10.5px] text-forest/50">
                   {formatBytes(f.size)} · {new Date(f.modified).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}

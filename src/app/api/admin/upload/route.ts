@@ -4,19 +4,12 @@ import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 import sharp from 'sharp'
 import { handleAdmin, bad } from '@/lib/admin-helpers'
+import { storageEnabled, storageHeaders, storageObjectUrl, storagePublicUrl } from '@/lib/storage'
 
 const MAX_SIZE = 5 * 1024 * 1024 // 5 MB
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 const MAX_DIM = 1600 // sisi terpanjang gambar setelah resize (hemat storage free plan)
 const WEBP_QUALITY = 82
-
-const SUPABASE_URL = process.env.SUPABASE_URL || ''
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-const STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'media'
-
-function storageEnabled(): boolean {
-  return Boolean(SUPABASE_URL && SUPABASE_KEY)
-}
 
 function nowPrefix(): string {
   const d = new Date()
@@ -25,20 +18,19 @@ function nowPrefix(): string {
 
 /** Unggah buffer ke Supabase Storage (REST) dan kembalikan URL publiknya. */
 async function uploadToSupabase(buffer: Buffer, key: string, contentType: string): Promise<string> {
-  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${key}`, {
+  const res = await fetch(storageObjectUrl(key), {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${SUPABASE_KEY}`,
+    headers: storageHeaders({
       'Content-Type': contentType,
       'x-upsert': 'true',
-    },
+    }),
     body: new Uint8Array(buffer),
   })
   if (!res.ok) {
     const detail = await res.text().catch(() => '')
     throw new Error(`Supabase Storage gagal (${res.status}). ${detail.slice(0, 180)}`)
   }
-  return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${key}`
+  return storagePublicUrl(key)
 }
 
 export async function POST(req: NextRequest) {

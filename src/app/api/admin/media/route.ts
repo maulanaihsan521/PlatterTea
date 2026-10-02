@@ -3,24 +3,18 @@ import { readdir, stat, unlink } from 'fs/promises'
 import path from 'path'
 import { handleAdmin, bad } from '@/lib/admin-helpers'
 import { logAudit } from '@/lib/audit'
+import {
+  IMAGE_EXT,
+  storageEnabled,
+  listStorageMedia,
+  deleteStorageObject,
+  storagePublicUrl,
+  type MediaFile,
+} from '@/lib/storage'
+
+export type { MediaFile } from '@/lib/storage'
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads')
-const IMAGE_EXT = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg']
-
-const SUPABASE_URL = process.env.SUPABASE_URL || ''
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-const STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'media'
-
-function storageEnabled(): boolean {
-  return Boolean(SUPABASE_URL && SUPABASE_KEY)
-}
-
-export interface MediaFile {
-  name: string
-  url: string
-  size: number
-  modified: string
-}
 
 async function listLocal(): Promise<MediaFile[]> {
   try {
@@ -49,42 +43,10 @@ async function listLocal(): Promise<MediaFile[]> {
   }
 }
 
-interface StorageItem {
-  name: string
-  updated_at?: string
-  metadata?: { size?: number } | null
-}
-
-async function listStorage(): Promise<MediaFile[]> {
-  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/list/${STORAGE_BUCKET}`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      prefix: '',
-      limit: 200,
-      offset: 0,
-      sortBy: { column: 'created_at', order: 'desc' },
-    }),
-  })
-  if (!res.ok) return []
-  const items = (await res.json().catch(() => [])) as StorageItem[]
-  return items
-    .filter((it) => it.metadata && IMAGE_EXT.includes(path.extname(it.name).toLowerCase()))
-    .map((it) => ({
-      name: it.name,
-      url: `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${it.name}`,
-      size: it.metadata?.size ?? 0,
-      modified: it.updated_at ?? new Date(0).toISOString(),
-    }))
-}
-
 /** GET /api/admin/media — daftar file gambar (Supabase Storage bila dikonfigurasi, lokal selainnya). */
 export async function GET() {
   return handleAdmin(async () => {
-    const files = storageEnabled() ? await listStorage() : await listLocal()
+    const files = storageEnabled() ? await listStorageMedia() : await listLocal()
     return NextResponse.json({ success: true, data: files })
   })
 }
@@ -104,11 +66,8 @@ export async function DELETE(req: NextRequest) {
       if (!IMAGE_EXT.includes(path.extname(key).toLowerCase())) {
         return bad('Hanya file gambar yang dapat dihapus.')
       }
-      const res = await fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${key}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${SUPABASE_KEY}` },
-      })
-      if (!res.ok && res.status !== 404) {
+      const ok = await deleteStorageObject(key)
+      if (!ok) {
         return bad('File gagal dihapus dari Storage.', 502)
       }
       logAudit({
@@ -116,9 +75,9 @@ export async function DELETE(req: NextRequest) {
         action: 'MEDIA_DELETE',
         entity: 'Media',
         entityLabel: key,
-        detail: { url: `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${key}` },
+        detail: { url: storagePublicUrl(key) },
       })
-      const files = await listStorage()
+      const files = await listStorageMedia()
       return NextResponse.json({ success: true, data: files })
     }
 

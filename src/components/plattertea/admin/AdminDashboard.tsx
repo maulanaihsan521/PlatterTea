@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import { adminFetch } from './shared'
+import { formatBytes } from './MediaPicker'
 import { Leaf, LeafPair } from '../Decor'
 import { cn } from '@/lib/utils'
 import {
@@ -27,6 +28,9 @@ import {
   ShieldAlert,
   ShieldCheck,
   Activity,
+  HardDrive,
+  Cloud,
+  FolderOpen,
 } from 'lucide-react'
 
 interface Stats {
@@ -37,7 +41,8 @@ interface Stats {
   gallery: number
   testimonials: number
   faqs: number
-  activity7d?: { date: string; label: string; total: number }[]
+  activity?: { date: string; label: string; total: number }[]
+  media?: { mode: 'storage' | 'local'; count: number; bytes: number }
 }
 
 interface RecentActivity {
@@ -61,6 +66,7 @@ const ACTIVITY_ICONS: Record<string, React.ComponentType<{ className?: string }>
   PASSWORD_RESET: KeyRound,
   PASSWORD_RESET_FAILED: ShieldX,
   PASSWORD_CHANGE: KeyRound,
+  MEDIA_DELETE: Trash2,
 }
 
 const ACTIVITY_LABEL: Record<string, string> = {
@@ -75,6 +81,7 @@ const ACTIVITY_LABEL: Record<string, string> = {
   PASSWORD_RESET: 'mengganti password (via token reset) —',
   PASSWORD_RESET_FAILED: 'gagal reset password —',
   PASSWORD_CHANGE: 'mengganti password akunnya sendiri',
+  MEDIA_DELETE: 'menghapus file media',
 }
 
 const ENTITY_LABEL: Record<string, string> = {
@@ -87,6 +94,7 @@ const ENTITY_LABEL: Record<string, string> = {
   Settings: 'Pengaturan',
   User: 'User Admin',
   Data: 'Backup',
+  Media: 'Media',
   Auth: '',
 }
 
@@ -122,14 +130,31 @@ export function AdminDashboard({
   const [loading, setLoading] = useState(true)
   const [recent, setRecent] = useState<RecentActivity[] | null>(null)
   const [failedLogins, setFailedLogins] = useState<number | null>(null)
+  const [range, setRange] = useState<7 | 30>(7)
+  const [chartLoading, setChartLoading] = useState(false)
 
   useEffect(() => {
     let mounted = true
-    adminFetch<Stats>('/api/admin/stats').then((res) => {
+    // Grafik & statistik diambil ulang saat rentang berubah (7 ↔ 30 hari)
+    adminFetch<Stats>(`/api/admin/stats?days=${range}`).then((res) => {
       if (!mounted) return
       if (res.ok && res.data) setStats(res.data)
       setLoading(false)
+      setChartLoading(false)
     })
+    return () => {
+      mounted = false
+    }
+  }, [range])
+
+  const changeRange = (r: 7 | 30) => {
+    if (r === range) return
+    setChartLoading(true)
+    setRange(r)
+  }
+
+  useEffect(() => {
+    let mounted = true
     adminFetch<{ items: RecentActivity[] }>('/api/admin/audit?limit=5').then((res) => {
       if (!mounted) return
       if (res.ok && res.data) setRecent(res.data.items)
@@ -154,6 +179,9 @@ export function AdminDashboard({
     10
   )
   const greeting = hour < 11 ? 'Selamat pagi' : hour < 15 ? 'Selamat siang' : hour < 18 ? 'Selamat sore' : 'Selamat malam'
+
+  const activity = stats?.activity
+  const isLong = range === 30
 
   return (
     <div className="space-y-6">
@@ -186,6 +214,14 @@ export function AdminDashboard({
           <Button
             size="sm"
             variant="outline"
+            onClick={() => onNavigate('media')}
+            className="h-9 rounded-full border-cream/30 bg-transparent text-xs font-bold text-cream hover:bg-cream/10 hover:text-cream"
+          >
+            Unggah Media
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
             onClick={() => onNavigate('settings')}
             className="h-9 rounded-full border-cream/30 bg-transparent text-xs font-bold text-cream hover:bg-cream/10 hover:text-cream"
           >
@@ -210,9 +246,9 @@ export function AdminDashboard({
                 key={label}
                 type="button"
                 onClick={() => onNavigate(section)}
-                className="group text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                className="group text-left transition-transform duration-150 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
               >
-                <Card className="h-full rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.06)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-[0_10px_24px_rgba(23,61,50,0.12)]">
+                <Card className="h-full rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.06)] transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-gold/35 group-hover:shadow-[0_10px_24px_rgba(23,61,50,0.12)]">
                   <CardContent className="flex flex-col gap-2 p-4">
                     <span className={cn('flex h-9 w-9 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110', tile)}>
                       <Icon className="h-4.5 w-4.5" />
@@ -229,52 +265,166 @@ export function AdminDashboard({
         )}
       </div>
 
-      {/* Aktivitas 7 hari — mini bar chart (data dari /api/admin/stats, bucket WIB) */}
-      <Card className="rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.05)]">
-        <CardContent className="p-5">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="flex items-center gap-2 text-[15px] font-extrabold text-forest">
-              <Activity className="h-4.5 w-4.5 text-gold-dark" /> Aktivitas 7 Hari Terakhir
-            </h3>
-            {stats?.activity7d && (
-              <span className="rounded-full bg-sage-light px-3 py-1 text-[11.5px] font-extrabold tabular-nums text-forest">
-                {stats.activity7d.reduce((s, d) => s + d.total, 0)} aksi
+      {/* Aktivitas CMS + penyimpanan media — minmax(0,…) + min-w-0 anti overflow mobile */}
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+        {/* Grafik aktivitas — mini bar chart (bucket harian WIB), rentang 7 / 30 hari */}
+        <Card className="min-w-0 rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.05)]">
+          <CardContent className="p-5">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+              <h3 className="flex items-center gap-2 text-[15px] font-extrabold text-forest">
+                <Activity className="h-4.5 w-4.5 text-gold-dark" /> Aktivitas CMS
+              </h3>
+              <div className="flex items-center gap-2">
+                <div
+                  role="group"
+                  aria-label="Rentang grafik aktivitas"
+                  className="flex rounded-full border border-forest/10 bg-sage-light/50 p-0.5"
+                >
+                  {([7, 30] as const).map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => changeRange(r)}
+                      aria-pressed={range === r}
+                      className={cn(
+                        'min-h-[28px] rounded-full px-3 text-[11px] font-extrabold tabular-nums transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-gold',
+                        range === r ? 'bg-forest text-cream shadow-sm' : 'text-forest/55 hover:text-forest'
+                      )}
+                    >
+                      {r} hari
+                    </button>
+                  ))}
+                </div>
+                {activity && (
+                  <span className="hidden rounded-full bg-sage-light px-3 py-1 text-[11.5px] font-extrabold tabular-nums text-forest sm:inline-flex">
+                    {activity.reduce((s, d) => s + d.total, 0)} aksi
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Legenda mini */}
+            <p className="mt-2.5 flex items-center gap-3 text-[10.5px] font-semibold text-forest/45">
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-[3px] bg-gold" aria-hidden="true" /> hari ini
               </span>
-            )}
-          </div>
-          {stats?.activity7d ? (
-            <div className="mt-4 flex items-end gap-2 sm:gap-3" role="img" aria-label="Grafik jumlah aktivitas CMS per hari, tujuh hari terakhir">
-              {stats.activity7d.map((d, i) => {
-                const max = Math.max(...stats.activity7d!.map((x) => x.total), 1)
-                const h = Math.round((d.total / max) * 100)
-                const isToday = i === stats.activity7d!.length - 1
-                return (
-                  <div key={d.date} className="flex min-w-0 flex-1 flex-col items-center gap-1.5">
-                    <span className={cn('text-[10.5px] font-extrabold tabular-nums', d.total > 0 ? 'text-forest' : 'text-forest/30')}>
-                      {d.total}
-                    </span>
-                    <div className="flex h-20 w-full items-end overflow-hidden rounded-lg bg-sage-light/50 sm:h-24">
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-[3px] bg-forest/60" aria-hidden="true" /> hari lain
+              </span>
+            </p>
+
+            {chartLoading ? (
+              <Skeleton className="mt-4 h-24 rounded-xl" />
+            ) : activity ? (
+              <div
+                className={cn('mt-4 flex items-end', isLong ? 'gap-0.5 sm:gap-1' : 'gap-2 sm:gap-3')}
+                role="img"
+                aria-label={`Grafik jumlah aktivitas CMS per hari, ${range} hari terakhir`}
+              >
+                {activity.map((d, i) => {
+                  const max = Math.max(...activity.map((x) => x.total), 1)
+                  const h = Math.round((d.total / max) * 100)
+                  const isToday = i === activity.length - 1
+                  // Rentang 30 hari: label hanya tiap 5 bar + bar pertama/terakhir agar legible
+                  const showLabel = !isLong || i === 0 || (i + 1) % 5 === 0 || isToday
+                  return (
+                    <div key={d.date} className="flex min-w-0 flex-1 flex-col items-center gap-1.5">
+                      {!isLong && (
+                        <span
+                          className={cn(
+                            'text-[10.5px] font-extrabold tabular-nums',
+                            d.total > 0 ? 'text-forest' : 'text-forest/30'
+                          )}
+                        >
+                          {d.total}
+                        </span>
+                      )}
                       <div
                         className={cn(
-                          'w-full rounded-lg transition-all duration-500 pt-fade-up',
-                          isToday ? 'bg-gold' : 'bg-forest/60'
+                          'flex w-full items-end overflow-hidden rounded-md bg-sage-light/50',
+                          isLong ? 'h-16 sm:h-20' : 'h-20 sm:h-24'
                         )}
-                        style={{ height: `${d.total > 0 ? Math.max(h, 8) : 4}%` }}
-                        title={`${d.label}: ${d.total} aktivitas`}
-                      />
+                      >
+                        <div
+                          className={cn(
+                            'w-full rounded-md transition-all duration-500 pt-fade-up',
+                            isToday ? 'bg-gold' : 'bg-forest/60'
+                          )}
+                          style={{ height: `${d.total > 0 ? Math.max(h, 8) : 4}%` }}
+                          title={`${d.date}: ${d.total} aktivitas`}
+                        />
+                      </div>
+                      <span
+                        className={cn(
+                          'text-[10.5px] font-bold leading-none',
+                          isToday ? 'text-gold-dark' : 'text-forest/45'
+                        )}
+                      >
+                        {showLabel ? d.label : ''}
+                      </span>
                     </div>
-                    <span className={cn('text-[10.5px] font-bold', isToday ? 'text-gold-dark' : 'text-forest/45')}>
-                      {d.label}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-          ) : (
-            <Skeleton className="mt-4 h-24 rounded-xl" />
-          )}
-        </CardContent>
-      </Card>
+                  )
+                })}
+              </div>
+            ) : (
+              <Skeleton className="mt-4 h-24 rounded-xl" />
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Penyimpanan media — mode Storage / lokal, jumlah & ukuran file */}
+        <Card className="h-fit min-w-0 rounded-2xl border-forest/10 shadow-[0_2px_12px_rgba(23,61,50,0.05)]">
+          <CardContent className="p-5">
+            <h3 className="flex items-center gap-2 text-[15px] font-extrabold text-forest">
+              <HardDrive className="h-4.5 w-4.5 text-gold-dark" /> Penyimpanan Media
+            </h3>
+            {stats?.media ? (
+              <>
+                <div className="mt-3 flex items-end gap-2">
+                  <p className="text-3xl font-extrabold leading-none tabular-nums tracking-tight text-forest">
+                    {stats.media.count}
+                  </p>
+                  <p className="pb-0.5 text-[12px] font-bold text-forest/50">file gambar</p>
+                </div>
+                <p className="mt-1.5 text-[12.5px] font-semibold tabular-nums text-forest/60">
+                  {formatBytes(stats.media.bytes)} terpakai
+                </p>
+                <div
+                  className={cn(
+                    'mt-3 inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10.5px] font-extrabold',
+                    stats.media.mode === 'storage' ? 'bg-sage-light text-forest' : 'bg-gold/15 text-gold-dark'
+                  )}
+                >
+                  {stats.media.mode === 'storage' ? (
+                    <Cloud className="h-3 w-3" aria-hidden="true" />
+                  ) : (
+                    <HardDrive className="h-3 w-3" aria-hidden="true" />
+                  )}
+                  {stats.media.mode === 'storage' ? 'Supabase Storage' : 'Disk lokal (mode dev)'}
+                </div>
+                <p className="mt-2.5 text-[11.5px] leading-relaxed text-forest/45">
+                  {stats.media.mode === 'storage'
+                    ? 'Foto tersimpan permanen di cloud — aman untuk deploy Vercel & CDN caching otomatis.'
+                    : 'Foto tersimpan di disk server lokal. Untuk produksi (Vercel), aktifkan Supabase Storage.'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('media')}
+                  className="mt-3 inline-flex min-h-[32px] items-center gap-1.5 rounded-full bg-forest/[0.06] px-3 text-[11.5px] font-extrabold text-forest transition-colors hover:bg-sage-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                >
+                  <FolderOpen className="h-3.5 w-3.5" /> Kelola Media →
+                </button>
+              </>
+            ) : (
+              <div className="mt-4 space-y-2.5">
+                <Skeleton className="h-8 w-24 rounded-lg" />
+                <Skeleton className="h-4 w-32 rounded-full" />
+                <Skeleton className="h-6 w-36 rounded-full" />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Security strip (Super Admin) — gagal login 24 jam */}
       {isSuperAdmin && failedLogins !== null && (
