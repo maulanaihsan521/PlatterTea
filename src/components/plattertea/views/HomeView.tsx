@@ -8,7 +8,7 @@ import { Leaf, LeafPair, Blob, Swoosh } from '../Decor'
 import { Mascot } from '../Mascot'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
 import { formatRupiah, promoHighlight, type Product, type Promotion, type Testimonial, type Route } from '@/lib/plattertea'
-import { ArrowRight, MessageCircle, Star, HandPlatter, BadgePercent, ShieldCheck, Clock, CheckCircle2, Instagram, Music2, UtensilsCrossed, ClipboardList, MapPin, PenLine } from 'lucide-react'
+import { ArrowRight, MessageCircle, Star, HandPlatter, BadgePercent, ShieldCheck, Clock, CheckCircle2, Instagram, Music2, UtensilsCrossed, ShoppingBag, MapPin, PenLine } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -442,16 +442,36 @@ function DarkCTA({ navigate }: HomeViewProps) {
 // ============ Cara Pesan (How to Order) ============
 
 const STEPS = [
-  { title: 'Pilih menu favoritmu', icon: UtensilsCrossed },
-  { title: 'Klik "Hubungi Kami" via WhatsApp', icon: MessageCircle },
-  { title: 'Isi format pesanan', icon: ClipboardList },
-  { title: 'Konfirmasi dengan admin', icon: CheckCircle2 },
-  { title: 'Ambil pesanan sesuai lokasi', icon: Clock },
+  {
+    title: 'Pilih menu favoritmu',
+    desc: 'Klik tombol + pada menu untuk masuk ke keranjang.',
+    icon: UtensilsCrossed,
+  },
+  {
+    title: 'Buka keranjang',
+    desc: 'Atur jumlah, isi nama & catatan pesananmu.',
+    icon: ShoppingBag,
+  },
+  {
+    title: 'Pesan via WhatsApp',
+    desc: 'Teks pesanan terisi otomatis — tinggal kirim.',
+    icon: MessageCircle,
+  },
+  {
+    title: 'Konfirmasi dengan admin',
+    desc: 'Admin akan mengonfirmasi pesanan & totalnya.',
+    icon: CheckCircle2,
+  },
+  {
+    title: 'Ambil pesanan sesuai lokasi',
+    desc: 'Ambil sesuai lokasi & jam operasional.',
+    icon: Clock,
+  },
 ]
 
-function HowToOrder() {
+function HowToOrder({ navigate }: HomeViewProps) {
   const settings = useSettings()
-  const wa = waLink(settings.whatsapp, WA_MESSAGES.order)
+  const wa = waLink(settings.whatsapp, WA_MESSAGES.general)
   const trackRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
   const [canLeft, setCanLeft] = useState(false)
@@ -499,7 +519,7 @@ function HowToOrder() {
           <h2 id="cara-pesan" className="text-2xl font-extrabold text-forest sm:text-3xl">
             Cara Pesan
           </h2>
-          <p className="mt-2 text-[15px] text-forest/70">Mudah banget! Cukup 5 langkah saja:</p>
+          <p className="mt-2 text-[15px] text-forest/70">Mudah banget! Cukup 5 langkah — pesanan terkirim lewat WhatsApp:</p>
           {/* Maskot menunjuk langkah-langkah — desktop saja */}
           <Mascot
             pose="point"
@@ -518,7 +538,7 @@ function HowToOrder() {
             onScroll={syncTrack}
             className="no-scrollbar mt-9 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [scroll-padding-left:1rem] sm:[scroll-padding-left:1.5rem] lg:grid lg:grid-cols-5 lg:gap-3 lg:overflow-visible"
           >
-            {STEPS.map(({ title, icon: Icon }, i) => (
+            {STEPS.map(({ title, desc, icon: Icon }, i) => (
               <div
                 key={i}
                 data-step
@@ -533,7 +553,10 @@ function HowToOrder() {
                     {i + 1}
                   </span>
                 </span>
-                <p className="text-[13px] font-semibold leading-snug text-forest/85">{title}</p>
+                <div>
+                  <p className="text-[13px] font-semibold leading-snug text-forest/85">{title}</p>
+                  <p className="mt-1 text-[11.5px] leading-snug text-forest/55">{desc}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -577,16 +600,24 @@ function HowToOrder() {
           ))}
         </div>
 
-        <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => navigate({ view: 'menu' })}
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-8 py-3 text-[15px] font-bold text-forest shadow-[0_8px_24px_rgba(232,161,38,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-gold-dark hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            Mulai Pesan Sekarang
+            <ArrowRight className="h-4 w-4" />
+          </button>
           <a
             href={wa}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-forest px-8 py-3 text-[15px] font-bold text-cream shadow-[0_8px_24px_rgba(23,61,50,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-forest-dark"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-full border-2 border-forest/15 bg-white px-6 py-3 text-[14px] font-bold text-forest transition-all duration-200 hover:-translate-y-0.5 hover:border-forest hover:bg-forest hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
           >
-            <MessageCircle className="h-5 w-5" />
-            Chat via WhatsApp
-            <ArrowRight className="h-4 w-4" />
+            <MessageCircle className="h-4.5 w-4.5" />
+            Tanya Admin Dulu
           </a>
         </div>
       </div>
@@ -798,7 +829,7 @@ export function HomeView({ navigate }: HomeViewProps) {
       <TeaCollection navigate={navigate} />
       <MarketDaysBanner navigate={navigate} />
       <DarkCTA navigate={navigate} />
-      <HowToOrder />
+      <HowToOrder navigate={navigate} />
       <OpenPOSection />
       <Testimonials />
       <PreFooterCTA navigate={navigate} />

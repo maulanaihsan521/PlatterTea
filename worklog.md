@@ -664,3 +664,24 @@ Stage Summary:
 2. Warning a11y pre-existing radix DialogContent (minor)
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
 4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+---
+Task ID: 12-l
+Agent: main (Z.ai Code)
+Task: Permintaan user — sesuaikan bagian "Cara Pesan" dengan alur pesan baru (keranjang → WhatsApp otomatis)
+
+Work Log:
+- Update STEPS di HomeView.tsx (HowToOrder): alur lama "Klik Hubungi Kami via WhatsApp + isi format pesanan manual" → alur baru sesuai fitur keranjang: (1) Pilih menu favoritmu — klik tombol +; (2) Buka keranjang — atur jumlah, nama & catatan; (3) Pesan via WhatsApp — teks terisi otomatis; (4) Konfirmasi dengan admin; (5) Ambil pesanan sesuai lokasi. Tiap langkah kini punya deskripsi singkat (selain judul)
+- Ganti CTA bawah section: primary "Mulai Pesan Sekarang" (emas, navigate ke #/menu) + sekunder "Tanya Admin Dulu" (outline, WhatsApp general) — menggantikan single "Chat via WhatsApp"
+- Import lucide: tambah ShoppingBag, hapus ClipboardList (tidak terpakai); HowToOrder kini menerima navigate prop; WA_MESSAGES.order → WA_MESSAGES.general
+- Open PO (MarketDays) TIDAK diubah — alur Open PO memang pakai format pesanan khusus via WhatsApp (paket, varian, jumlah) karena pre-order
+- Verifikasi agent-browser: desktop 5 kolom + deskripsi tampil rapi; klik "Mulai Pesan Sekarang" → hash #/menu + heading "Menu Kami" (navigasi OK); mobile 390px scroll snap + indikator titik + 2 CTA tanpa overflow; 0 console error; bun run lint lulus; dev.log bersih
+
+Stage Summary:
+- Bagian Cara Pesan kini konsisten dengan fitur keranjang: pilih menu (+) → keranjang → WhatsApp otomatis → konfirmasi admin → ambil
+- Konten FAQ tersimpan di DB (dikelola via CMS) belum dicek/ubah — jika ada jawaban yang menyebut alur lama, user bisa update lewat admin → FAQ
+
+## Unresolved Issues / Next Priorities
+1. Cek & sesuaikan konten FAQ di CMS bila ada yang menyebut cara pesan lama (dikelola user via admin)
+2. User: pertimbangkan passphrase lebih kuat; rotasi kredensial yang pernah terekspos di chat
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal (butuh mailer)
+4. Jika deploy Vercel: set env DATABASE_URL, DIRECT_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
