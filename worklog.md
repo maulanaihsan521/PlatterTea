@@ -917,3 +917,26 @@ Stage Summary:
 1. User: tes share link di WA (cache OG lama bisa 24h; pakai wa.me langsung dengan URL baru utk bypass)
 2. Opsional: Google Business Profile + Search Console (submit sitemap) utk indexing lokal
 3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 12-w
+Agent: main (Z.ai Code)
+Task: Ganti OG image dengan desain baru dari user (ada CTA "Beli di Sini") + resolusi lebih besar agar tajam saat dibagikan ke sosmed
+
+Work Log:
+- USER request: og:image diganti dgn gambar baru (upload/pasted_image_1790958306512.png, PNG 1670x941 1.8MB, desain banner lengkap: logo + tagline + maskot + food box + 4 gelas + CTA button)
+- SHARP: resize 2400x1260 (rasio 1.91:1 standar OG, resolusi 2x utk layar retina), crop fit-cover position:bottom (hanya langit atas terpangkas ~64px — CTA/logo/produk utuh), JPEG mozjpeg q82 chroma 4:4:4 → public/og-image-v2.jpg 391KB
+- VERIFIKASI VISUAL: baca file hasil — logo, "Mix, Sip, Enjoy!", tombol "Beli di Sini", maskot, box makanan & 4 minuman semua utuh
+- CACHE BUST: nama file BARU og-image-v2.jpg (bukan overwrite og-image.jpg) agar preview WhatsApp/FB yang ter-cache URL lama langsung menampilkan versi baru; og-image.jpg lama dihapus
+- LAYOUT.TSX: openGraph.images → {url:/og-image-v2.jpg, 2400x1260, alt + CTA}, twitter:image v2, JSON-LD image v2; komentar menjelaskan resolusi 2x + cache bust
+- LINT bersih
+
+Stage Summary:
+- OG image produksi sekarang 2400x1260 q82 391KB (sebelumnya 1200x630 147KB) — teks & CTA terlihat jelas di preview WA/FB/X
+- Setelah deploy: WA/FB akan fetch URL baru /og-image-v2.jpg → tanpa masalah cache
+- Catatan: SITE_URL fallback https://plattertea.vercel.app aktif (NEXT_PUBLIC_SITE_URL opsional)
+
+## Unresolved Issues / Next Priorities
+1. User: tes share link di WhatsApp (URL og baru otomatis ter-fetch)
+2. Opsional: Google Business Profile + Search Console
+3. Pending lama: touch drag reorder, SW offline LRU, notifikasi login-gagal, ganti admin password produksi

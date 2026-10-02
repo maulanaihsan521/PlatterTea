@@ -86,10 +86,13 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "PlatterTea — Mix Platter & es teh kekinian. Mix, Sip, Enjoy!",
+        // Resolusi 2x (2400x1260, rasio 1.91:1) agar teks & CTA "Beli di Sini"
+        // tetap tajam/jelas saat link dibagikan ke WhatsApp/IG/Facebook/X.
+        // Nama file -v2 juga mem-bust cache preview WhatsApp/Facebook.
+        url: "/og-image-v2.jpg",
+        width: 2400,
+        height: 1260,
+        alt: "PlatterTea — Food & Tea Purwokerto: Mix Platter, es teh & camilan kekinian. Beli di sini! Mix, Sip, Enjoy!",
       },
     ],
   },
@@ -98,7 +101,7 @@ export const metadata: Metadata = {
     title: "PlatterTea — Food & Tea Purwokerto | Mix, Sip, Enjoy!",
     description:
       "Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan kekinian. Pesan mudah lewat keranjang online → WhatsApp.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image-v2.jpg"],
   },
 };
 
@@ -120,7 +123,7 @@ const localBusinessJsonLd = {
     "Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan kekinian. Pesan mudah lewat keranjang online → WhatsApp.",
   telephone: "+6285175397747",
   url: SITE_URL,
-  image: [`${SITE_URL}/og-image.jpg`],
+  image: [`${SITE_URL}/og-image-v2.jpg`],
   priceRange: "Rp8.000 - Rp25.000",
   menu: `${SITE_URL}/#/menu`,
   address: {
