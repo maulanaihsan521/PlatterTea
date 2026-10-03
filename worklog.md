@@ -1657,3 +1657,23 @@ Stage Summary:
 - LANGKAH USER SAAT INI: klik "Verifikasi" di GSC → submit sitemap.xml → Inspeksi URL
   "https://plattertea.vercel.app" → Minta Pengindeksan
 - Sitelinks muncul otomatis seiring indexing & trafik (tidak bisa diminta manual)
+
+---
+Task ID: 17
+Agent: main (Z.ai Code)
+Task: GSC terverifikasi user; diagnosis status "Tidak dapat mengambil peta situs" (Couldn't fetch)
+
+Work Log:
+- User: GSC verification BERHASIL; submit sitemap.xml → status "Tidak dapat mengambil peta
+  situs" (0 halaman, dibaca 4 Okt)
+- Diagnosis server-side (semua sehat, BUKAN bug kode): sitemap.xml 200 + application/xml,
+  edge cache HIT, 30-38ms, XML valid 14 URL, lastmod ISO, robots.txt Sitemap URL benar
+- Kesimpulan: false alarm terkenal GSC (fetcher GSC ≠ Googlebot, status update lambat
+  24-72 jam) + kemungkinan fetch saat window deploy Vercel / cold start
+- Instruksi user: JANGAN kirim ulang berulang; tunggu 1-3 hari; lanjutkan Inspeksi URL →
+  Minta Pengindeksan utk /, /menu, /promo
+- Revisit HANYA jika >1 minggu masih gagal fetch DAN 0 URL terindeks
+
+Stage Summary:
+- Tidak ada perubahan kode. GSC verified ✓, sitemap submitted ✓, menunggu proses Google
+- Next milestone: status sitemap hijau (24-72 jam) → indexing URL (2-7 hari) → sitelinks (1-4 minggu)
