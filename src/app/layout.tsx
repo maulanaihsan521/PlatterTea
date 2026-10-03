@@ -34,7 +34,9 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://plattertea.vercel.
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "PlatterTea — Food & Tea Purwokerto | Mix, Sip, Enjoy!",
+  // CATATAN: <title> TIDAK diatur di sini — dirender per view oleh <DocumentMeta>
+  // (React 19 hoisting). Jika title juga ada di metadata, React mengelola DUA
+  // node <title> dan me-restore versi layout setiap re-render (perang title).
   description:
     "Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan kekinian. Pesan mudah lewat keranjang online → WhatsApp. Mix, Sip, Enjoy!",
   keywords: [
@@ -74,7 +76,13 @@ export const metadata: Metadata = {
     title: "PlatterTea",
   },
   icons: {
-    icon: "/brand/logo.png",
+    // Set lengkap: favicon klasik + PWA — Google memakai ini utk favicon
+    // hasil pencarian (tampil di samping sitename seperti contoh Fore Coffee)
+    icon: [
+      { url: "/brand/favicon.png", type: "image/png" },
+      { url: "/pwa/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/pwa/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
     apple: "/pwa/apple-touch-icon.png",
   },
   openGraph: {
@@ -122,10 +130,16 @@ const localBusinessJsonLd = {
   description:
     "Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan kekinian. Pesan mudah lewat keranjang online → WhatsApp.",
   telephone: "+6285175397747",
+  email: "plattertea@gmail.com",
   url: SITE_URL,
   image: [`${SITE_URL}/og-image-v2.jpg`],
+  logo: `${SITE_URL}/pwa/icon-512.png`,
   priceRange: "Rp8.000 - Rp25.000",
-  menu: `${SITE_URL}/#/menu`,
+  servesCuisine: ["Indonesian", "Tea", "Snack"],
+  // Menu kini URL path asli — dapat diindeks & muncul sbg sitelink "Menu"
+  hasMenu: `${SITE_URL}/menu`,
+  menu: `${SITE_URL}/menu`,
+  acceptsReservations: "False",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Jl. D.I. Panjaitan No. 128 (Telkom University Purwokerto)",
@@ -139,9 +153,34 @@ const localBusinessJsonLd = {
     latitude: -7.435263,
     longitude: 109.246518,
   },
-  openingHours: "Mo-Su 07:00-20:00",
-  servesCuisine: ["Indonesian", "Tea", "Snack"],
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      opens: "07:00",
+      closes: "20:00",
+    },
+  ],
   sameAs: ["https://instagram.com/plattertea", "https://tiktok.com/@plattertea"],
+}
+
+// JSON-LD WebSite + SearchAction — memenuhi syarat sitelinks searchbox:
+// URL ?q=kata+kunci membuka pencarian situs secara langsung (didukung SPA).
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "PlatterTea",
+  alternateName: "PlatterTea — Food & Tea Purwokerto",
+  url: SITE_URL,
+  inLanguage: "id-ID",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_URL}/?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({
@@ -161,6 +200,32 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        {/* Fallback tanpa-JS: konten inti + tautan navigasi tetap terbaca
+            crawler sederhana & aksesibilitas — informasi sama dgn render JS */}
+        <noscript>
+          <div style={{ fontFamily: "sans-serif", padding: 24, background: "#F7F3E9", color: "#173D32" }}>
+            <h2>PlatterTea — Food &amp; Tea Purwokerto</h2>
+            <p>
+              Booth PlatterTea di Telkom University Purwokerto: Mix Platter, es teh, dan camilan
+              kekinian. Pesan mudah lewat keranjang online → WhatsApp. Mix, Sip, Enjoy!
+            </p>
+            <ul>
+              <li><a href="/menu">Menu</a> — pilihan Mix Platter, Tea &amp; Combo</li>
+              <li><a href="/promo">Promo</a> — Spesial Market Days &amp; Open PO</li>
+              <li><a href="/about">Tentang Kami</a></li>
+              <li><a href="/contact">Hubungi Kami</a> — WhatsApp +62 851-7539-7747</li>
+              <li><a href="/faq">FAQ</a></li>
+            </ul>
+            <p>
+              Alamat: Telkom University Purwokerto, Jl. D.I. Panjaitan No. 128, Purwokerto, Kab.
+              Banyumas, Jawa Tengah 53147 · Buka setiap hari 07.00–20.00
+            </p>
+          </div>
+        </noscript>
       </body>
     </html>
   );

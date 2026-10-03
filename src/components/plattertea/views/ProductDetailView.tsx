@@ -38,7 +38,7 @@ export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
   const openCart = useCartStore((s) => s.openCart)
   const [qty, setQty] = useState(1)
   // Catatan: qty tidak perlu reset manual saat pindah produk — <main> di
-  // page.tsx memakai key={routeToHash(route)} sehingga view remount per rute.
+  // page.tsx memakai key={routeToPath(route)} sehingga view remount per rute.
 
   useEffect(() => {
     let mounted = true
@@ -131,6 +131,11 @@ export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
         title={`${product.name} — ${product.category?.name || 'Menu'} | PlatterTea`}
         description={product.shortDesc || product.fullDesc || `Pesan ${product.name} PlatterTea via WhatsApp.`}
         image={product.mainImage}
+        path={`/produk/${product.slug}`}
+        breadcrumb={[
+          { name: 'Menu', path: '/menu' },
+          { name: product.name, path: `/produk/${product.slug}` },
+        ]}
       />
       <div className="relative overflow-hidden pt-20 sm:pt-24">
         <LeafPair className="absolute right-[6%] top-24 h-16 w-24 text-forest-light/30" />

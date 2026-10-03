@@ -10,6 +10,8 @@ interface SearchOverlayProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   navigate: (r: Route) => void
+  /** Query awal dari URL ?q= — dukungan SearchAction JSON-LD (sitelinks searchbox) */
+  initialQuery?: string
 }
 
 const QUICK_LINKS: { label: string; icon: React.ComponentType<{ className?: string }>; route: Route }[] = [
@@ -25,9 +27,9 @@ const QUICK_LINKS: { label: string; icon: React.ComponentType<{ className?: stri
  * Pencarian produk fungsional (⌘K / Ctrl+K):
  * mencari semua menu + navigasi cepat, langsung buka detail produk.
  */
-export function SearchOverlay({ open, onOpenChange, navigate }: SearchOverlayProps) {
+export function SearchOverlay({ open, onOpenChange, navigate, initialQuery }: SearchOverlayProps) {
   const [products, setProducts] = useState<Product[] | null>(null)
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(initialQuery ?? '')
 
   // Ambil produk hanya saat overlay pertama kali dibuka
   useEffect(() => {

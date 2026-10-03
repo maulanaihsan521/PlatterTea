@@ -57,7 +57,13 @@ export function PromoView({ navigate }: PromoViewProps) {
 
   return (
     <div className="min-h-screen">
-      <DocumentMeta title={promoTitle} description={promoDescription} image={featured?.image} />
+      <DocumentMeta
+        title={promoTitle}
+        description={promoDescription}
+        image={featured?.image}
+        path="/promo"
+        breadcrumb={[{ name: 'Promo', path: '/promo' }]}
+      />
       <PageHeader
         title="Promo & Info Terbaru"
         subtitle="Promo menarik dan info terbaru dari PlatterTea untukmu."

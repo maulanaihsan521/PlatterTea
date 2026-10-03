@@ -7,6 +7,18 @@ interface DocumentMetaProps {
   description?: string
   /** URL gambar untuk og:image / twitter:image (diubah ke absolute otomatis bila relatif). */
   image?: string | null
+  /**
+   * Path canonical view ini (mis. '/menu'). SEO path-routing: Google membaca
+   * canonical hasil render — wajib di-update per view agar /menu, /promo, dst.
+   * terindeks sebagai halaman berbeda (syarat sitelinks).
+   */
+  path?: string
+  /**
+   * Rantai breadcrumb JSON-LD (dari view, tanpa beranda — otomatis ditambahkan).
+   * Contoh: [{ name: 'Menu', path: '/menu' }, { name: 'Tea Only', path: '/produk/tea-only' }]
+   * Menghasilkan rich result breadcrumb Google (jalur navigasi di hasil pencarian).
+   */
+  breadcrumb?: { name: string; path: string }[]
 }
 
 function absoluteUrl(src: string): string {
@@ -25,13 +37,31 @@ function setMeta(attr: 'name' | 'property', key: string, value: string) {
   el.setAttribute('content', value)
 }
 
+/** Perbarui / buat <link rel="canonical"> — sinyal utama URL versi Google. */
+function setCanonical(href: string) {
+  let el = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+  if (!el) {
+    el = document.createElement('link')
+    el.setAttribute('rel', 'canonical')
+    document.head.appendChild(el)
+  }
+  el.setAttribute('href', href)
+}
+
 /**
- * SEO dinamis client-side: perbarui <title>, meta description, dan OG tags
- * setiap kali view berubah (SPA hash-routing tidak punya metadata per route).
+ * SEO dinamis client-side: <title> per view (React 19 hoisting), meta
+ * description, OG/Twitter tags, canonical, dan breadcrumb JSON-LD.
+ *
+ * PENTING — kenapa <title> dirender sbg elemen React (bukan document.title):
+ * React 19 mengelola <title> hoisted milik layout metadata dan ME-RESTORE
+ * text node-nya ±20ms setelah penulisan imperatif document.title (terverifikasi
+ * via MutationObserver). Dengan me-render <title> di dalam pohon komponen,
+ * React sendiri yang menyinkronkan document.title per view — tidak ada perang.
+ * SPA path-routing tidak punya metadata per route di server — sinkronisasi
+ * di sini dibaca Google saat merender halaman (renderer JS Google resmi).
  */
-export function DocumentMeta({ title, description, image }: DocumentMetaProps) {
+export function DocumentMeta({ title, description, image, path, breadcrumb }: DocumentMetaProps) {
   useEffect(() => {
-    document.title = title
     if (description) {
       setMeta('name', 'description', description)
       setMeta('property', 'og:title', title)
@@ -45,7 +75,41 @@ export function DocumentMeta({ title, description, image }: DocumentMetaProps) {
       setMeta('name', 'twitter:image', url)
       setMeta('property', 'og:image:alt', title)
     }
-  }, [title, description, image])
+    if (path) {
+      const url = absoluteUrl(path)
+      setCanonical(url)
+      setMeta('property', 'og:url', url)
+    }
 
-  return null
+    // Breadcrumb JSON-LD — selalu mulai dari beranda (konvensi schema.org)
+    const scriptId = 'pt-jsonld-breadcrumb'
+    let script = document.getElementById(scriptId) as HTMLScriptElement | null
+    if (breadcrumb && breadcrumb.length > 0) {
+      const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Beranda', item: window.location.origin + '/' },
+          ...breadcrumb.map((b, i) => ({
+            '@type': 'ListItem',
+            position: i + 2,
+            name: b.name,
+            item: absoluteUrl(b.path),
+          })),
+        ],
+      }
+      if (!script) {
+        script = document.createElement('script')
+        script.id = scriptId
+        script.type = 'application/ld+json'
+        document.head.appendChild(script)
+      }
+      script.textContent = JSON.stringify(jsonLd)
+    } else if (script) {
+      script.remove()
+    }
+  }, [title, description, image, path, breadcrumb])
+
+  // <title> hoisted React 19 → head; document.title ikut tersinkron otomatis
+  return <title>{title}</title>
 }

@@ -74,7 +74,9 @@ export interface GalleryItem {
 
 export type SiteSettings = Record<string, string>
 
-// Routes: hash-based SPA routing (sandbox exposes only `/`)
+// Routes: SPA routing. View publik memakai PATH URL asli (/menu, /promo, dst.) —
+// wajib untuk SEO: Google TIDAK mengindeks fragmen hash (#/menu tidak pernah
+// jadi sitelink). Admin tetap hash (#/P578Admin) — noindex, nol risiko.
 export type Route =
   | { view: 'home' }
   | { view: 'menu' }
@@ -85,19 +87,19 @@ export type Route =
   | { view: 'faq' }
   | { view: 'admin'; path: string[] }
 
-export function parseHash(hash: string): Route {
-  const clean = hash.replace(/^#\/?/, '').split('?')[0]
-  const parts = clean.split('/').filter(Boolean)
-  if (parts.length === 0) return { view: 'home' }
+/** Parse segmen bersama untuk hash legacy & pathname — urutan case sama dulu */
+function parseSegments(parts: string[]): Route {
   switch (parts[0]) {
     // Slug admin disamarkan (tidak mudah ditebak) — URL resmi: #/P578Admin
     case 'P578Admin':
       return { view: 'admin', path: parts.slice(1) }
     case 'menu':
+      // /menu/{slug} & #/menu/{slug} — alias lama, tetap didukung
       if (parts[1]) return { view: 'product', slug: parts[1] }
       return { view: 'menu' }
     case 'product':
-      // alias #/product/{slug} — arahkan sama seperti #/menu/{slug}
+    case 'produk':
+      // alias product & prefix baru /produk/{slug}
       if (parts[1]) return { view: 'product', slug: parts[1] }
       return { view: 'menu' }
     case 'promo':
@@ -113,25 +115,58 @@ export function parseHash(hash: string): Route {
   }
 }
 
-export function routeToHash(route: Route): string {
+export function parseHash(hash: string): Route {
+  const clean = hash.replace(/^#\/?/, '').split('?')[0]
+  const parts = clean.split('/').filter(Boolean)
+  if (parts.length === 0) return { view: 'home' }
+  return parseSegments(parts)
+}
+
+/**
+ * Pathname URL asli → Route. Return null bila '/' (root) supaya pemanggil
+ * bisa fallback ke hash (legacy deep-link & admin yang tetap hash-based).
+ */
+export function parsePathname(pathname: string): Route | null {
+  const parts = pathname.replace(/\/+$/, '').split('/').filter(Boolean)
+  if (parts.length === 0) return null
+  return parseSegments(parts)
+}
+
+/**
+ * Route → URL publik. View publik = path asli (SEO/sitelinks), admin = hash.
+ * Dipakai juga sbg key remount <main> dan penyusun canonical/sitemap.
+ */
+export function routeToPath(route: Route): string {
   switch (route.view) {
     case 'home':
-      return '#/'
+      return '/'
     case 'menu':
-      return '#/menu'
+      return '/menu'
     case 'product':
-      return `#/menu/${route.slug}`
+      return `/produk/${route.slug}`
     case 'promo':
-      return '#/promo'
+      return '/promo'
     case 'about':
-      return '#/about'
+      return '/about'
     case 'contact':
-      return '#/contact'
+      return '/contact'
     case 'faq':
-      return '#/faq'
+      return '/faq'
     case 'admin':
       return route.path.length ? `#/P578Admin/${route.path.join('/')}` : '#/P578Admin'
   }
+}
+
+/** Label manusiawi per view — dipakai breadcrumb JSON-LD & judul */
+export const VIEW_LABELS: Record<Route['view'], string> = {
+  home: 'Beranda',
+  menu: 'Menu',
+  product: 'Menu',
+  promo: 'Promo',
+  about: 'Tentang Kami',
+  contact: 'Hubungi Kami',
+  faq: 'FAQ',
+  admin: 'Admin',
 }
 
 export function formatRupiah(price: number): string {

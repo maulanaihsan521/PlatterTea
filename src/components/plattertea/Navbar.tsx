@@ -31,9 +31,25 @@ export function Navbar({ route, navigate }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [initialSearchQuery, setInitialSearchQuery] = useState<string | undefined>(undefined)
   const settings = useSettings()
   const openCart = useCartStore((s) => s.openCart)
   const cartCount = useCartCount()
+
+  // Dukungan SearchAction JSON-LD (WebSite.potentialAction): Google / URL
+  // dengan ?q=kata+kunci langsung membuka overlay pencarian berisi query itu.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('q')
+    if (q && q.trim()) {
+      // Ditunggu 1 tick: buka overlay setelah paint pertama (aman hydration,
+      // dan setState dlm callback bukan sinkron-dlm-efek sesuai aturan react-hooks)
+      const t = window.setTimeout(() => {
+        setInitialSearchQuery(q)
+        setSearchOpen(true)
+      }, 0)
+      return () => window.clearTimeout(t)
+    }
+  }, [])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -291,8 +307,15 @@ export function Navbar({ route, navigate }: NavbarProps) {
         </aside>
       </div>
 
-      {/* Search overlay (⌘K) */}
-      <SearchOverlay open={searchOpen} onOpenChange={setSearchOpen} navigate={navigate} />
+      {/* Search overlay (⌘K) — key = query awal ?q= agar remount & terisi saat
+          dibuka otomatis dari SearchAction (state query diinisialisasi sekali) */}
+      <SearchOverlay
+        key={initialSearchQuery ?? 'search'}
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        navigate={navigate}
+        initialQuery={initialSearchQuery}
+      />
     </>
   )
 }

@@ -1484,3 +1484,47 @@ Stage Summary (lanjutan 13-x — hasil verifikasi produksi):
 - Catatan verifikasi: buka URL hash (#/menu) dari origin yang sudah terbuka TIDAK me-reload halaman —
   selalu hard-reload (cache-bust query / about:blank dulu) saat memverifikasi deploy baru
 - Commit verifikasi ini lokal; akan terbawa push berikutnya
+
+---
+Task ID: 14-a
+Agent: main (Z.ai Code)
+Task: Persiapan SEO agar tampil seperti Fore Coffee di Google (favicon + sitelinks + rich results)
+
+Work Log:
+- AUDIT AWAL: metadata & JSON-LD FoodEstablishment sudah ada; robots.txt menunjuk /sitemap.xml yang
+  TIDAK ADA (404); akar masalah terbesar = routing hash (#/menu) — Google tidak pernah mengindeks
+  fragmen hash → sitelinks mustahil
+- ROUTING PATH-BASED (rombak terbesar):
+  • lib/plattertea.ts: parseSegments bersama, parsePathname baru, routeToPath baru (view publik =
+    /, /menu, /produk/{slug}, /promo, /about, /contact, /faq; admin tetap hash #/P578Admin), VIEW_LABELS
+  • use-plattertea.tsx: useHashRoute → useSiteRoute (useSyncExternalStore dgn popstate+hashchange+
+    custom 'pt:navigate'); navigate() = history.pushState utk view publik; normalisasi deep-link hash
+    lama (#/promo → /promo via replaceState saat mount) — URL lama di bio/IG tetap hidup
+  • next.config.ts: rewrites semua path view → "/" (SPA tunggal, tanpa route file baru)
+  • QA: direct-load 6 path + /produk/tea-only 200; back/forward browser ✓; admin hash ✓
+- PERANG TITLE REACT 19 (bug subtangkap via MutationObserver): layout metadata memiliki <title>
+  hoisted dan ME-RESTORE text node-nya ±20ms setelah penulisan imperatif document.title — title
+  per view selalu kalah. FIX: hapus title dari layout metadata; DocumentMeta kini MERENDER <title>
+  (React 19 hoisting) → React sendiri yang sinkronkan document.title per view. Canonical & breadcrumb
+  lolos imperatif (React hanya restore node miliknya). Terdokumentasi di komentar DocumentMeta.
+  Kuncinya juga: DocumentMeta harus DI DALAM <main key={routeToPath}> (remount per route) — efek di
+  luar main tidak terpicu ulang saat sinkronisasi route pasca-hydration
+- DOCUMENTMETA v2: <title> React per view + canonical/og:url per path + breadcrumb JSON-LD dinamis
+  (Beranda → Menu → Produk); ProductDetailView & PromoView kirim path+breadcrumb masing-masing
+- SEARCHACTION: JSON-LD WebSite.potentialAction target /?q={query}; Navbar membaca ?q= → buka overlay
+  pencarian terisi (SearchOverlay key={initialQuery} supaya remount & terisi); QA ?q=combo → input
+  terisi, hasil PlatterTea Combo & Bestie Combo
+- SITEMAP DINAMIS (src/app/sitemap.ts): 6 view + 8 URL /produk/{slug} dari DB (revalidate 3600,
+  fallback statis saat DB gagal); robots.txt + Disallow /P578Admin; manifest shortcut → path URL;
+  layout: icons lengkap (favicon.png + 192 + 512), noscript fallback konten+nav, JSON-LD WebSite
+- QA penuh: lint 0, tsc 0, console bersih, visual utuh (home/menu/detail), title+canonical benar di
+  SEMUA direct-load (/ "PlatterTea — Food & Tea Purwokerto", /menu "Menu Kami", /faq "FAQ",
+  /produk/tea-only "Tea Only — Tea"), sitemap 14 URL, JSON-LD 2 skema di SSR
+
+Stage Summary:
+- Fondasi sitelinks lengkap: URL path asli per halaman (dapat diindeks), sitemap 14 URL, canonical per
+  view, breadcrumb JSON-LD, SearchAction berfungsi, favicon set lengkap, LocalBusiness rapi
+- Commit lokal TANPA push (menunggu kata "push" dari user)
+- LANGKAH USER SETELAH PUSH (di luar kode): daftar/verifikasi Google Search Console → submit
+  sitemap.xml → minta indexing; sitelinks muncul otomatis begitu Google mengenali struktur & trafik
+- Opsional lanjutan: FAQPage JSON-LD dinamis dari DB, domain sendiri utk brand trust

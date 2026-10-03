@@ -1,51 +1,95 @@
 'use client'
 
 import { useEffect, useState, createContext, useContext, useCallback, useSyncExternalStore } from 'react'
-import { parseHash, routeToHash, type Route, type SiteSettings } from '@/lib/plattertea'
+import { parseHash, parsePathname, routeToPath, type Route, type SiteSettings } from '@/lib/plattertea'
 
-// ============ Hash Router Hook ============
+// ============ Router Hook (path URL asli utk view publik, hash utk admin) ============
 
 const HOME_ROUTE: Route = { view: 'home' }
 
 // Cache snapshot agar getSnapshot stabil (wajib untuk useSyncExternalStore)
-let hashCache = ''
+let locCache = ''
 let routeCache: Route = HOME_ROUTE
 
-function getHashRoute(): Route {
+function locationKey(): string {
+  if (typeof window === 'undefined') return ''
+  return `${window.location.pathname}|${window.location.hash}`
+}
+
+function getRoute(): Route {
   if (typeof window === 'undefined') return HOME_ROUTE
-  const h = window.location.hash
-  if (h !== hashCache) {
-    hashCache = h
-    routeCache = parseHash(h)
+  const key = locationKey()
+  if (key !== locCache) {
+    locCache = key
+    // Prioritas pathname (view publik — SEO); fallback hash utk admin & deep-link lama
+    routeCache = parsePathname(window.location.pathname) ?? parseHash(window.location.hash)
   }
   return routeCache
 }
 
-function subscribeHash(callback: () => void) {
-  window.addEventListener('hashchange', callback)
-  return () => window.removeEventListener('hashchange', callback)
+function subscribeRoute(callback: () => void) {
+  window.addEventListener('popstate', callback) // back/forward browser (path)
+  window.addEventListener('hashchange', callback) // admin & deep-link hash lama
+  window.addEventListener('pt:navigate', callback) // notifikasi pushState internal
+  return () => {
+    window.removeEventListener('popstate', callback)
+    window.removeEventListener('hashchange', callback)
+    window.removeEventListener('pt:navigate', callback)
+  }
 }
 
-export function useHashRoute() {
-  // Saat SSR & hydration selalu mulai dari home, lalu sinkron ke hash asli
-  // setelah mount — mencegah hydration mismatch pada deep-link (mis. #/P578Admin).
-  const route = useSyncExternalStore(subscribeHash, getHashRoute, () => HOME_ROUTE)
+export function useSiteRoute() {
+  // Saat SSR & hydration selalu mulai dari home, lalu sinkron ke URL asli
+  // setelah mount — mencegah hydration mismatch pada deep-link (mis. /menu).
+  const route = useSyncExternalStore(subscribeRoute, getRoute, () => HOME_ROUTE)
 
+  // Normalisasi deep-link hash LAMA (#/menu → /menu) agar URL lama yang tersebar
+  // (mis. di bio IG) tetap berfungsi & langsung jadi URL bersih yang terindeks.
   useEffect(() => {
-    const onHashChange = () => {
-      window.scrollTo({ top: 0 })
+    const { pathname, hash } = window.location
+    if (pathname === '/' && hash && !hash.startsWith('#/P578Admin')) {
+      const legacy = parseHash(hash)
+      if (legacy.view !== 'admin') {
+        history.replaceState(null, '', routeToPath(legacy))
+        window.dispatchEvent(new Event('pt:navigate'))
+      }
     }
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
+
+  // Scroll ke atas tiap pindah view (back/forward & navigasi internal)
+  useEffect(() => {
+    const onMove = () => window.scrollTo({ top: 0 })
+    window.addEventListener('popstate', onMove)
+    window.addEventListener('hashchange', onMove)
+    window.addEventListener('pt:navigate', onMove)
+    return () => {
+      window.removeEventListener('popstate', onMove)
+      window.removeEventListener('hashchange', onMove)
+      window.removeEventListener('pt:navigate', onMove)
+    }
   }, [])
 
   const navigate = useCallback((r: Route, opts?: { scrollToTop?: boolean }) => {
-    const target = routeToHash(r)
-    if (window.location.hash === target) {
+    const target = routeToPath(r)
+    const scrollTop = () => {
       if (opts?.scrollToTop !== false) window.scrollTo({ top: 0, behavior: 'smooth' })
-      return
     }
-    window.location.hash = target
+    if (target.startsWith('#')) {
+      // Admin — hash-based (hashchange otomatis memicu re-render)
+      if (window.location.hash === target) {
+        scrollTop()
+        return
+      }
+      window.location.hash = target
+    } else {
+      // View publik — path URL asli (shareable & terindeks Google)
+      if (window.location.pathname === target && !window.location.hash) {
+        scrollTop()
+        return
+      }
+      history.pushState(null, '', target)
+      window.dispatchEvent(new Event('pt:navigate'))
+    }
     if (opts?.scrollToTop !== false) {
       requestAnimationFrame(() => window.scrollTo({ top: 0 }))
     }

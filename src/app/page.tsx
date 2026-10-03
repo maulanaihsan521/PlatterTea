@@ -14,8 +14,8 @@ import { FaqView } from '@/components/plattertea/views/FaqView'
 import { DocumentMeta } from '@/components/plattertea/DocumentMeta'
 import { InstallBanner } from '@/components/plattertea/InstallApp'
 import { CartSheet } from '@/components/plattertea/Cart'
-import { useHashRoute, SettingsProvider } from '@/hooks/use-plattertea'
-import { routeToHash, type Route } from '@/lib/plattertea'
+import { useSiteRoute, SettingsProvider } from '@/hooks/use-plattertea'
+import { routeToPath, type Route } from '@/lib/plattertea'
 import { Loader2 } from 'lucide-react'
 
 /**
@@ -43,19 +43,28 @@ const AdminView = dynamic(
  * (No transaction features — website is NOT e-commerce per brand rules)
  */
 function PlatterTeaApp() {
-  const { route, navigate } = useHashRoute()
+  const { route, navigate } = useSiteRoute()
 
   const nav = (r: Route) => navigate(r)
 
-  // SEO dinamis per view (judul di-detail produk dioverride oleh ProductDetailView)
-  const meta: Record<Route['view'], { title: string; description: string }> = {
+  // SEO dinamis per view — path canonical + breadcrumb JSON-LD per halaman
+  // (syarat sitelinks Google: setiap view = URL + judul + canonical sendiri)
+  const meta: Record<
+    Route['view'],
+    { title: string; description: string; path?: string; breadcrumb?: { name: string; path: string }[] }
+  > = {
     home: {
-      title: 'PlatterTea — Food & Tea | Mix, Sip, Enjoy!',
-      description: 'PlatterTea menghadirkan Mix Platter dan berbagai pilihan Tea dengan konsep yang fresh, praktis, dan menyenangkan.',
+      title: 'PlatterTea — Food & Tea Purwokerto | Mix, Sip, Enjoy!',
+      description:
+        'PlatterTea menghadirkan Mix Platter dan berbagai pilihan Tea dengan konsep yang fresh, praktis, dan menyenangkan.',
+      path: '/',
     },
     menu: {
       title: 'Menu Kami — PlatterTea',
-      description: 'Pilihan Mix Platter, Tea, dan Combo PlatterTea. Ada Platter Only Rp15.000, Tea Only Rp8.000, dan paket combo hemat.',
+      description:
+        'Pilihan Mix Platter, Tea, dan Combo PlatterTea. Ada Platter Only Rp15.000, Tea Only Rp8.000, dan paket combo hemat.',
+      path: '/menu',
+      breadcrumb: [{ name: 'Menu', path: '/menu' }],
     },
     product: {
       title: 'Menu — PlatterTea',
@@ -64,18 +73,27 @@ function PlatterTeaApp() {
     promo: {
       title: 'Promo & Info Terbaru — PlatterTea',
       description: 'Promo menarik, Spesial Market Days, dan layanan Open PO via WhatsApp mulai H-4.',
+      path: '/promo',
+      breadcrumb: [{ name: 'Promo', path: '/promo' }],
     },
     about: {
       title: 'Tentang Kami — PlatterTea',
       description: 'Kenalan dengan PlatterTea: visi, misi, nilai brand, dan galeri momen bersama.',
+      path: '/about',
+      breadcrumb: [{ name: 'Tentang Kami', path: '/about' }],
     },
     contact: {
-      title: 'Kontak — PlatterTea',
-      description: 'Hubungi PlatterTea via WhatsApp, Instagram, TikTok, atau kunjungi booth kami.',
+      title: 'Hubungi Kami — PlatterTea',
+      description:
+        'Hubungi PlatterTea via WhatsApp +62 851-7539-7747, Instagram, TikTok, atau kunjungi booth kami di Telkom University Purwokerto.',
+      path: '/contact',
+      breadcrumb: [{ name: 'Hubungi Kami', path: '/contact' }],
     },
     faq: {
       title: 'FAQ — PlatterTea',
       description: 'Pertanyaan yang sering diajukan tentang menu, pemesanan, dan promo PlatterTea.',
+      path: '/faq',
+      breadcrumb: [{ name: 'FAQ', path: '/faq' }],
     },
     admin: {
       title: 'Admin CMS — PlatterTea',
@@ -95,13 +113,21 @@ function PlatterTeaApp() {
 
   return (
     <div className="flex min-h-screen flex-col bg-cream">
-      {/* view product & promo menangani meta sendiri di view masing-masing */}
-      {route.view !== 'product' && route.view !== 'promo' && (
-        <DocumentMeta title={meta[route.view].title} description={meta[route.view].description} />
-      )}
       <Navbar route={route} navigate={nav} />
 
-      <main key={routeToHash(route)} className="pt-fade-in flex-1">
+      <main key={routeToPath(route)} className="pt-fade-in flex-1">
+        {/* Meta SEO per view — HARUS di dalam <main key> (remount per route):
+            efek DocumentMeta di luar main tidak terpicu ulang saat sinkronisasi
+            route pasca-hydration (quirk React 19), di dalam main selalu jalan.
+            View product & promo menangani meta sendiri di komponen masing-masing. */}
+        {route.view !== 'product' && route.view !== 'promo' && (
+          <DocumentMeta
+            title={meta[route.view].title}
+            description={meta[route.view].description}
+            path={meta[route.view].path}
+            breadcrumb={meta[route.view].breadcrumb}
+          />
+        )}
         {route.view === 'home' && <HomeView navigate={nav} />}
         {route.view === 'menu' && <MenuView navigate={nav} />}
         {route.view === 'product' && <ProductDetailView slug={route.slug} navigate={nav} />}

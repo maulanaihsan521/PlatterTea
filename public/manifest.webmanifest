@@ -35,21 +35,21 @@
       "name": "Lihat Menu",
       "short_name": "Menu",
       "description": "Jelajahi menu PlatterTea",
-      "url": "/#/menu",
+      "url": "/menu",
       "icons": [{ "src": "/pwa/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Promo Terbaru",
       "short_name": "Promo",
       "description": "Promo dan info terbaru PlatterTea",
-      "url": "/#/promo",
+      "url": "/promo",
       "icons": [{ "src": "/pwa/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Hubungi Kami",
       "short_name": "Kontak",
       "description": "Hubungi PlatterTea via WhatsApp",
-      "url": "/#/contact",
+      "url": "/contact",
       "icons": [{ "src": "/pwa/icon-192.png", "sizes": "192x192" }]
     }
   ]

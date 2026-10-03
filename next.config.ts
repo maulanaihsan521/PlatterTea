@@ -46,6 +46,23 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+  /**
+   * SEO path-routing: view SPA publik kini punya URL asli yang bisa diindeks
+   * Google (syarat sitelinks). Semua path di-rewrite ke halaman tunggal "/" —
+   * SPA membaca pathname (parsePathname) untuk menentukan view. Hash #/P578Admin
+   * tetap berfungsi (admin tidak butuh indeks).
+   */
+  async rewrites() {
+    return [
+      { source: "/menu", destination: "/" },
+      { source: "/menu/:slug", destination: "/" }, // alias lama deep-link produk
+      { source: "/produk/:slug", destination: "/" },
+      { source: "/promo", destination: "/" },
+      { source: "/about", destination: "/" },
+      { source: "/contact", destination: "/" },
+      { source: "/faq", destination: "/" },
+    ];
+  },
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
