@@ -1285,3 +1285,17 @@ Stage Summary:
 ## Unresolved Issues / Next Priorities
 1. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
 2. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-p
+Agent: main (Z.ai Code)
+Task: Push 10 commit ke origin main — TERBLOKIR kredensial
+
+Work Log:
+- git push origin main → fatal: could not read Username (PAT tidak disimpan di sandbox sesuai aturan keamanan; token lama dipakai inline & sudah disarankan revoke)
+- VERIFIKASI PRODUKSI LANGSUNG: curl plattertea.vercel.app/api → porsi "250–300 gram" ✓, komposisi baru ✓, promo "Mulai H-4" ✓ (DB Supabase dev=prod, jadi konten update SUDAH LIVE di produksi tanpa push)
+- 10 commit tertahan di lokal: hero wordmark mobile-only, lazy-load AdminView, edge cache API + vercel.json, sinkronisasi H-4 (kode), worklog
+
+Stage Summary:
+- KONTEN SUDAH LIVE DI PRODUKSI (DB). Yang belum masuk produksi = perubahan KODE (10 commit) menunggu token push dari user
+- NEXT: user kirim PAT baru (disarankan fine-grained, expiring) → push origin main → Vercel auto-deploy kode
