@@ -1473,3 +1473,14 @@ Work Log:
 - Push via inline token URL (tanpa menyimpan kredensial) ke marketeens3-dot/PlatterTea main
 - Verifikasi pasca-push: remote = lokal; pantau deploy Vercel; cek x-vercel-id (harus sin1),
   posisi harga kartu, badge Hemat Rp2.500, dan kesehatan gambar di produksi
+
+Stage Summary (lanjutan 13-x — hasil verifikasi produksi):
+- Deploy Vercel selesai; x-vercel-id kini hkg1::sin1::... (function Singapura, bukan lagi iad1)
+- API produksi pasca-deploy: /api/products 93-321ms, /api/settings 91-112ms (sebelum: dingin
+  1.5-4.2 dtk; hangat +440ms overhead DB) — perbaikan region terbukti
+- UI produksi (fresh load): 8/8 kartu aligned (harga di atas, 2 tombol sebaris) — bug posisi harga
+  tuntas di produksi; 16 tag "Hemat Rp2.500" tampil; strikethrough +2500 benar (Rp17.500/Rp10.500/
+  Rp23.500/Rp37.500); 0 gambar rusak
+- Catatan verifikasi: buka URL hash (#/menu) dari origin yang sudah terbuka TIDAK me-reload halaman —
+  selalu hard-reload (cache-bust query / about:blank dulu) saat memverifikasi deploy baru
+- Commit verifikasi ini lokal; akan terbawa push berikutnya
