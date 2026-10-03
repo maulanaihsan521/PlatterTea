@@ -1328,3 +1328,30 @@ Stage Summary:
 - PRODUKSI LENGKAP: konten BMC/Business Plan (live via DB) + kode baru (live via deploy af2cae4→552def5)
 - Free-tier guard aktif: edge cache 30s+SWR, cache browser aset statis 7 hari, lazy AdminView
 - Sisa risiko: token classic masih aktif & sudah 2x terekspos di chat → user WAJIB revoke di GitHub Settings → Developer settings → PAT
+
+---
+Task ID: 13-s
+Agent: main (Z.ai Code)
+Task: Tampilan "seolah-olah harga diskon Rp2.000" — harga coret di semua harga produk
+
+Work Log:
+- Perbaikan env: .env sandbox ter-reset ke SQLite & kredensial Supabase hilang → pulihkan src/app/api/admin/upload/route.ts (terhapus tak sengaja, masih direferensikan 3 file) via git restore
+- HELPER: src/lib/plattertea.ts — PROMO_DISKON_RP=2000 + hargaSebelumDiskon(price)=price+2000 (lapisan tampilan saja)
+- KOMPONEN BARU: src/components/plattertea/PromoPrice.tsx — CoretPrice (<s> semantik + sr-only "Harga normal: …") & HematBadge
+- CAKUPAN: ProductCard 3 varian (grid: coret di atas harga besar; row & tea: inline), ProductDetailView (harga utama + badge HEMAT RP2.000 + related), SearchOverlay, Cart (harga/porsi dicoret + baris "Hemat promo −Rp2.000")
+- KONSISTEN: banner MarketDays sudah lama mengklaim "Diskon Rp2.000 semua produk" → kini harga visual mendukung klaim tsb
+- BISNIS AMAN: total, subtotal, dan buildWaOrderMessage (WA) tetap harga ASLI — yang dibayar customer tidak berubah; admin CMS juga tetap harga asli
+- FIX BONUS: prisma/seed.ts path gambar .png→.webp (11 path) — gambar rusak saat fresh seed
+- QA agent-browser: menu 16 strike (Rp17.000/10.000/23.000) ✓; detail Rp15.000+coret Rp17.000+badge ✓; keranjang: per-porsi coret + Hemat promo −Rp2.000 + Total Rp15.000 ✓; search overlay 7 strike ✓; varian mobile row ✓; lint 0; tsc 0; console bersih
+- DATABASE LOKAL: supabase tak terjangkau (kredensial hilang pasca reset env) → runtime QA pakai SQLite sementara (schema REPO tetap postgresql; generated client gitignored di-switch ke sqlite utk dev lokal; .env sandbox = file:)
+
+Stage Summary:
+- Commit 99a684e feat(promo): tampilan harga coret diskon Rp2.000 — 7 file (+104/−23)
+- SIAP PUSH MENUNGGU PERINTAH USER (user belum bilang "push" utk fitur ini)
+- CATATAN ENV: kredensial Supabase (.env) perlu ditulis ulang oleh user bila ingin dev sandbox tersambung DB produksi lagi
+
+## Unresolved Issues / Next Priorities
+1. [PUSH] Commit 99a684e menunggu perintah "push" dari user
+2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
+3. [ENV] Tulis ulang .env Supabase di sandbox (kredensial dari user) bila perlu QA dgn data produksi
+4. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
