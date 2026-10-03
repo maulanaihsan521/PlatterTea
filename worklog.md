@@ -1461,3 +1461,15 @@ Stage Summary:
   Vercel salah benua, sudah diperbaiki di vercel.json (menunggu push/deploy utk aktif)
 - Commit lokal TANPA push (menunggu kata "push" dari user)
 - Opsional backlog: kompres mix-sip-enjoy.webp 159KB → ~100KB
+
+---
+Task ID: 13-x
+Agent: main (Z.ai Code)
+Task: PUSH ke GitHub (perintah eksplisit user: "Push") + verifikasi deploy produksi
+
+Work Log:
+- Status pra-push: lokal 9c75c50, remote 7d4f957 → 4 commit tertunda (7e8a2ee promo Rp2.500,
+  c467e78 worklog, 3a0e4ee fix posisi harga kartu, 9c75c50 region sin1)
+- Push via inline token URL (tanpa menyimpan kredensial) ke marketeens3-dot/PlatterTea main
+- Verifikasi pasca-push: remote = lokal; pantau deploy Vercel; cek x-vercel-id (harus sin1),
+  posisi harga kartu, badge Hemat Rp2.500, dan kesehatan gambar di produksi
