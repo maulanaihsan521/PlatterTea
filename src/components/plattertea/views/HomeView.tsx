@@ -24,12 +24,12 @@ function Hero({ navigate }: HomeViewProps) {
 
   return (
     <section className="relative overflow-hidden pt-24 sm:pt-28 lg:pt-32" aria-label="Pembuka">
-      {/* organic background decorations */}
+      {/* organic background decorations — daun sisi disembunyikan <lg: wordmark bawaan sudah punya daun sendiri (dulu tabrakan/tumpang tindih) */}
       <Blob className="pointer-events-none absolute -left-24 top-24 h-72 w-72 text-beige/70" />
       <Blob className="pointer-events-none absolute -right-32 top-40 h-96 w-96 text-beige/60" />
-      <Leaf className="pointer-events-none absolute left-[6%] top-40 h-14 w-24 -rotate-12 text-forest-light/70 sm:left-[10%] sm:top-44" />
+      <Leaf className="pointer-events-none absolute left-[6%] top-40 hidden h-14 w-24 -rotate-12 text-forest-light/70 sm:left-[10%] sm:top-44 lg:block" />
       <Leaf flip className="pointer-events-none absolute bottom-10 left-[38%] hidden h-12 w-20 rotate-6 text-gold/60 lg:block" />
-      <LeafPair className="pointer-events-none absolute right-[4%] top-28 h-20 w-28 rotate-12 text-forest-light/60" />
+      <LeafPair className="pointer-events-none absolute right-[4%] top-28 hidden h-20 w-28 rotate-12 text-forest-light/60 lg:block" />
 
       <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 sm:px-6 lg:grid-cols-2 lg:gap-6 lg:px-8 lg:pb-20">
         {/* Text */}

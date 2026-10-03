@@ -1223,3 +1223,22 @@ Stage Summary:
 1. [TUNGGU USER] Push perubahan hero (13-j/k/l)
 2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-m
+Agent: main (Z.ai Code)
+Task: Perbaiki tampilan wordmark mobile yang "menumpuk" (user kirim screenshot: dekorasi daun background menabrak daun bawaan wordmark) — JANGAN PUSH dulu
+
+Work Log:
+- DIAGNOSIS (eval DOM + crop pixel): Leaf kiri (left-6% top-40) & LeafPair kanan (right-4% top-28) pada section hero bertumpang dgn daun MILIK ASET wordmark → dobel daun di kiri "Mix," & kanan "Enjoy!" = kesan menumpuk
+- FIX: Leaf & LeafPair kini hidden lg:block (hanya desktop, yg memakai teks script tanpa daun bawaan); Blob beige dipertahankan (wash halus, tak kompetitif); komponen tetap ada utk desktop
+- VERIFIKASI: eval 464px — daun dekorasi visible=false, hanya 2 blob; crop pixel tepi kiri/kanan screenshot vs file aset = identik (daun tersisa murni bawaan aset); desktop 1280 — 5 dekorasi + swoosh + 2 ikon tetap tampil; lint 0; console 0
+
+Stage Summary:
+- Mobile kini bersih: wordmark + daun bawaan asetnya saja, tanpa daun duplikat background; desktop tak berubah
+- SIAP PUSH — MENUNGGU PERINTAH USER; file berubah: HomeView.tsx, Decor.tsx, public/brand/mix-sip-enjoy.webp
+
+## Unresolved Issues / Next Priorities
+1. [TUNGGU USER] Push perubahan hero (13-j/k/l/m)
+2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
