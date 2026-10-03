@@ -1633,3 +1633,27 @@ Stage Summary:
 - Belum dipush (stasio): 5aef1b3 (SSR metadata per path + admin noindex) + commit baru ini
 - Langkah user setelah push: Verifikasi GSC → submit sitemap.xml → Inspeksi URL "/" minta
   pengindeksan; sitelinks muncul otomatis seiring trafik & struktur
+
+---
+Task ID: 16
+Agent: main (Z.ai Code)
+Task: Push 2 commit SEO atas perintah "push" user + verifikasi produksi
+
+Work Log:
+- Push 78d69fa..e894321 (5aef1b3 SSR metadata per path + admin noindex; e894321 file
+  verifikasi GSC + JSON-LD Product/Offer & FAQPage + refactor SITE_URL lib)
+- Poll deploy: file /google0a8609c757bf7532.html 404→404→404→200 (±45 dtk) dengan konten
+  persis "google-site-verification: google0a8609c757bf7532.html" ✓
+- Verifikasi produksi lengkap: /produk/tea-only raw HTML ada Product(Tea Only, 8000 IDR,
+  InStock)+FoodEstablishment+WebSite; /faq ada FAQPage; /menu SSR metadata benar (title
+  "Menu Kami — PlatterTea" + canonical + og:title di RAW HTML — commit 5aef1b3 bekerja);
+  /P578Admin noindex,nofollow; robots.txt Disallow /P578Admin
+- Browser produksi: home render utuh (hero maskot, CTA, PWA prompt), 0 error
+- Cron webDevReview 15 menit dibuat ulang (job_id 433978) dgn iron rule no-push
+
+Stage Summary:
+- SEMUA fondasi SEO LIVE di produksi: verifikasi GSC siap diklik, rich results
+  Product+FAQ terpasang, SSR metadata per path aktif, admin noindex efektif
+- LANGKAH USER SAAT INI: klik "Verifikasi" di GSC → submit sitemap.xml → Inspeksi URL
+  "https://plattertea.vercel.app" → Minta Pengindeksan
+- Sitelinks muncul otomatis seiring indexing & trafik (tidak bisa diminta manual)
