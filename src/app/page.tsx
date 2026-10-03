@@ -1,5 +1,6 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { Navbar } from '@/components/plattertea/Navbar'
 import { Footer } from '@/components/plattertea/Footer'
 import { BackToTop, BottomNav } from '@/components/plattertea/Floating'
@@ -10,12 +11,30 @@ import { PromoView } from '@/components/plattertea/views/PromoView'
 import { AboutView } from '@/components/plattertea/views/AboutView'
 import { ContactView } from '@/components/plattertea/views/ContactView'
 import { FaqView } from '@/components/plattertea/views/FaqView'
-import { AdminView } from '@/components/plattertea/admin/AdminView'
 import { DocumentMeta } from '@/components/plattertea/DocumentMeta'
 import { InstallBanner } from '@/components/plattertea/InstallApp'
 import { CartSheet } from '@/components/plattertea/Cart'
 import { useHashRoute, SettingsProvider } from '@/hooks/use-plattertea'
 import { routeToHash, type Route } from '@/lib/plattertea'
+import { Loader2 } from 'lucide-react'
+
+/**
+ * Admin CMS di-lazy-load: kode admin (~1MB dev / ratusan KB di produksi)
+ * TIDAK diunduh pengunjung publik — hanya dimuat saat hash #/P578Admin dibuka.
+ * Publik jadi lebih ringan & lebih cepat (visitor tidak pernah butuh kode admin).
+ */
+const AdminView = dynamic(
+  () => import('@/components/plattertea/admin/AdminView').then((m) => m.AdminView),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-cream" role="status" aria-live="polite">
+        <Loader2 className="h-8 w-8 animate-spin text-forest" aria-hidden="true" />
+        <p className="text-sm font-semibold text-forest/70">Memuat Admin CMS…</p>
+      </div>
+    ),
+  },
+)
 
 /**
  * PlatterTea — Public Website + Admin CMS

@@ -1242,3 +1242,25 @@ Stage Summary:
 1. [TUNGGU USER] Push perubahan hero (13-j/k/l/m)
 2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-n
+Agent: main (Z.ai Code)
+Task: Jawab "Apakah berat?" (user) — audit bobot halaman + optimasi nyata
+
+Work Log:
+- AUDIT GAMBAR: total public/ = 2.0MB; 14 img homepage = 775KB; wordmark mix-sip-enjoy.webp = 159KB (dari PNG 1.1MB) → GAMBAR TIDAK BERAT
+- AUDIT JS (agent-browser resource timing, dev mode): total 7.8MB tertransfer, JS 6.4MB — ditemukan chunk admin 1.056KB ikut termuat di homepage publik (page.tsx import statis AdminView)
+- FIX: AdminView → next/dynamic (ssr:false, loading spinner "Memuat Admin CMS…" dgn Loader2, aria-live polite) — kode admin hanya diunduh saat hash #/P578Admin dibuka
+- HASIL: JS homepage 6.426KB → 4.926KB (-1,5MB dev; di produksi jauh lebih terasa krn minify); chunk admin tersisa = stub 1KB; adminChunkLoaded=false utk bundle besar
+- VERIFIKASI: lint 0; admin flow #/P578Admin → spinner → login page render sempurna; homepage: wordmark visible @390, desktop tetap teks script; console 0 error
+
+Stage Summary:
+- Jawaban: gambar RINGAN (775KB total, wordmark 159KB); yang berat = JS, dan sudah dioptimalkan — pengunjung publik tak lagi mengunduh kode admin
+- File berubah: src/app/page.tsx (dynamic import AdminView)
+- SIAP PUSH — MENUNGGU PERINTAH USER (13-j/k/l/m/n)
+
+## Unresolved Issues / Next Priorities
+1. [TUNGGU USER] Push perubahan hero + perf (13-j/k/l/m/n)
+2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
