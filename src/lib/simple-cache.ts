@@ -23,6 +23,18 @@ const store: Map<string, Entry<unknown>> = (globalForCache.platterteaCacheStore 
 
 export const PUBLIC_CACHE_TTL_MS = 30_000
 
+/**
+ * Cache-Control utk respons API publik (GET) di Vercel:
+ * - s-maxage=30        → respons disimpan di Edge Network Vercel 30 dtk.
+ *   Kunjungan berikutnya dilayani edge TANPA menjalankan fungsi (tanpa query Supabase)
+ *   → melindungi kuota free-tier (Supabase egress + compute) saat traffic ramai.
+ * - stale-while-revalidate=300 → dlm 5 menit, edge boleh sajikan salinan lama
+ *   sambil refresh di background → pengunjung selalu respons cepat.
+ * Freshness: perubahan CMS tampil maksimal 30 dtk kemudian (setara TTL cache memori),
+ * dan invalidasi memori tetap aktif utk instance yg hangat.
+ */
+export const PUBLIC_CACHE_CONTROL = 'public, s-maxage=30, stale-while-revalidate=300'
+
 export function cacheGet<T>(key: string): T | undefined {
   const hit = store.get(key)
   if (!hit) return undefined

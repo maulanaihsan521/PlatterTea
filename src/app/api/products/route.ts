@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { getOrLoad } from '@/lib/simple-cache'
+import { getOrLoad, PUBLIC_CACHE_CONTROL } from '@/lib/simple-cache'
 
 export async function GET(req: NextRequest) {
   try {
@@ -24,8 +24,9 @@ export async function GET(req: NextRequest) {
       })
     )
 
-    // no-store: konten CMS harus selalu fresh di browser pengunjung setelah admin mengubahnya
-    return NextResponse.json({ success: true, data: products }, { headers: { 'Cache-Control': 'no-store' } })
+    // Edge cache 30 dtk (Vercel) + memori: pengunjung ramai tak menghantam Supabase;
+    // perubahan CMS tampil <=30 dtk (invalidasi memori tetap aktif)
+    return NextResponse.json({ success: true, data: products }, { headers: { 'Cache-Control': PUBLIC_CACHE_CONTROL } })
   } catch (error) {
     console.error('GET /api/products error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat produk.' }, { status: 500 })

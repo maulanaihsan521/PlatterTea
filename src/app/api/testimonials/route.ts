@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { logAudit } from '@/lib/audit'
 import { checkPublicLimit, requestIp } from '@/lib/rate-limit'
-import { getOrLoad } from '@/lib/simple-cache'
+import { getOrLoad, PUBLIC_CACHE_CONTROL } from '@/lib/simple-cache'
 
 export async function GET() {
   try {
@@ -12,8 +12,8 @@ export async function GET() {
         orderBy: { sortOrder: 'asc' },
       })
     )
-    // no-store: testimoni yang disetujui admin langsung terlihat oleh pengunjung
-    return NextResponse.json({ success: true, data: testimonials }, { headers: { 'Cache-Control': 'no-store' } })
+    // Edge cache 30 dtk: testimoni yang disetujui admin tampil <=30 dtk kemudian
+    return NextResponse.json({ success: true, data: testimonials }, { headers: { 'Cache-Control': PUBLIC_CACHE_CONTROL } })
   } catch (error) {
     console.error('GET /api/testimonials error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat testimoni.' }, { status: 500 })

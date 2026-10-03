@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { PUBLIC_CACHE_CONTROL } from '@/lib/simple-cache'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
 
     return NextResponse.json(
       { success: true, data: { product, related } },
-      { headers: { 'Cache-Control': 'no-store' } },
+      { headers: { 'Cache-Control': PUBLIC_CACHE_CONTROL } },
     )
   } catch (error) {
     console.error('GET /api/products/[slug] error:', error)

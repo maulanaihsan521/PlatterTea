@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { getOrLoad } from '@/lib/simple-cache'
+import { getOrLoad, PUBLIC_CACHE_CONTROL } from '@/lib/simple-cache'
 
 export async function GET() {
   try {
@@ -10,8 +10,8 @@ export async function GET() {
         orderBy: { sortOrder: 'asc' },
       })
     )
-    // no-store: konten CMS harus selalu fresh di browser pengunjung setelah admin mengubahnya
-    return NextResponse.json({ success: true, data: faqs }, { headers: { 'Cache-Control': 'no-store' } })
+    // Edge cache 30 dtk: perubahan CMS tampil <=30 dtk
+    return NextResponse.json({ success: true, data: faqs }, { headers: { 'Cache-Control': PUBLIC_CACHE_CONTROL } })
   } catch (error) {
     console.error('GET /api/faqs error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat FAQ.' }, { status: 500 })

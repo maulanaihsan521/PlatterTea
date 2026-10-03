@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { getOrLoad } from '@/lib/simple-cache'
+import { getOrLoad, PUBLIC_CACHE_CONTROL } from '@/lib/simple-cache'
 
 export async function GET(req: NextRequest) {
   try {
@@ -18,8 +18,8 @@ export async function GET(req: NextRequest) {
         ...(limit ? { take: parseInt(limit, 10) } : {}),
       })
     )
-    // no-store: perubahan galeri dari admin langsung terlihat oleh pengunjung
-    return NextResponse.json({ success: true, data: items }, { headers: { 'Cache-Control': 'no-store' } })
+    // Edge cache 30 dtk: perubahan galeri dari admin tampil <=30 dtk
+    return NextResponse.json({ success: true, data: items }, { headers: { 'Cache-Control': PUBLIC_CACHE_CONTROL } })
   } catch (error) {
     console.error('GET /api/gallery error:', error)
     return NextResponse.json({ success: false, error: 'Gagal memuat galeri.' }, { status: 500 })
