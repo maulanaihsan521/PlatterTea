@@ -1,10 +1,10 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { getOrLoad } from "@/lib/simple-cache";
+import { SITE_URL } from "@/lib/site-url";
 
 // Sitemap dinamis untuk mesin pencari. Sejak routing path-based, setiap view
 // punya URL sendiri (syarat sitelinks Google) + URL detail produk /produk/{slug}.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://plattertea.vercel.app";
 
 // Regenerasi sitemap.xml maksimal sekali per jam (hemat query ke Supabase)
 export const revalidate = 3600;

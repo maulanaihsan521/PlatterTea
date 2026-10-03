@@ -1599,3 +1599,37 @@ Stage Summary:
 - Commit lokal (TANPA push — menunggu user bilang "push")
 - Catatan risiko: page kini dynamic (baca searchParams) — HTML tak di-cache edge static
   lagi; TTFB masih cepat (function sin1 dekat DB). Sitemap/robots/API tak berubah
+
+---
+Task ID: 15
+Agent: main (Z.ai Code)
+Task: Pasang file verifikasi Google Search Console + JSON-LD Product/FAQPage (rich results)
+
+Work Log:
+- USER sedang setup GSC (properti Awalan URL https://plattertea.vercel.app) & upload file
+  verifikasi google0a8609c757bf7532.html → dipasang di public/ (static file, tak tersentuh
+  rewrites karena rewrites hanya path spesifik, bukan catch-all)
+- QA file verifikasi: curl localhost:3000/google0a8609c757bf7532.html → 200, konten persis
+  "google-site-verification: google0a8609c757bf7532.html", content-type text/html ✓
+- REFACTOR kecil: SITE_URL kini lib bersama (src/lib/site-url.ts) — layout.tsx + sitemap.ts
+  + page.tsx satu sumber (sebelumnya duplikat inline 2 file)
+- JSON-LD Product+Offer (page.tsx, server-side → masuk raw HTML):
+  • /produk/{slug} valid → Product (name, description ≤300 char, image absolut, sku=slug,
+    category, brand PlatterTea) + Offer (url, priceCurrency IDR, price Int, InStock,
+    NewCondition, seller Organization) — Google bisa menampilkan harga di hasil pencarian
+  • slug tidak dikenal / view lain → TIDAK dirender (terverifikasi /menu = 0 schema Product)
+  • TS: narrowing let initialProduct tak menembus closure → const productResult dulu
+- JSON-LD FAQPage (page.tsx): view /faq → getPublishedFaqs() (src/lib/faqs-server.ts, cache
+  getOrLoad 'ssr:faqs' pola identik /api/faqs; DB gagal → [] tanpa 500) → 8 Question +
+  acceptedAnswer terverifikasi di raw HTML
+- QA penuh: lint 0, tsc 0; raw HTML: /produk/tea-only ada Product(price 8000 IDR)+
+  FoodEstablishment+WebSite, /faq ada FAQPage(8 Q), /menu bersih; browser: produk & FAQ
+  render utuh (harga, badge Hemat, maskot), console bersih; dev.log 0 error
+- Commit lokal TANPA push — menunggu kata "push" dari user (IRON RULE)
+
+Stage Summary:
+- GSC: file verifikasi siap — SETELAH push+deploy, user klik "Verifikasi" di GSC
+- Rich results siap: Product+Offer (harga di Google) & FAQPage (8 Q&A) masuk raw HTML SSR
+- Belum dipush (stasio): 5aef1b3 (SSR metadata per path + admin noindex) + commit baru ini
+- Langkah user setelah push: Verifikasi GSC → submit sitemap.xml → Inspeksi URL "/" minta
+  pengindeksan; sitelinks muncul otomatis seiring trafik & struktur

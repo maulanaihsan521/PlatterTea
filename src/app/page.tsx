@@ -3,6 +3,8 @@ import { PlatterTeaClient } from '@/components/plattertea/PlatterTeaClient'
 import type { ProductResult } from '@/components/plattertea/views/ProductDetailView'
 import { routeFromSearchParams, formatRupiah, type Route } from '@/lib/plattertea'
 import { getProductWithRelated } from '@/lib/products-server'
+import { getPublishedFaqs } from '@/lib/faqs-server'
+import { SITE_URL } from '@/lib/site-url'
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>
 
@@ -141,6 +143,12 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
   }
 }
 
+/** Path gambar relatif → absolut (atau biarkan URL eksternal apa adanya). */
+function absoluteAssetUrl(src: string): string {
+  if (/^https?:\/\//i.test(src)) return src
+  return `${SITE_URL}${src.startsWith('/') ? '' : '/'}${src}`
+}
+
 /**
  * PlatterTea — Public Website + Admin CMS (server entry)
  * Server membaca rewrite ptview (next.config) → tahu view tanpa JS → SSR
@@ -157,5 +165,71 @@ export default async function PlatterTeaPage({ searchParams }: { searchParams: S
     initialProduct = (await getProductWithRelated(initialRoute.slug).catch(() => null)) ?? 'notfound'
   }
 
-  return <PlatterTeaClient initialRoute={initialRoute} initialProduct={initialProduct} />
+  // JSON-LD Product+Offer — harga & ketersediaan terbaca Google (rich result
+  // produk) + preview sosial makin kaya. Hanya utk view produk yang VALID.
+  const productResult =
+    initialRoute.view === 'product' && initialProduct && initialProduct !== 'notfound'
+      ? initialProduct
+      : null
+  const productLd = productResult
+    ? (() => {
+        const p = productResult.product
+        const desc = (p.shortDesc || p.fullDesc || '').trim().slice(0, 300)
+        return {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: p.name,
+            ...(desc ? { description: desc } : {}),
+            image: [p.mainImage ? absoluteAssetUrl(p.mainImage) : `${SITE_URL}/og-image-v2.jpg`],
+            sku: p.slug,
+            ...(p.category?.name ? { category: p.category.name } : {}),
+            brand: { '@type': 'Brand', name: 'PlatterTea' },
+            offers: {
+              '@type': 'Offer',
+              url: `${SITE_URL}/produk/${p.slug}`,
+              priceCurrency: 'IDR',
+              price: p.price,
+              availability: 'https://schema.org/InStock',
+              itemCondition: 'https://schema.org/NewCondition',
+              seller: { '@type': 'Organization', name: 'PlatterTea' },
+            },
+          }
+        })()
+    : null
+
+  // JSON-LD FAQPage — memperkaya pemahaman Google atas konten Q&A /faq
+  const faqLd =
+    initialRoute.view === 'faq'
+      ? await (async () => {
+          const faqs = await getPublishedFaqs()
+          if (faqs.length === 0) return null
+          return {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqs.map((f) => ({
+              '@type': 'Question',
+              name: f.question,
+              acceptedAnswer: { '@type': 'Answer', text: f.answer },
+            })),
+          }
+        })()
+      : null
+
+  return (
+    <>
+      {productLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
+        />
+      )}
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
+      <PlatterTeaClient initialRoute={initialRoute} initialProduct={initialProduct} />
+    </>
+  )
 }

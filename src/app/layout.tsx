@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Geist_Mono, Caveat, Kaushan_Script } from "next/font
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ServiceWorkerRegister } from "@/components/plattertea/ServiceWorkerRegister";
+import { SITE_URL } from "@/lib/site-url";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -26,11 +27,6 @@ const kaushan = Kaushan_Script({
   subsets: ["latin"],
   weight: ["400"],
 });
-
-// URL produksi — bisa dioverride via env NEXT_PUBLIC_SITE_URL (mis. saat pakai
-// domain sendiri). Fallback domain Vercel agar OG/metadata tetap absolut & benar
-// tanpa perlu env (penting untuk preview WhatsApp/Facebook/X).
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://plattertea.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
