@@ -1299,3 +1299,32 @@ Work Log:
 Stage Summary:
 - KONTEN SUDAH LIVE DI PRODUKSI (DB). Yang belum masuk produksi = perubahan KODE (10 commit) menunggu token push dari user
 - NEXT: user kirim PAT baru (disarankan fine-grained, expiring) → push origin main → Vercel auto-deploy kode
+
+---
+Task ID: 13-q
+Agent: main (Z.ai Code)
+Task: Push 10+1 commit dengan token user — SUCCESS
+
+Work Log:
+- git push (inline token, tidak disimpan) → af2cae4..552def5 main -> main
+- ls-remote konfirmasi: remote main = 552def5 = lokal HEAD (termasuk commit cron worklog)
+- Verifikasi deploy Vercel: header Cache-Control s-maxage pada /api/settings sebagai canary kode baru
+
+Stage Summary:
+- SEMUA perubahan (13-j s.d. 13-p) sudah di GitHub main → Vercel auto-deploy
+- PENGINGAT KEAMANAN: token classic tsering di chat → WAJIB revoke/rotate setelah push
+
+---
+Task ID: 13-r
+Agent: main (Z.ai Code)
+Task: Verifikasi deploy produksi pasca-push — SEMUA LIVE
+
+Work Log:
+- Canary kode baru: /api/settings respons melalui layer cache Vercel (cache-control: public + x-vercel-cache) — kode lama (no-store) sudah tergantikan
+- Buktikan edge cache aktif: req1 MISS (age 0) → req2 HIT (age 3) → fungsi & Supabase TIDAK diinvoke pada cache hit
+- Homepage produksi: x-vercel-cache HIT
+
+Stage Summary:
+- PRODUKSI LENGKAP: konten BMC/Business Plan (live via DB) + kode baru (live via deploy af2cae4→552def5)
+- Free-tier guard aktif: edge cache 30s+SWR, cache browser aset statis 7 hari, lazy AdminView
+- Sisa risiko: token classic masih aktif & sudah 2x terekspos di chat → user WAJIB revoke di GitHub Settings → Developer settings → PAT
