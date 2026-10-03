@@ -134,7 +134,7 @@ const FEATURES = [
   {
     icon: Clock,
     title: 'Open PO',
-    desc: 'H-7 s.d. H-1',
+    desc: 'H-4 s.d. H-1',
   },
 ]
 

@@ -1264,3 +1264,24 @@ Stage Summary:
 1. [TUNGGU USER] Push perubahan hero + perf (13-j/k/l/m/n)
 2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-o
+Agent: main (Z.ai Code)
+Task: Update konten produk sesuai dokumen resmi user (BMC_PlatterTea.pdf & Business_Plan_PlatterTea (3).pdf) + review/iteration + PUSH (user authorize)
+
+Work Log:
+- Ekstrak 2 dokumen: 4 paket & harga SUDAH sesuai (Platter Only 15k/Tea Only 8k/Combo 21k/Bestie 35k); yang BEDA = komposisi/deskripsi/porsi produk + jadwal Open PO (dokumen: H-4 s.d. H-1, website lama: H-7)
+- Temuan env: shell sandbox export DATABASE_URL=file:... (SQLite) → script terpisah harus load .env manual (scripts/db-env.ts); dev server = Supabase pooler 6543 (db yang SAMA dgn produksi)
+- DB UPDATE (Supabase, idempotent scripts/update-content.ts): 8 produk — Platter Only (porsi 250–300 gram, comp Potongan Sosis + Bola-Bola Ayam, tray tertutup/renyah), Tea Only (1 gelas semua varian), Combo & Bestie (semua varian + hemat terpisah), 4 tea sesuai Tabel 2 BMC (Original: seduhan teh+gula pilihan; Yakult: seduhan teh+Yakult dikocok; Teh Tarik: teh kuat ditarik berbusa ≠ Teh Susu; Teh Susu: susu+krimer resep tetap batch kecil); 2 FAQ PO H-4; 2 Promo H-7→H-4 (termasuk judul "Mulai H-4")
+- CODE H-7→H-4: HomeView (feature strip), MarketDays (banner chip, benefit chip, milestone H-4, font-hand, komentar), PromoView meta, page.tsx meta — grep H-7 di src/ = 0
+- QA: platter-only detail (250–300 gram + Potongan Sosis + tray tertutup) ✓; teh-tarik "Ditarik hingga berbusa" ✓; FAQ API jawaban H-4 ✓; promo & home noH7 ✓ hasH4 ✓; lint 0; tsc 0; console 0 error
+
+Stage Summary:
+- Konten website kini konsisten dengan BMC + Business Plan resmi (produk, porsi, komposisi, jadwal PO H-4 s.d. H-1)
+- Script reusable: scripts/db-env.ts + scripts/update-content.ts (idempotent, tanpa secret hardcoded)
+- Keputusan push: user eksplisit "lalu push" — commit code + script, push ke origin main → Vercel auto-deploy
+
+## Unresolved Issues / Next Priorities
+1. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
+2. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal

@@ -25,7 +25,7 @@ interface MarketDaysProps {
 /**
  * SPESIAL MARKET DAYS — banner promo terbaru.
  * Ticket/kupon style: gold gradient, notches, dashed divider.
- * Sesuai Business Plan: diskon saat Market Days + Open PO via WhatsApp mulai H-7.
+ * Sesuai Business Plan: diskon saat Market Days + Open PO via WhatsApp mulai H-4.
  */
 export function MarketDaysBanner({ navigate }: MarketDaysProps) {
   const settings = useSettings()
@@ -48,7 +48,7 @@ export function MarketDaysBanner({ navigate }: MarketDaysProps) {
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3.5 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-forest">
                   <CalendarClock className="h-3.5 w-3.5" />
-                  Open PO via WhatsApp mulai H-7
+                  Open PO via WhatsApp mulai H-4
                 </span>
               </div>
 
@@ -74,7 +74,7 @@ export function MarketDaysBanner({ navigate }: MarketDaysProps) {
                 {[
                   { icon: Store, label: 'Booth Market Days kampus' },
                   { icon: BadgePercent, label: 'Diskon Rp2.000 semua produk' },
-                  { icon: MessageCircle, label: 'Order via WhatsApp H-7' },
+                  { icon: MessageCircle, label: 'Order via WhatsApp H-4' },
                 ].map(({ icon: Icon, label }) => (
                   <span
                     key={label}
@@ -144,12 +144,12 @@ export function MarketDaysBanner({ navigate }: MarketDaysProps) {
 }
 
 /**
- * OPEN PO — layanan pre-order via WhatsApp sejak H-7 (Business Plan: pembeda utama).
- * Timeline H-7 → H-1 → H → H+1 + panduan format pesanan (bukan form transaksi).
+ * OPEN PO — layanan pre-order via WhatsApp sejak H-4 (BMC/Business Plan: pembeda utama).
+ * Timeline H-4 → H-1 → H → H+1 + panduan format pesanan (bukan form transaksi).
  */
 const PO_MILESTONES = [
   {
-    day: 'H-7',
+    day: 'H-4',
     title: 'Open PO Dibuka',
     desc: 'Pesan lewat WhatsApp: tentukan paket, varian tea, dan jumlahnya.',
     icon: MessageCircle,
@@ -215,7 +215,7 @@ export function OpenPOSection() {
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="pt-fade-up text-center">
-          <p className="font-hand text-2xl font-semibold text-gold-dark">mulai H-7 sebelum acara!</p>
+          <p className="font-hand text-2xl font-semibold text-gold-dark">mulai H-4 sebelum acara!</p>
           <h2 id="open-po-title" className="mt-1 text-2xl font-extrabold text-forest sm:text-3xl">
             Open PO via WhatsApp
           </h2>

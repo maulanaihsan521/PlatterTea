@@ -53,7 +53,7 @@ export function PromoView({ navigate }: PromoViewProps) {
     : 'Promo & Info Terbaru — PlatterTea'
   const promoDescription =
     featured?.description?.slice(0, 155) ||
-    'Promo menarik, Spesial Market Days, dan layanan Open PO via WhatsApp mulai H-7.'
+    'Promo menarik, Spesial Market Days, dan layanan Open PO via WhatsApp mulai H-4.'
 
   return (
     <div className="min-h-screen">

@@ -63,7 +63,7 @@ function PlatterTeaApp() {
     },
     promo: {
       title: 'Promo & Info Terbaru — PlatterTea',
-      description: 'Promo menarik, Spesial Market Days, dan layanan Open PO via WhatsApp mulai H-7.',
+      description: 'Promo menarik, Spesial Market Days, dan layanan Open PO via WhatsApp mulai H-4.',
     },
     about: {
       title: 'Tentang Kami — PlatterTea',
