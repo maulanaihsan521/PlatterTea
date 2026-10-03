@@ -1102,3 +1102,39 @@ Stage Summary:
 - Ikon gabungan terverifikasi JELAS di kedua varian & kedua breakpoint: tas ShoppingBag identik ikon keranjang situs + badge krem ber-plus di sudut kanan-atas tas (pola e-commerce umum, kontras forest/cream kuat)
 - Ukuran badge kini KONSISTEN 12px di grid & row
 - PENDING PUSH tetap menunggu perintah user: 9474e1b (gap fix) + perubahan ikon 13-c/d/e/g (belum di-commit; saat push dirapikan 1 commit bersih tanpa upload/)
+
+---
+Task ID: 13-h
+Agent: main (Z.ai Code)
+Task: Review & Iteration penuh + pastikan tidak ada bug/error + PUSH + audit keamanan repository (user)
+
+Work Log:
+- QA STATIS: lint 0 error; tsc --noEmit exit 0; dev.log bersih
+- AUDIT KEAMANAN REPO (lengkap):
+  1. .gitignore solid: .env*, *.log, db/*.db, src/generated, public/uploads, tool-results ✓
+  2. Tidak ada file sensitif terlacak (.env/key/pem/log) ✓
+  3. git grep pola secret (sk-/AKIA/ghp_/JWT service_role/private key) = nihil ✓
+  4. Tidak ada hardcoded password di src ✓
+  5. GIT HISTORY: .env TIDAK PERNAH ter-commit sejak commit pertama ✓
+  6. Auth: scrypt+salt+timingSafeEqual; sesi HMAC-SHA256 httpOnly secure(lax); AUTH_SECRET fail-closed di produksi (tanpa fallback di repo) ✓
+  7. SEMUA route admin ter-guard (handleAdmin/handleSuperAdmin/requireAdmin) — verifikasi runtime curl: GET products/settings/users/stats/audit tanpa sesi = 401, POST products = 401 ✓
+  8. Login rate-limit 5 gagal/10 mnt → lockout 15 mnt; error generik (tanpa user enumeration) ✓
+  9. Reset password: token 144-bit SHA-256 hash, one-time (usedAt), expiry, rate-limit ✓
+  10. SUPABASE_SERVICE_ROLE_KEY hanya server-side; satu-satunya NEXT_PUBLIC = NEXT_PUBLIC_SITE_URL (bukan rahasia) ✓
+  11. z-ai-web-dev-sdk tidak dipakai client-side ✓
+  12. Deps: Next 16.1.1 / React 19 / Prisma 6.11 — versi mayor modern (npm audit tak bisa jalan: bun.lock bukan package-lock; sandbox timeout)
+  13. TEMUAN MINOR: folder upload/ (8 PNG mockup brand, 4.5MB, tak direferensikan kode, TIDAK sensitif) terlacak → DIHAPUS dari tracking + blokir via .gitignore (tanpa rewrite history — isinya aman)
+- QA RUNTIME BROWSER (agent-browser, sesi fresh): home 10 H2 urutan benar + 0 gambar rusak; menu 16 kartu + tambah-keranjang → badge FAB 0→1; cart sheet + checkout WA URL benar (wa.me/6285175397747, teks bersih); detail produk Platter Only + harga + tombol WA; promo/about/contact/faq semua render; search filter "platter" → 3 hasil; admin login → dashboard → products (data tampil); console 0 error; mobile 390px: tanpa h-scroll, footer di dasar dokumen, bottom nav ada
+- GIT: 7 commit UUID cron di-squash → reset --soft origin/main → upload/ dikeluarkan → 1 COMMIT BERSIH 50fab82 "feat(menu): ikon tambah-keranjang gabungan + perapian gap home & bersih-bersih repo" (11 file, tanpa junk, secret-scan lulus); branch backup backup/pre-push-13h dibuat
+- INSIDEN PUSH: git push GAGAL "could not read Username for https://github.com" — sandbox kehilangan kredensial GitHub (reset platform, pola sama dgn insiden .env 12-z): tidak ada credential helper, ~/.git-credentials, ~/.netrc, ~/.ssh, gh CLI, GH_TOKEN/GITHUB_TOKEN. Push TERTUNDA menunggu token dari user.
+
+Stage Summary:
+- Kode final: ikon tambah-keranjang gabungan (bag+badge plus, konsisten 12px) + fix gap home + repo bersih — commit 50fab82 LOKAL siap push
+- Audit keamanan: 13 poin LULUS, tidak ada jalur hack yang ditemukan di repo/kode
+- PUSH MENUNGGU: user memberi PAT GitHub (scope repo) ATAU push manual dari mesin user: git push origin main (commit sudah rapi)
+- Pengingat keamanan berjalan: password admin produksi masih plattertea123 — WAJIB diganti via CMS (#/P578Admin → ganti password) + rotasi SUPABASE_SERVICE_ROLE_KEY per PANDUAN-DEPLOY.md
+
+## Unresolved Issues / Next Priorities
+1. [BLOKIR] Push 50fab82 — butuh PAT GitHub dari user (sandbox tanpa kredensial)
+2. User: ganti password admin produksi (masih plattertea123) + rotasi Supabase key
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
