@@ -1181,3 +1181,25 @@ Stage Summary:
 1. [TUNGGU USER] Push perubahan hero maskot (13-j)
 2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-k
+Agent: main (Z.ai Code)
+Task: Ganti komposisi hero dgn wordmark resmi "Mix, Sip, Enjoy!" dari user (upload/pasted_image_1791037574159.png) — JANGAN PUSH dulu
+
+Work Log:
+- Inspeksi aset: PNG 2172x724 RGBA, background SUDAH transparan (alpha 0 di sudut), 1.1MB → terlalu berat utk web
+- Optimasi: resize 1400px (cukup utk retina @540px display) → WebP q90 → public/brand/mix-sip-enjoy.webp (159KB, hemat 85%)
+- HomeView Hero: hapus komposisi CSS (h1 font-script + maskot peek + 3 Sparkle + Swoosh) → ganti <h1><img src="/brand/mix-sip-enjoy.webp" alt="Mix, Sip, Enjoy!" width=1400 height=467 fetchPriority=high /></h1> (alt mempertahankan semantik h1 utk SEO/a11y); ukuran mx-auto max-w-[350px] sm:430 lg:mx-0 lg:540
+- Restorasi padding section: pt-24 sm:pt-28 lg:pt-32 (tidak perlu headroom peek lagi)
+- Bersihkan import: Sparkle & Swoosh keluar dari import HomeView (tak terpakai); komponen Sparkle tetap ada di Decor.tsx utk pemakaian masa depan
+- VERIFIKASI (3 breakpoint): gap navbar→wordmark = 24px @390, 28px @768, 44px @1280; imgW 350/430/532; tanpa horizontal overflow; lint 0; tsc 0; console 0 error; desktop rata kiri, mobile center
+
+Stage Summary:
+- Hero kini memakai wordmark resmi dari user (maskot kedip + gelas teh + daun + kilau + swoosh dalam 1 aset) — identik dgn brand
+- SIAP PUSH — MENUNGGU PERINTAH USER; perubahan belum di-commit: Decor.tsx (Sparkle baru), HomeView.tsx (hero wordmark), public/brand/mix-sip-enjoy.webp (aset baru)
+
+## Unresolved Issues / Next Priorities
+1. [TUNGGU USER] Push perubahan hero wordmark (13-j + 13-k)
+2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal

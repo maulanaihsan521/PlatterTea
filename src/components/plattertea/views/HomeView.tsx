@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ProductCard, TeaCard } from '../ProductCard'
 import { MarketDaysBanner, OpenPOSection } from '../MarketDays'
 import { TestimonialForm } from '../TestimonialForm'
-import { Leaf, LeafPair, Blob, Swoosh, Sparkle } from '../Decor'
+import { Leaf, LeafPair, Blob } from '../Decor'
 import { Mascot } from '../Mascot'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
 import { formatRupiah, promoHighlight, type Product, type Promotion, type Testimonial, type Route } from '@/lib/plattertea'
@@ -23,7 +23,7 @@ function Hero({ navigate }: HomeViewProps) {
   const wa = waLink(settings.whatsapp, WA_MESSAGES.general)
 
   return (
-    <section className="relative overflow-hidden pt-[152px] sm:pt-[176px] lg:pt-40" aria-label="Pembuka">
+    <section className="relative overflow-hidden pt-24 sm:pt-28 lg:pt-32" aria-label="Pembuka">
       {/* organic background decorations */}
       <Blob className="pointer-events-none absolute -left-24 top-24 h-72 w-72 text-beige/70" />
       <Blob className="pointer-events-none absolute -right-32 top-40 h-96 w-96 text-beige/60" />
@@ -34,25 +34,18 @@ function Hero({ navigate }: HomeViewProps) {
       <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 sm:px-6 lg:grid-cols-2 lg:gap-6 lg:px-8 lg:pb-20">
         {/* Text */}
         <div className="pt-fade-up text-center lg:text-left">
-          <div className="relative inline-block">
-            {/* Maskot mengintip dari belakang tulisan (sesuai mockup) — teks selalu di depan */}
-            <div className="pointer-events-none absolute -top-[64px] left-1/2 z-0 -translate-x-1/2 sm:-top-[76px] lg:-top-[88px]">
-              <Mascot
-                pose="tea"
-                width={104}
-                animation="sway"
-                className="w-[86px] sm:w-[110px] lg:w-[118px]"
-              />
-              {/* kilau emas di sekitar maskot */}
-              <Sparkle className="absolute -right-3 top-2 h-4 w-4 text-gold sm:-right-5 sm:h-5 sm:w-5" />
-              <Sparkle className="absolute -left-4 top-9 h-3 w-3 text-gold/80 sm:-left-6" />
-              <Sparkle className="absolute -left-1 top-1 h-2 w-2 text-gold-light" />
-            </div>
-            <h1 className="relative z-10 font-script text-5xl leading-[1.15] text-forest sm:text-6xl lg:text-[64px]">
-              Mix, Sip, Enjoy!
-            </h1>
-            <Swoosh className="absolute -bottom-3 left-1/2 h-5 w-56 -translate-x-1/2 text-gold lg:left-8 lg:w-64" />
-          </div>
+          {/* Wordmark resmi "Mix, Sip, Enjoy!" — maskot, daun, kilau & swoosh sudah termasuk dlm aset */}
+          <h1>
+            <img
+              src="/brand/mix-sip-enjoy.webp"
+              alt="Mix, Sip, Enjoy!"
+              width={1400}
+              height={467}
+              fetchPriority="high"
+              draggable={false}
+              className="mx-auto w-full max-w-[350px] select-none sm:max-w-[430px] lg:mx-0 lg:max-w-[540px]"
+            />
+          </h1>
 
           <p className="mx-auto mt-7 max-w-md text-[16.5px] font-medium leading-relaxed text-forest sm:text-lg sm:text-forest/90 lg:mx-0 lg:text-lg">
             {settings.hero_subtitle}
