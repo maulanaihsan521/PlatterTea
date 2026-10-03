@@ -3,7 +3,7 @@
 import { formatRupiah, type Product } from '@/lib/plattertea'
 import { useCartStore } from '@/hooks/use-cart'
 import { useToast } from '@/hooks/use-toast'
-import { ArrowRight, Plus, Check } from 'lucide-react'
+import { ArrowRight, Plus, Check, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
@@ -119,7 +119,13 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
               aria-label={`Tambah ${product.name} ke keranjang`}
               title="Tambah ke keranjang"
             >
-              {added ? <Check className="h-4.5 w-4.5" strokeWidth={2.5} /> : <Plus className="h-4.5 w-4.5" strokeWidth={2.5} />}
+              {added ? <Check className="h-4.5 w-4.5" strokeWidth={2.5} /> : (
+                /* Satu ikon "tambah keranjang": ShoppingBag (identik ikon keranjang situs) + plus dlm badge krem di sudut — jelas & tak bertabrakan dgn garis tas */
+                <span className="relative inline-flex" aria-hidden>
+                  <ShoppingBag className="h-4.5 w-4.5" strokeWidth={2} />
+                  <Plus strokeWidth={4} className="absolute -right-1.5 -top-1.5 h-3 w-3 rounded-full bg-cream p-[1.5px] text-forest shadow-[0_1px_3px_rgba(23,61,50,0.35)]" />
+                </span>
+              )}
             </button>
             <button
               type="button"
@@ -179,7 +185,13 @@ export function ProductCardRow({ product, onOpen }: ProductCardProps) {
             aria-label={`Tambah ${product.name} ke keranjang`}
             title="Tambah ke keranjang"
           >
-            {added ? <Check className="h-4 w-4" strokeWidth={2.5} /> : <Plus className="h-4 w-4" strokeWidth={2.5} />}
+            {added ? <Check className="h-4 w-4" strokeWidth={2.5} /> : (
+              /* Satu ikon "tambah keranjang": ShoppingBag (identik ikon keranjang situs) + plus dlm badge krem di sudut — ukuran badge disamakan dgn varian grid agar tetap terbaca di layar kecil */
+              <span className="relative inline-flex" aria-hidden>
+                <ShoppingBag className="h-4 w-4" strokeWidth={2} />
+                <Plus strokeWidth={4} className="absolute -right-1.5 -top-1.5 h-3 w-3 rounded-full bg-cream p-[1.5px] text-forest shadow-[0_1px_3px_rgba(23,61,50,0.35)]" />
+              </span>
+            )}
           </button>
           <button
             type="button"

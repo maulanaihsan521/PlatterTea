@@ -1013,3 +1013,92 @@ Work Log:
 Stage Summary:
 - Urutan home live: Kenalan → Cara Pesan → Menu PlatterTea (sesuai permintaan)
 - Lokal kini sinkron penuh dengan origin/main (367152f) + commit reorder; histori divergen diamankan di branch backup
+
+---
+Task ID: 13-b
+Agent: main (Z.ai Code)
+Task: Perbaiki gap berlebih antara section "Cara Pesan" dan "Menu PlatterTea" di Home (screenshot user) — TANPA PUSH (user: "jangan push sebelum saya bilang push")
+
+Work Log:
+- Akar: padding bawah HowToOrder (lg:py-20 → pb 80px) + padding atas ProductShowcase (lg:py-16 → pt 64px) = 144px ruang kosong di desktop (sisa kebiasaan urutan lama; kini keduanya bertetangga langsung)
+- HomeView.tsx: HowToOrder → `pt-14 pb-10 lg:pt-20 lg:pb-12` (pb 80→48); ProductShowcase → `pt-4 pb-10 lg:pt-6 lg:pb-16` (pt 64→24; bottom tak diubah agar seam ke TeaCollection aman)
+- Ukur via agent-browser eval: gap tombol CTA → heading Menu = 72px @1280 (dari 144px); 56px @390 mobile (dari 96px); tanpa horizontal overflow; seam BrandIntro→CaraPesan antar tepi section 0px (padding internal by design, mascot overhang aman)
+- lint bersih; console 0 error
+
+Stage Summary:
+- Gap terselesaikan di lokal & SIAP PUSH — MENUNGGU PERINTAH USER (jangan push dulu)
+- Commit belum dibuat; perubahan hanya di working tree (HomeView.tsx) + worklog
+
+---
+Task ID: 13-c
+Agent: main (Z.ai Code)
+Task: Review & Iteration penuh (user: "pastikan tidak ada bug dan error lalu push") + ganti ikon tombol tambah kartu menu jadi "tambah keranjang" (user; JANGAN PUSH dulu)
+
+Work Log:
+- STATIC: lint 0 error; dev.log bersih; server hidup
+- GIT STATE: 2 commit UUID tak-terpush dari agent cron — 9474e1b = gap fix 13-b (HomeView padding) + worklog; b117051 = file upload/pasted_image (SEHARUSNYA tak masuk repo). RENCANA PUSH: reset --soft origin/main, keluarkan upload/ dari stage, commit bersih 1x dgn pesan proper (eksekusi saat user bilang push)
+- QA DESKTOP (agent-browser): home urutan section ✓ gap 72px ✓ hero ✓; quick-add → badge FAB update ✓; cart sheet isi benar ✓; checkout WA intercept — URL wa.me benar, produk+qty+total ada, tanpa karakter rusak ✓; dialog tertutup proper (mounted-hidden normal) ✓; Menu 16 kartu ✓; Promo 3 kartu ✓; About 4 section ✓; Contact WA+maps ✓; FAQ 9 accordion ✓; detail produk render + tombol WA/FAB ✓; search overlay filter "platter" ✓; console 0 error
+- IKON BARU (ProductCard.tsx): tombol tambah di ProductCard & ProductCardRow kini komposit ShoppingCart + Plus kecil di sudut (lucide tak punya ShoppingCartPlus di versi ini); state added tetap Check; aria-label/title tak berubah; lint 0; klik → badge naik ✓; komposit tampil di semua 8 kartu @390px & @1280px; console 0 error
+
+Stage Summary:
+- QA penuh LULUS tanpa bug baru; ikon tambah-keranjang live di lokal
+- PENDING PUSH (menunggu perintah user): 9474e1b (gap) + perubahan ikon (belum di-commit) → akan dirapikan jadi 1 commit bersih tanpa upload/
+
+---
+Task ID: 13-d
+Agent: main (Z.ai Code)
+Task: Samakan ikon tombol tambah pada kartu menu dengan ikon keranjang (user) — tetap JANGAN PUSH
+
+Work Log:
+- Riset: ikon keranjang di seluruh situs (header Navbar:233, FAB Cart.tsx:77, sheet Cart.tsx:148) = lucide ShoppingBag; revisi komposit sebelumnya (13-c) memakai ShoppingCart (troli) → beda bentuk
+- ProductCard.tsx: ganti komposit → ShoppingBag polos di ProductCard (h-4.5, stroke 2) & ProductCardRow (h-4, stroke 2); import dibersihkan (Plus & ShoppingCart keluar); state added tetap Check; aria-label/title tetap "Tambah … ke keranjang"
+- Verifikasi: lint 0; ikon tombol tambah identik dgn ikon keranjang header (screenshot); klik → badge FAB naik ✓; console 0 error
+
+Stage Summary:
+- Bahasa ikon keranjang kini KONSISTEN: ShoppingBag di header, FAB, sheet, dan tombol tambah kartu
+- PENDING PUSH tetap: 9474e1b (gap) + ikon (belum commit) → dirapikan jadi 1 commit bersih saat user bilang push
+
+---
+Task ID: 13-e
+Agent: main (Z.ai Code)
+Task: Klarifikasi user — ikon tombol tambah = SATU ikon gabungan (ShoppingBag situs + plus kecil) — tetap JANGAN PUSH
+
+Work Log:
+- Klarifikasi maksud user 13-d: bukan ikon polos, tapi gabungan plus + keranjang DALAM SATU ikon; bentuk keranjang harus sama dengan ikon keranjang situs (ShoppingBag, bukan ShoppingCart troli)
+- ProductCard.tsx: komposit ShoppingBag + Plus kecil (-right-1 -top-1, stroke 4) di ProductCard & ProductCardRow; komentar jelaskan; import Plus kembali
+- Verifikasi: lint 0; screenshot — bentuk keranjang identik ikon header + plus kecil sudut ✓; klik → badge naik ✓; console 0 error
+
+Stage Summary:
+- Ikon "tambah keranjang" final: ShoppingBag situs + plus kecil, satu kesatuan visual di kedua varian kartu
+- PENDING PUSH tetap menunggu perintah user (gap fix 9474e1b + ikon belum commit)
+
+---
+Task ID: 13-f
+Agent: main (Z.ai Code)
+Task: UX review ikon tambah-keranjang (user: "apakah jelas & mudah dipahami?") — tetap JANGAN PUSH
+
+Work Log:
+- Inspeksi zoom 3x: temuan — plus kecil MENUMPUK di garis tas (bereksekusi outline sudut) → di ukuran asli bisa terbaca sbg noise
+- Refinement: plus kini dalam BADGE LINGKARAN KREM (h-3, p-1.5px, shadow tipis) di sudut kanan-atas tas — terpisah jelas dari garis tas, pola badge e-commerce umum (Shopee/Amazon-like); varian row ikut diperbaiki
+- Verifikasi zoom 3x + ukuran asli + klik (badge naik) + console 0 error
+
+Stage Summary:
+- Ikon final: ShoppingBag situs + badge krem ber-plus — satu glyph, jelas, konsisten brand (krem/forest)
+- PENDING PUSH tetap menunggu perintah user
+
+---
+Task ID: 13-g
+Agent: main (Z.ai Code)
+Task: UX review ulang ikon tambah-keranjang (user: "coba lihat lagi apakah jelas dan mudah dipahami user?") — tetap JANGAN PUSH
+
+Work Log:
+- Inspeksi visual berlapis dgn agent-browser: preview terisolasi (ikon composite direplikasi murni dlm overlay 320px & 120px), render ASLI desktop 1280px di-zoom 7x (ProductCard grid, tombol 36px), render ASLI mobile 390px di-zoom 8x (ProductCardRow, tombol 32px)
+- Verifikasi konteks kartu utuh 1:1 — ikon terbaca jelas di samping tombol "Lihat Detail"
+- TEMUAN: badge plus varian row mobile (h-2.5 = 10px, p-[1px], tanpa shadow) lebih kecil/tipis dibanding varian grid desktop (h-3 = 12px + shadow) → kurang konsisten
+- REFINEMENT (ProductCard.tsx ProductCardRow): badge disamakan dgn varian grid → h-3 w-3, p-[1.5px], shadow [0_1px_3px_rgba(23,61,50,0.35)]; posisi -right-1.5 -top-1.5 relatif thd tas tetap; aman dari klip (badge x:12-24 y:-6..6 relatif tas 16px di tombol 32px, tepi badge 30px < 32px)
+- Verifikasi ulang: zoom 8x mobile — plus kini tebal & tegas, bentuk sama persis dgn desktop; klik tombol → badge FAB 0→1 + state gold "added" ✓; desktop grid tak berubah (badge tetap 12px) ✓; console 0 error; lint bersih; kompilasi sukses
+
+Stage Summary:
+- Ikon gabungan terverifikasi JELAS di kedua varian & kedua breakpoint: tas ShoppingBag identik ikon keranjang situs + badge krem ber-plus di sudut kanan-atas tas (pola e-commerce umum, kontras forest/cream kuat)
+- Ukuran badge kini KONSISTEN 12px di grid & row
+- PENDING PUSH tetap menunggu perintah user: 9474e1b (gap fix) + perubahan ikon 13-c/d/e/g (belum di-commit; saat push dirapikan 1 commit bersih tanpa upload/)

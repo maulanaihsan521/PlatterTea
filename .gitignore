@@ -67,3 +67,6 @@ agent-ctx
 
 # file kerja internal (hasil tool/testing lokal) — tidak untuk publik
 tool-results
+
+# file kerja lokal (mockup/temp upload) — tidak untuk repo publik
+upload/

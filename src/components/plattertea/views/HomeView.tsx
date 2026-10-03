@@ -230,7 +230,7 @@ function ProductShowcase({ navigate }: HomeViewProps) {
   )
 
   return (
-    <section className="relative py-10 lg:py-16" aria-labelledby="menu-plattertea">
+    <section className="relative pt-4 pb-10 lg:pt-6 lg:pb-16" aria-labelledby="menu-plattertea">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="pt-fade-up">
           <h2 id="menu-plattertea" className="text-2xl font-extrabold text-forest sm:text-3xl">
@@ -512,7 +512,7 @@ function HowToOrder({ navigate }: HomeViewProps) {
   }
 
   return (
-    <section className="relative overflow-hidden py-14 lg:py-20" aria-labelledby="cara-pesan">
+    <section className="relative overflow-hidden pt-14 pb-10 lg:pt-20 lg:pb-12" aria-labelledby="cara-pesan">
       <Leaf className="pointer-events-none absolute left-[8%] top-8 h-12 w-20 -rotate-12 text-forest-light/40" />
       <LeafPair flip className="pointer-events-none absolute bottom-10 right-[6%] h-16 w-24 text-gold/30" />
 
