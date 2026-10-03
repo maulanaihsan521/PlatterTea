@@ -1355,3 +1355,25 @@ Stage Summary:
 2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
 3. [ENV] Tulis ulang .env Supabase di sandbox (kredensial dari user) bila perlu QA dgn data produksi
 4. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-t
+Agent: main (Z.ai Code)
+Task: Jawab "mengapa gambar tidak tampil" + pulihkan .env Supabase (kredensial dari user) + push commit 99a684e
+
+Work Log:
+- AKAR MASALAH GAMBAR (sandbox): .env ter-reset → dev lokal jatuh ke SQLite seed lama dgn path /products/*.png, sedangkan file asli .webp → img rusak. PRODUKSI TIDAK TERPENGARUH (DB Supabase path .webp benar semua). Fix permanen seed .png→.webp sudah di commit 99a684e
+- ENV PULIH: tulis ulang .env dari kredensial user (pola 12-j): DATABASE_URL=transaction pooler 6543 (pgbouncer=true&connection_limit=1), DIRECT_URL=session pooler 5432, SUPABASE_URL + SERVICE_ROLE_KEY (sb_secret_...) + bucket media, AUTH_SECRET baru (openssl rand), NEXT_PUBLIC_SITE_URL
+- Prisma client regenerate (postgresql); dev server restart dgn env eksplisit (shell export sqlite ditimpa) → /api/products 200 menyajikan data Supabase asli (8 produk, porsi 250–300 gram, path .webp semua)
+- VERIFIKASI VISUAL: menu — 16 img / 0 rusak setelah lazy-load; kartu tampil ~~Rp17.000~~ Rp15.000 dst; homepage — 27 img / 0 rusak / 12 harga coret; console bersih
+- PUSH: git push (inline token) fbf7101..bf50e41 main → main; ls-remote = lokal HEAD bf50e41 (isi: 99a684e feat promo diskon Rp2.000 + bf50e41 worklog 13-s)
+
+Stage Summary:
+- Sandbox kembali tersambung Supabase (dev = data produksi); gambar tampil normal; fitur harga coret live di preview
+- Push sukses → Vercel auto-deploy kode promo harga coret
+- KEAMANAN: PAT classic & password DB & sb_secret key SEMUA sudah terekspos di chat berulang kali → WAJIB revoke/rotate oleh user setelah deploy terverifikasi
+
+## Unresolved Issues / Next Priorities
+1. [WAJIB USER] Revoke PAT ghp_zRz... setelah push ini + rotate password Postgres & Supabase secret key (semua terekspos di chat)
+2. Verifikasi deploy produksi pasca-push (harga coret tampil di plattertea.vercel.app)
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
