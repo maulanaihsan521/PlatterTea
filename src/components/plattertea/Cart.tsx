@@ -21,6 +21,7 @@ import { buildWaOrderMessage, formatRupiah, PROMO_DISKON_RP, type Route } from '
 import { cn } from '@/lib/utils'
 import { WhatsAppIcon } from './ProductCard'
 import { CoretPrice } from './PromoPrice'
+import { BadgePercent } from 'lucide-react'
 
 // ============ Tombol tambah ke keranjang (kartu produk) ============
 
@@ -111,7 +112,7 @@ export function CartSheet({ navigate }: CartSheetProps) {
   const [note, setNote] = useState('')
 
   const total = useMemo(() => cartTotal(items), [items])
-  // Estimasi "hemat" tampilan: tiap item dianggap dipotong Rp2.000 dari harga normal (lapisan promo)
+  // Estimasi "hemat" tampilan: tiap item dianggap dipotong PROMO_DISKON_RP dari harga normal (lapisan promo)
   const hemat = useMemo(() => items.reduce((n, i) => n + i.qty * PROMO_DISKON_RP, 0), [items])
 
   const order = () => {
@@ -300,9 +301,12 @@ export function CartSheet({ navigate }: CartSheetProps) {
               </div>
 
               {hemat > 0 && (
-                <div className="mt-3 flex items-center justify-between text-[12.5px]">
-                  <span className="font-semibold text-gold-dark">Hemat promo</span>
-                  <span className="font-extrabold tabular-nums text-gold-dark">−{formatRupiah(hemat)}</span>
+                <div className="mt-3 flex items-center justify-between rounded-xl bg-gold/10 px-3.5 py-2.5 ring-1 ring-gold/25 ring-inset">
+                  <span className="flex items-center gap-1.5 text-[12px] font-bold text-gold-dark">
+                    <BadgePercent className="h-3.5 w-3.5" aria-hidden />
+                    Hemat promo
+                  </span>
+                  <span className="text-[13.5px] font-extrabold tabular-nums text-gold-dark">−{formatRupiah(hemat)}</span>
                 </div>
               )}
 

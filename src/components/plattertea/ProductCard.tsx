@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast'
 import { ArrowRight, Plus, Check, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { CoretPrice } from './PromoPrice'
+import { CoretPrice, PromoTag } from './PromoPrice'
 
 /** WhatsApp brand glyph (simple-icons path) — dipakai tombol checkout WhatsApp di keranjang */
 export function WhatsAppIcon({ className }: { className?: string }) {
@@ -77,6 +77,7 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
             Favorit
           </span>
         )}
+        <PromoTag />
         <img
           src={product.mainImage || '/products/tea-only.webp'}
           alt={product.name}
@@ -103,7 +104,7 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
         <div className="mt-auto flex flex-wrap items-center justify-between gap-1.5 gap-y-2 pt-4">
           <div className="shrink-0">
             <CoretPrice price={product.price} className="block text-[11px] leading-tight" />
-            <p className="text-[16.5px] font-extrabold leading-tight tracking-tight text-forest">
+            <p className="text-[16.5px] font-extrabold leading-tight tracking-tight text-gold-dark">
               {formatRupiah(product.price)}
             </p>
           </div>
@@ -159,6 +160,7 @@ export function ProductCardRow({ product, onOpen }: ProductCardProps) {
             Favorit
           </span>
         )}
+        <PromoTag className="right-1.5 top-1.5 px-1.5 py-0.5 text-[8px]" />
         <img
           src={product.mainImage || '/products/tea-only.webp'}
           alt={product.name}
@@ -177,7 +179,7 @@ export function ProductCardRow({ product, onOpen }: ProductCardProps) {
         </div>
         <p className="flex flex-wrap items-baseline gap-x-1.5">
           <CoretPrice price={product.price} className="text-[11px]" />
-          <span className="text-[13.5px] font-extrabold tracking-tight text-forest">{formatRupiah(product.price)}</span>
+          <span className="text-[13.5px] font-extrabold tracking-tight text-gold-dark">{formatRupiah(product.price)}</span>
         </p>
         <div className="mt-1 flex items-center gap-1.5">
           <button
@@ -226,6 +228,7 @@ export function TeaCard({ product, onOpen }: ProductCardProps) {
     >
       {/* Gambar edge-to-edge (baris grid bisa stretch di samping kartu promo) */}
       <div className="relative min-h-[120px] flex-1 w-full overflow-hidden bg-cream">
+        <PromoTag className="right-2 top-2 px-1.5 py-0.5 text-[8px]" />
         <img
           src={product.mainImage || '/products/tea-only.webp'}
           alt={product.name}
@@ -237,7 +240,7 @@ export function TeaCard({ product, onOpen }: ProductCardProps) {
         <h3 className="truncate text-[13.5px] font-bold leading-tight text-forest">{product.name}</h3>
         <p className="mt-0.5 flex items-baseline justify-center gap-x-1.5">
           <CoretPrice price={product.price} className="text-[10.5px]" />
-          <span className="text-[13.5px] font-extrabold tracking-tight text-forest">{formatRupiah(product.price)}</span>
+          <span className="text-[13.5px] font-extrabold tracking-tight text-gold-dark">{formatRupiah(product.price)}</span>
         </p>
       </div>
       {/* Hint hover — affordance klik */}

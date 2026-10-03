@@ -137,7 +137,7 @@ export function SearchOverlay({ open, onOpenChange, navigate }: SearchOverlayPro
                       </span>
                       <span className="block truncate text-[12px] text-forest/55">
                         {p.category?.name || 'Menu'} · <CoretPrice price={p.price} className="text-[11px]" />{' '}
-                        <span className="font-semibold text-forest">{formatRupiah(p.price)}</span>
+                        <span className="font-semibold text-gold-dark">{formatRupiah(p.price)}</span>
                       </span>
                     </span>
                     <ArrowUpRight className="h-4 w-4 shrink-0 text-forest/30" />

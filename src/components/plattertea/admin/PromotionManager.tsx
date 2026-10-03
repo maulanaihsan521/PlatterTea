@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Promotion } from '@/lib/plattertea'
+import { formatRupiah, PROMO_DISKON_RP } from '@/lib/plattertea'
 import { useResource, StatusBadge, Field, TextInput, TextArea, ToggleField, ImageField } from './shared'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -201,7 +202,7 @@ export function PromotionManager() {
               <TextInput value={form.title} onChange={(e) => set('title', e.target.value)} placeholder="cth. SPESIAL MARKET DAYS" />
             </Field>
             <Field label="Subjudul">
-              <TextInput value={form.subtitle} onChange={(e) => set('subtitle', e.target.value)} placeholder="Diskon Rp2.000 Semua Produk!" />
+              <TextInput value={form.subtitle} onChange={(e) => set('subtitle', e.target.value)} placeholder={`Diskon ${formatRupiah(PROMO_DISKON_RP)} Semua Produk!`} />
             </Field>
             <Field label="Deskripsi">
               <TextArea value={form.description} onChange={(e) => set('description', e.target.value)} className="min-h-[100px]" />

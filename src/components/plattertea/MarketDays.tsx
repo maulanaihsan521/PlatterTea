@@ -16,7 +16,7 @@ import { Leaf, LeafPair, Blob } from './Decor'
 import { Mascot } from './Mascot'
 import { useSettings, waLink, WA_MESSAGES, OPEN_PO_MESSAGE_TEMPLATE } from '@/hooks/use-plattertea'
 import { cn } from '@/lib/utils'
-import type { Route } from '@/lib/plattertea'
+import { formatRupiah, PROMO_DISKON_RP, type Route } from '@/lib/plattertea'
 
 interface MarketDaysProps {
   navigate: (r: Route) => void
@@ -64,7 +64,7 @@ export function MarketDaysBanner({ navigate }: MarketDaysProps) {
 
               <p className="mt-3 max-w-xl text-[14.5px] leading-relaxed text-forest/75">
                 Diskon{' '}
-                <strong className="font-extrabold text-forest">Rp2.000 semua produk</strong>{' '}
+                <strong className="font-extrabold text-forest">{formatRupiah(PROMO_DISKON_RP)} semua produk</strong>{' '}
                 saat event Market Days di kampus. Mau lebih praktis? Pesan lebih awal lewat
                 Open PO via WhatsApp, ambil di booth tanpa antre!
               </p>
@@ -73,7 +73,7 @@ export function MarketDaysBanner({ navigate }: MarketDaysProps) {
               <div className="mt-5 flex flex-wrap gap-2.5">
                 {[
                   { icon: Store, label: 'Booth Market Days kampus' },
-                  { icon: BadgePercent, label: 'Diskon Rp2.000 semua produk' },
+                  { icon: BadgePercent, label: `Diskon ${formatRupiah(PROMO_DISKON_RP)} semua produk` },
                   { icon: MessageCircle, label: 'Order via WhatsApp H-4' },
                 ].map(({ icon: Icon, label }) => (
                   <span
@@ -129,7 +129,7 @@ export function MarketDaysBanner({ navigate }: MarketDaysProps) {
                 {/* discount tag */}
                 <span className="absolute -right-3 -top-4 flex rotate-6 items-center gap-1 rounded-full bg-forest px-3.5 py-2 text-xs font-extrabold text-gold shadow-[0_6px_16px_rgba(15,46,38,0.4)]">
                   <BadgePercent className="h-3.5 w-3.5" />
-                  -Rp2.000
+                  -{formatRupiah(PROMO_DISKON_RP)}
                 </span>
                 <p className="absolute -bottom-5 left-1 -rotate-3 font-hand text-2xl font-semibold text-forest">
                   tanpa antre!

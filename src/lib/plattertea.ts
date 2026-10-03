@@ -142,11 +142,14 @@ export function formatRupiah(price: number): string {
 
 /**
  * Besaran diskon tampilan: setiap harga produk tampil "seolah-olah" dipotong
- * Rp2.000 — harga normal (harga + 2.000) dicoret, harga sekarang jadi harga promo.
+ * Rp2.500 — harga normal (harga + 2.500) dicoret, harga sekarang jadi harga promo.
+ * Dipilih 2.500 karena: harga asli berakhiran .500 terasa wajar bagi konsumen
+ * F&B Indonesia, dan Tea Only jadi ~~Rp10.000~~ → Rp8.000 (diskon 20% rapi).
  * HANYA lapisan tampilan: harga asli di DB, subtotal/total keranjang, dan
  * pesanan WhatsApp tetap memakai harga sekarang (yang dibayar tidak berubah).
+ * Ubah nilai ini dan seluruh situs (badge, banner, admin placeholder) ikut.
  */
-export const PROMO_DISKON_RP = 2000
+export const PROMO_DISKON_RP = 2500
 
 /** Harga normal (sebelum "diskon") yang dicoret di tampilan publik. */
 export function hargaSebelumDiskon(price: number): number {
@@ -156,10 +159,11 @@ export function hargaSebelumDiskon(price: number): number {
 /**
  * Highlight angka untuk kartu promo (harga paket / nominal diskon).
  * Dipetakan dari judul promo di CMS — tanpa field harga khusus.
+ * Nominal diskon diturunkan dari PROMO_DISKON_RP agar selalu konsisten.
  */
 export function promoHighlight(title: string): string | null {
   const t = title.toUpperCase()
-  if (t.includes('MARKET DAY')) return 'Diskon Rp2.000'
+  if (t.includes('MARKET DAY')) return `Diskon ${formatRupiah(PROMO_DISKON_RP)}`
   if (t.includes('BESTIE')) return 'Rp35.000'
   if (t.includes('PLATTERTEA COMBO')) return 'Rp21.000'
   return null
