@@ -19,6 +19,11 @@ interface DocumentMetaProps {
    * Menghasilkan rich result breadcrumb Google (jalur navigasi di hasil pencarian).
    */
   breadcrumb?: { name: string; path: string }[]
+  /**
+   * True → meta robots noindex,nofollow (node ber-id khusus, mudah dibersihkan
+   * saat pindah ke view publik). Dipakai view admin — jalur /P578Admin.
+   */
+  noindex?: boolean
 }
 
 function absoluteUrl(src: string): string {
@@ -60,8 +65,23 @@ function setCanonical(href: string) {
  * SPA path-routing tidak punya metadata per route di server — sinkronisasi
  * di sini dibaca Google saat merender halaman (renderer JS Google resmi).
  */
-export function DocumentMeta({ title, description, image, path, breadcrumb }: DocumentMetaProps) {
+export function DocumentMeta({ title, description, image, path, breadcrumb, noindex }: DocumentMetaProps) {
   useEffect(() => {
+    // noindex admin — node ber-id agar tidak menghapus meta robots milik layout
+    const ROBOTS_ID = 'pt-robots-noindex'
+    if (noindex) {
+      let el = document.getElementById(ROBOTS_ID) as HTMLMetaElement | null
+      if (!el) {
+        el = document.createElement('meta')
+        el.id = ROBOTS_ID
+        el.setAttribute('name', 'robots')
+        document.head.appendChild(el)
+      }
+      el.setAttribute('content', 'noindex, nofollow')
+    } else {
+      document.getElementById(ROBOTS_ID)?.remove()
+    }
+
     if (description) {
       setMeta('name', 'description', description)
       setMeta('property', 'og:title', title)
@@ -108,7 +128,7 @@ export function DocumentMeta({ title, description, image, path, breadcrumb }: Do
     } else if (script) {
       script.remove()
     }
-  }, [title, description, image, path, breadcrumb])
+  }, [title, description, image, path, breadcrumb, noindex])
 
   // <title> hoisted React 19 → head; document.title ikut tersinkron otomatis
   return <title>{title}</title>

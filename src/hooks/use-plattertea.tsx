@@ -38,21 +38,22 @@ function subscribeRoute(callback: () => void) {
   }
 }
 
-export function useSiteRoute() {
-  // Saat SSR & hydration selalu mulai dari home, lalu sinkron ke URL asli
-  // setelah mount — mencegah hydration mismatch pada deep-link (mis. /menu).
-  const route = useSyncExternalStore(subscribeRoute, getRoute, () => HOME_ROUTE)
+export function useSiteRoute(initialRoute?: Route) {
+  // SSR + hydration: pakai view dari server (via rewrite ptview — searchParams
+  // di page.tsx) sehingga raw HTML & hydration render view yang benar; setelah
+  // mount, snapshot klien (location asli) yang mengambil alih — nilainya sama.
+  const getServerSnapshot = useCallback(() => initialRoute ?? HOME_ROUTE, [initialRoute])
+  const route = useSyncExternalStore(subscribeRoute, getRoute, getServerSnapshot)
 
-  // Normalisasi deep-link hash LAMA (#/menu → /menu) agar URL lama yang tersebar
-  // (mis. di bio IG) tetap berfungsi & langsung jadi URL bersih yang terindeks.
+  // Normalisasi deep-link hash LAMA (#/menu → /menu, #/P578Admin → /P578Admin)
+  // agar URL lama yang tersebar (mis. di bio IG / email) tetap berfungsi &
+  // langsung jadi URL bersih (publik terindeks, admin terblokir robots.txt).
   useEffect(() => {
     const { pathname, hash } = window.location
-    if (pathname === '/' && hash && !hash.startsWith('#/P578Admin')) {
+    if (pathname === '/' && hash) {
       const legacy = parseHash(hash)
-      if (legacy.view !== 'admin') {
-        history.replaceState(null, '', routeToPath(legacy))
-        window.dispatchEvent(new Event('pt:navigate'))
-      }
+      history.replaceState(null, '', routeToPath(legacy))
+      window.dispatchEvent(new Event('pt:navigate'))
     }
   }, [])
 

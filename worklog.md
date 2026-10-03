@@ -1547,3 +1547,55 @@ Work Log:
 Stage Summary:
 - Identitas maskot kini hadir di bagian Visi/Misi — halaman About lebih hidup & personal
 - Commit lokal TANPA push (menunggu kata "push" dari user)
+
+---
+Task ID: 14
+Agent: Z.ai Code (main session)
+Task: Pasca-push verifikasi produksi (SEO commit 087d433 + about commit 78d69fa) + fix gap: SSR metadata per path & admin noindex
+
+Work Log:
+- Push 3 commit (fbf16dc..78d69fa) atas perintah "push" user; verifikasi produksi:
+  robots.txt OK, sitemap 14 URL (6 view + 8 produk), JSON-LD FoodEstablishment/WebSite/
+  SearchAction ada di raw HTML, pwa icons 200, /menu /promo /faq /about /contact
+  direct-load benar (title+canonical via JS), ?q=combo terisi, 0 console error
+- Ditemukan GAP 1: commit klaim "admin noindex" ternyata tak pernah diimplementasi
+  (hanya komentar di src). Hash #/P578Admin juga tidak terblokir robots.txt (hash tak
+  dikirim ke server) — jika Google me-render URL itu, konten admin menempel ke URL "/"
+- Ditemukan GAP 2 (lebih penting): RAW HTML semua path = metadata beranda! SSR memakai
+  snapshot HOME (useSyncExternalStore tak bisa baca location di server). WhatsApp/IG/
+  Facebook/Twitter tidak mengeksekusi JS → share link /produk/{slug} menampilkan kartu
+  beranda, bukan kartu produk (nama/foto/harga hilang)
+- FIX (commit lokal, belum push):
+  a) rewrites next.config kini mengirim ?ptview=menu|product|promo|about|contact|faq|admin
+     (+ slug) → server component page.tsx tahu view TANPA middleware
+  b) page.tsx jadi server component: generateMetadata per path (description/canonical/
+     og:url/og:title/og:description/og:image/twitter — title SENGAJA tidak di-set agar
+     tidak perang dgn <title> DocumentMeta React 19) + pass initialRoute & initialProduct
+  c) <title> per path tetap dari DocumentMeta — kini benar saat SSR krn view awal benar
+     (PlatterTeaClient.tsx baru, useSiteRoute menerima server snapshot)
+  d) /produk/{slug}: query DB via src/lib/products-server.ts (dipakai bersama API route,
+     DRY) → og:image foto produk asli + og:title nama produk; ProductDetailView menerima
+     initialEntry → SSR konten + fetch ganda terhindar
+  e) Admin MIGRASI hash → path /P578Admin: robots.txt Disallow kini efektif (crawler
+     tak fetch sama sekali) + meta noindex,nofollow di generateMetadata (raw HTML) +
+     noindex client-side (DocumentMeta prop baru, node ber-id untuk cleanup). Legacy
+     #/P578Admin otomatis dinormalisasi ke path via useSiteRoute effect. Reset-password
+     link email ikut pindah ke path URL
+  f) AdminView onNavigate pushState (bukan location.hash), link AdminLogin/
+     ResetPasswordForm pakai path
+- INSIDENTAL: dev server mati-matian "URL must start with postgresql://" — ternyata shell
+  sandbox punya DATABASE_URL=file:...custom.db (template lama) yang MENIMPA .env saat
+  restart. Solusi: env -u DATABASE_URL bun run dev. Produksi (Vercel) tidak terdampak
+- QA lengkap lokal: raw HTML 10 path (title+canonical+og+robots semua benar; produk
+  og:image=/products/platter-only.webp); browser: direct-load menu/produk interaktif
+  (kartu qty+, wa.me, cart), legacy #/menu & #/P578Admin → path otomatis, pushState
+  nav + back/forward OK, ?q=combo terisi, sitemap 14 loc, lint 0, tsc 0, dev.log 0 error
+
+Stage Summary:
+- Raw HTML kini SEO-perfect per path: crawler sosial (tanpa JS) pun mendapat title/
+  canonical/OG produk asli — preview WhatsApp menampilkan foto & nama produk
+- Admin benar-benar noindex (robots.txt + meta) di path asli /P578Admin; hash legacy
+  tetap berfungsi
+- Commit lokal (TANPA push — menunggu user bilang "push")
+- Catatan risiko: page kini dynamic (baca searchParams) — HTML tak di-cache edge static
+  lagi; TTFB masih cepat (function sin1 dekat DB). Sitemap/robots/API tak berubah

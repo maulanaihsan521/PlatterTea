@@ -133,7 +133,8 @@ export function parsePathname(pathname: string): Route | null {
 }
 
 /**
- * Route → URL publik. View publik = path asli (SEO/sitelinks), admin = hash.
+ * Route → URL publik. View publik & admin sama-sama path URL asli (SEO:
+ * sitelinks + robots.txt Disallow /P578Admin memblokir crawler sejak fetch).
  * Dipakai juga sbg key remount <main> dan penyusun canonical/sitemap.
  */
 export function routeToPath(route: Route): string {
@@ -153,7 +154,40 @@ export function routeToPath(route: Route): string {
     case 'faq':
       return '/faq'
     case 'admin':
-      return route.path.length ? `#/P578Admin/${route.path.join('/')}` : '#/P578Admin'
+      return route.path.length ? `/P578Admin/${route.path.join('/')}` : '/P578Admin'
+  }
+}
+
+/**
+ * searchParams hasil rewrite next.config (ptview/slug) → Route.
+ * Dipakai server component (page.tsx) untuk menentukan view saat SSR —
+ * raw HTML punya <title>/meta/canonical yang benar per path (WhatsApp/
+ * Facebook/X tidak mengeksekusi JS; Google pun membaca HTML awal).
+ */
+export function routeFromSearchParams(
+  sp: Record<string, string | string[] | undefined>,
+): Route {
+  const first = (v: string | string[] | undefined): string | undefined =>
+    Array.isArray(v) ? v[0] : v
+  switch (first(sp.ptview)) {
+    case 'menu':
+      return { view: 'menu' }
+    case 'product': {
+      const slug = first(sp.slug)
+      return slug ? { view: 'product', slug } : { view: 'menu' }
+    }
+    case 'promo':
+      return { view: 'promo' }
+    case 'about':
+      return { view: 'about' }
+    case 'contact':
+      return { view: 'contact' }
+    case 'faq':
+      return { view: 'faq' }
+    case 'admin':
+      return { view: 'admin', path: [] }
+    default:
+      return { view: 'home' }
   }
 }
 

@@ -16,16 +16,25 @@ import { cn } from '@/lib/utils'
 interface ProductDetailViewProps {
   slug: string
   navigate: (r: Route) => void
+  /**
+   * Data hasil SSR (page.tsx query server) — view langsung punya produk tanpa
+   * menunggu fetch, dan <title>/meta produk benar di raw HTML. null/undefined =
+   * fetch klien seperti biasa (SPA navigasi internal).
+   */
+  initialEntry?: ProductResult | 'notfound' | null
 }
 
-interface ProductResult {
+export interface ProductResult {
   product: Product
   related: Product[]
 }
 
-export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
-  // cache keyed by slug — avoids synchronous setState in effect
-  const [results, setResults] = useState<Record<string, ProductResult | 'notfound'>>({})
+export function ProductDetailView({ slug, navigate, initialEntry }: ProductDetailViewProps) {
+  // cache keyed by slug — avoids synchronous setState in effect;
+  // SSR menyuntikkan entry awal (produk dari server) ke cache yang sama
+  const [results, setResults] = useState<Record<string, ProductResult | 'notfound'>>(
+    initialEntry && initialEntry !== 'notfound' ? { [slug]: initialEntry } : initialEntry === 'notfound' ? { [slug]: 'notfound' } : {},
+  )
   const [shared, setShared] = useState(false)
   const entry = results[slug]
   const loading = entry === undefined

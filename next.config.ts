@@ -47,20 +47,25 @@ const nextConfig: NextConfig = {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
   /**
-   * SEO path-routing: view SPA publik kini punya URL asli yang bisa diindeks
-   * Google (syarat sitelinks). Semua path di-rewrite ke halaman tunggal "/" —
-   * SPA membaca pathname (parsePathname) untuk menentukan view. Hash #/P578Admin
-   * tetap berfungsi (admin tidak butuh indeks).
+   * SEO path-routing SSR: semua path di-rewrite ke halaman tunggal "/" dengan
+   * query ptview — server component (page.tsx) membaca searchParams untuk
+   * me-render view + metadata yang benar saat SSR (raw HTML per path: title,
+   * canonical, OG — terbaca crawler sosial yang tidak mengeksekusi JS).
+   * Hash #/P578Admin lama tetap didukung via parseHash (fallback legacy).
    */
   async rewrites() {
     return [
-      { source: "/menu", destination: "/" },
-      { source: "/menu/:slug", destination: "/" }, // alias lama deep-link produk
-      { source: "/produk/:slug", destination: "/" },
-      { source: "/promo", destination: "/" },
-      { source: "/about", destination: "/" },
-      { source: "/contact", destination: "/" },
-      { source: "/faq", destination: "/" },
+      { source: "/menu", destination: "/?ptview=menu" },
+      { source: "/menu/:slug", destination: "/?ptview=product&slug=:slug" }, // alias lama
+      { source: "/produk/:slug", destination: "/?ptview=product&slug=:slug" },
+      { source: "/promo", destination: "/?ptview=promo" },
+      { source: "/about", destination: "/?ptview=about" },
+      { source: "/contact", destination: "/?ptview=contact" },
+      { source: "/faq", destination: "/?ptview=faq" },
+      // Admin CMS — path asli (robots.txt Disallow + noindex metadata;
+      // hash #/P578Admin lama otomatis dinormalisasi ke path ini)
+      { source: "/P578Admin", destination: "/?ptview=admin" },
+      { source: "/P578Admin/:path*", destination: "/?ptview=admin" },
     ];
   },
   /* config options here */

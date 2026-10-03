@@ -45,7 +45,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
       data: {
         token: raw,
         expiresAt: expiresAt.toISOString(),
-        url: `/#/P578Admin/reset/${raw}`,
+        url: `/P578Admin/reset/${raw}`,
       },
     })
   })
