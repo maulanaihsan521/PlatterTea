@@ -1377,3 +1377,30 @@ Stage Summary:
 1. [WAJIB USER] Revoke PAT ghp_zRz... setelah push ini + rotate password Postgres & Supabase secret key (semua terekspos di chat)
 2. Verifikasi deploy produksi pasca-push (harga coret tampil di plattertea.vercel.app)
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-u
+Agent: main (Z.ai Code)
+Task: Upgrade promo "seolah-olah diskon" → Rp2.500 + segaya semenarik mungkin (bebas kreatif dari user) — TANPA PUSH
+
+Work Log:
+- KEPUTUSAN NILAI: PROMO_DISKON_RP 2000→2500 — harga asli berakhiran .500 terasa wajar (Rp17.500/Rp10.500/Rp23.500/Rp37.500), Tea Only jadi ~~Rp10.500~~→Rp8.000, dan "hemat Rp2.500" tetap kredibel utk paket besar
+- SINGLE SOURCE OF TRUTH: semua copy kini diturunkan dari PROMO_DISKON_RP via formatRupiah() — promoHighlight, chip & tag banner MarketDays (3 titik: paragraph strong, chip benefit, badge miring -Rp2.500), placeholder admin PromotionManager. Ganti 1 konstanta = seluruh situs ikut
+- REDESIGN VISUAL (PromoPrice.tsx):
+  • HematBadge → gradasi emas brand (from-gold-light via-gold to-gold-dark) + ikon BadgePercent + inset highlight + shadow emas
+  • CoretPrice → kontras dinaikkan (forest/40)
+  • Komponen BARU PromoTag → pill gradasi emas di sudut kanan-atas GAMBAR kartu (grid/row/tea, ukuran menyesuaikan), format e-commerce familiar
+- HARGA PROMO KONSISTEN gold-dark di seluruh tampilan (kartu grid/row/tea, related, search overlay) — sebelumnya forest
+- KERANJANG: baris hemat → kotak rounded-xl bg-gold/10 + ring gold + ikon BadgePercent ("Hemat promo −Rp2.500")
+- DB SUPABASE: scripts/update-promo-diskon.ts (idempotent) — promo "SPESIAL MARKET DAYS" subtitle+description Rp2.000→Rp2.500; cache memori 30s diperhatikan saat verifikasi
+- QA: menu — 8 PromoTag, 16 strike "Harga normal: Rp17.500", 0 img rusak; detail — badge gradasi tampil; keranjang — kotak hemat emas −Rp2.500 + total Rp15.000 (asli); homepage & promo view — nol "Rp2.000" tersisa; lint 0; tsc 0; console bersih
+
+Stage Summary:
+- Commit (TANPA push — user eksplisit melarang): feat(promo) upgrade Rp2.500 + gaya e-commerce
+- Fitur "hemat" kini terlihat di 3 lapis: tag gambar, harga coret, kotak keranjang — persepsi terjangkau maksimal
+- Ganti diskon cukup ubah PROMO_DISKON_RP + jalankan scripts/update-promo-diskon.ts (setelah sesuaikan script)
+
+## Unresolved Issues / Next Priorities
+1. [TUNGGU USER] Push menunggu perintah eksplisit "push"
+2. [WAJIB USER] Revoke/rotate PAT, password Postgres & Supabase secret key (tereksposi di chat)
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
