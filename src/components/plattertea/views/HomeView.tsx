@@ -837,12 +837,13 @@ export function HomeView({ navigate }: HomeViewProps) {
     <>
       <Hero navigate={navigate} />
       <FeatureStrip />
+      {/* Urutan: Kenalan → Cara Pesan → Menu (Cara Pesan dipindah naik sesuai permintaan) */}
       <BrandIntro navigate={navigate} />
+      <HowToOrder navigate={navigate} />
       <ProductShowcase navigate={navigate} />
       <TeaCollection navigate={navigate} />
       <MarketDaysBanner navigate={navigate} />
       <DarkCTA navigate={navigate} />
-      <HowToOrder navigate={navigate} />
       <OpenPOSection />
       <Testimonials />
       <PreFooterCTA navigate={navigate} />
