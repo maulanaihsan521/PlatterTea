@@ -1404,3 +1404,30 @@ Stage Summary:
 1. [TUNGGU USER] Push menunggu perintah eksplisit "push"
 2. [WAJIB USER] Revoke/rotate PAT, password Postgres & Supabase secret key (tereksposi di chat)
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-v
+Agent: main (Z.ai Code)
+Task: Fix bug posisi harga di kartu produk (harga "lepas" di atas tombol, lapor user via screenshot Bestie Combo)
+
+Work Log:
+- DIAGNOSIS (agent-browser, viewport 1404 & eval geometri DOM): baris harga+aksi kartu grid memakai
+  `flex flex-wrap items-center justify-between` — butuh ~248px (harga 85 + tombol 157 + gap 6),
+  sedangkan baris hanya 222px pada kartu grid 4-kolom lg (card 254px - padding 32). Saat tidak muat,
+  tombol wrap ke baris kedua rata kanan (`ml-auto`) sehingga blok harga terlihat mengambang di atas
+  tombol — persis seperti screenshot user (Bestie Combo). Sifatnya tidak deterministik: di viewport/
+  zoom lain hanya SEBAGIAN kartu wrap (3 kartu pertama muat, ke-4 tidak) → terlihat sebagai bug posisi.
+  Tereproduksi lokal: SEMUA kartu wrap pada lg 4-kolom.
+- FIX (ProductCard.tsx varian grid): ganti flex-wrap rawan dengan LAYOUT 2-BARIS DETERMINISTIK:
+  baris 1 = harga coret (block) + harga promo gold-dark; baris 2 = tombol quick-add bulat (h-10 w-10,
+  naik dari h-9 demi target sentuh) + tombol "Lihat Detail" flex-1 (full-width sisa, min-h-[40px],
+  justify-center). Tidak ada wrap acak mungkin; semua kartu sejajar di semua lebar.
+- QA agent-browser: #/menu 4-kolom lg — 8/8 kartu aligned:true, tombol 1 baris; home "Menu PlatterTea"
+  — konsisten; tablet 768 (2-kolom) & mobile 390 (ProductCardRow) — aman; detail produk + Menu Lainnya
+  — aman; quick-add klik OK (badge keranjang 1→2), keranjang: hemat promo −Rp5.000 (2×2500) benar,
+  total Rp23.000 = harga asli (promo tetap lapisan tampilan saja); console bersih; `bun run lint` 0 error.
+
+Stage Summary:
+- Bug posisi harga tuntas: layout kartu kini deterministik & seragam (harga atas, tombol bawah full-width)
+  — pola e-commerce standar, sekaligus menaikkan target sentuh tombol ke 40px
+- Commit lokal TANPA push (menunggu kata "push" dari user)

@@ -100,15 +100,16 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
           {product.shortDesc}
         </p>
 
-        {/* Harga + aksi — harga promo besar dgn harga normal dicoret di atasnya */}
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-1.5 gap-y-2 pt-4">
-          <div className="shrink-0">
-            <CoretPrice price={product.price} className="block text-[11px] leading-tight" />
-            <p className="text-[16.5px] font-extrabold leading-tight tracking-tight text-gold-dark">
-              {formatRupiah(product.price)}
-            </p>
-          </div>
-          <div className="ml-auto flex shrink-0 items-center gap-1.5">
+        {/* Harga + aksi — layout 2-baris deterministik: blok harga di atas, tombol di baris bawah.
+            Dulu flex-wrap harga+kembali berdampingan: saat lebar kartu kurang (grid 4 kolom ~254px),
+            tombol wrap sendiri sehingga harga terlihat "lepas" di atas tombol (bug posisi harga).
+            Sekarang selalu sejajar & konsisten di semua lebar kartu. */}
+        <div className="mt-auto pt-4">
+          <CoretPrice price={product.price} className="block text-[11px] leading-tight" />
+          <p className="text-[16.5px] font-extrabold leading-tight tracking-tight text-gold-dark">
+            {formatRupiah(product.price)}
+          </p>
+          <div className="mt-2.5 flex items-center gap-1.5">
             <button
               type="button"
               onClick={(e) => {
@@ -116,7 +117,7 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
                 quickAdd()
               }}
               className={cn(
-                'flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest',
+                'flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest',
                 added
                   ? 'bg-gold text-forest shadow-[0_2px_10px_rgba(232,161,38,0.45)]'
                   : 'bg-forest text-cream hover:-translate-y-0.5 hover:bg-gold hover:text-forest'
@@ -135,7 +136,7 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
             <button
               type="button"
               onClick={() => onOpen(product.slug)}
-              className="inline-flex min-h-[36px] shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-forest px-3 py-2 text-[11.5px] font-bold text-cream transition-colors duration-200 hover:bg-forest-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+              className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-full bg-forest px-3 py-2 text-[11.5px] font-bold text-cream transition-colors duration-200 hover:bg-forest-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
               aria-label={`Lihat detail ${product.name}`}
             >
               Lihat Detail
