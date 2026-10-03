@@ -1138,3 +1138,24 @@ Stage Summary:
 1. [BLOKIR] Push 50fab82 — butuh PAT GitHub dari user (sandbox tanpa kredensial)
 2. User: ganti password admin produksi (masih plattertea123) + rotasi Supabase key
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-i
+Agent: main (Z.ai Code)
+Task: Push commit 50fab82 ke GitHub memakai PAT dari user (lanjutan 13-h)
+
+Work Log:
+- Validasi token via git ls-remote (remote HEAD = 9afd844, cocok dgn origin/main lokal)
+- Push inline URL (token TIDAK disimpan ke .git/config / file repo / credential store): 9afd844..43fde42 HEAD -> main
+- NOTE: ikut ter-push 1 commit UUID cron 43fde42 (isinya hanya worklog.md +36 baris — aman, bukan junk)
+- Verifikasi: refs/heads/main = 43fde42 = local HEAD (sinkron penuh); worktree bersih; upload/ tak terlacak lagi
+- Cron webDevReview dibuat ulang (job 433199, fixed_rate 900s)
+
+Stage Summary:
+- PRODUKSI TER-UPDATE: github.com/marketeens3-dot/PlatterTea main = 43fde42 (ikon tambah-keranjang gabungan + fix gap home + repo bersih) → Vercel auto-deploy
+- KEAMANAN TOKEN: token ghp_... terekspos di percakapan → WAJIB di-revoke/rotasi user via GitHub Settings → Developer settings → PAT (sesuai PANDUAN-DEPLOY.md 0.2). Sandbox sengaja TIDAK menyimpan token tsb.
+
+## Unresolved Issues / Next Priorities
+1. [WAJIB USER] Revoke/rotasi PAT GitHub yang baru dikirim di chat + rotasi SUPABASE_SERVICE_ROLE_KEY
+2. User: ganti password admin produksi (masih plattertea123) via CMS
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
