@@ -87,3 +87,12 @@ export function Swoosh({ className }: { className?: string }) {
     </svg>
   )
 }
+
+/** 4-point sparkle (kilau emas) — aksen dekoratif di sekitar maskot/judul */
+export function Sparkle({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={cn('pointer-events-none select-none', className)}>
+      <path d="M12 1.5c.65 5.2 2.6 8 8.5 8.7-5.9.7-7.85 3.5-8.5 8.7-.65-5.2-2.6-8-8.5-8.7 5.9-.7 7.85-3.5 8.5-8.7Z" />
+    </svg>
+  )
+}

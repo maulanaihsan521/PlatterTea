@@ -1159,3 +1159,25 @@ Stage Summary:
 1. [WAJIB USER] Revoke/rotasi PAT GitHub yang baru dikirim di chat + rotasi SUPABASE_SERVICE_ROLE_KEY
 2. User: ganti password admin produksi (masih plattertea123) via CMS
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-j
+Agent: main (Z.ai Code)
+Task: Tambah maskot mengintip di atas tulisan "Mix, Sip, Enjoy!" di hero (user kirim mockup mobile) — JANGAN PUSH dulu
+
+Work Log:
+- Analisis mockup: maskot (pegang gelas teh) mengintip dari BELAKANG teks hero, kilau emas di sekitarnya; teks selalu di depan; gap jelas dari navbar
+- Decor.tsx: tambah komponen Sparkle (bintang 4 titik, reusable, currentColor)
+- HomeView Hero: struktur h1 dibungkus container relative → maskot pose "tea" absolute -top-[64px] left-1/2 z-0 (sway), 3 Sparkle gold di sekitar maskot, h1 relative z-10 di depan; ukuran responsif w-86/sm:110/lg:118
+- INSIDEN TABRAKAN NAVBAR: percobaan awal (-top-72, pt-24) → mascotTop 22px < navBottom 72px (mobile) & 57 < 84 (desktop) → hero pt dinaikkan bertahap: pt-[152px] sm:pt-[176px] lg:pt-40; peek -top-[64/76/88px]
+- HASIL UKUR (eval): gap navbar→maskot = 14px @390, 13px @768, 12px @1280; tanpa horizontal overflow di ketiganya; teks tampil di depan maskot sesuai mockup; console 0 error; lint bersih
+- Maskot "box" di kiri-bawah gambar hero TETAP (ada di mockup juga)
+
+Stage Summary:
+- Hero mobile kini sesuai mockup user: maskot teh + kilau emas mengintip di atas "Mix, Sip, Enjoy!"
+- SIAP PUSH — MENUNGGU PERINTAH USER (jangan push dulu); perubahan: Decor.tsx + HomeView.tsx (belum di-commit)
+
+## Unresolved Issues / Next Priorities
+1. [TUNGGU USER] Push perubahan hero maskot (13-j)
+2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
