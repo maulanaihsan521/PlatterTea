@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command'
 import { formatRupiah, type Product, type Route } from '@/lib/plattertea'
 import { Home, UtensilsCrossed, Tag, Info, Phone, CircleHelp, Search, ArrowUpRight } from 'lucide-react'
+import { CoretPrice } from './PromoPrice'
 
 interface SearchOverlayProps {
   open: boolean
@@ -135,7 +136,8 @@ export function SearchOverlay({ open, onOpenChange, navigate }: SearchOverlayPro
                         )}
                       </span>
                       <span className="block truncate text-[12px] text-forest/55">
-                        {p.category?.name || 'Menu'} · {formatRupiah(p.price)}
+                        {p.category?.name || 'Menu'} · <CoretPrice price={p.price} className="text-[11px]" />{' '}
+                        <span className="font-semibold text-forest">{formatRupiah(p.price)}</span>
                       </span>
                     </span>
                     <ArrowUpRight className="h-4 w-4 shrink-0 text-forest/30" />

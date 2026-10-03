@@ -17,9 +17,10 @@ import { useToast } from '@/hooks/use-toast'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { useCartStore, useCartCount, cartTotal, MAX_QTY_PER_ITEM } from '@/hooks/use-cart'
 import { useSettings, waLink } from '@/hooks/use-plattertea'
-import { buildWaOrderMessage, formatRupiah, type Route } from '@/lib/plattertea'
+import { buildWaOrderMessage, formatRupiah, PROMO_DISKON_RP, type Route } from '@/lib/plattertea'
 import { cn } from '@/lib/utils'
 import { WhatsAppIcon } from './ProductCard'
+import { CoretPrice } from './PromoPrice'
 
 // ============ Tombol tambah ke keranjang (kartu produk) ============
 
@@ -110,6 +111,8 @@ export function CartSheet({ navigate }: CartSheetProps) {
   const [note, setNote] = useState('')
 
   const total = useMemo(() => cartTotal(items), [items])
+  // Estimasi "hemat" tampilan: tiap item dianggap dipotong Rp2.000 dari harga normal (lapisan promo)
+  const hemat = useMemo(() => items.reduce((n, i) => n + i.qty * PROMO_DISKON_RP, 0), [items])
 
   const order = () => {
     if (items.length === 0) return
@@ -229,8 +232,9 @@ export function CartSheet({ navigate }: CartSheetProps) {
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                    <p className="mt-0.5 text-[12.5px] font-semibold text-forest/55">
-                      {formatRupiah(item.price)} / porsi
+                    <p className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 text-[12.5px] font-semibold text-forest/55">
+                      <CoretPrice price={item.price} className="text-[11px]" />
+                      <span>{formatRupiah(item.price)} / porsi</span>
                     </p>
                     <div className="mt-2 flex items-center justify-between gap-2">
                       {/* Stepper qty */}
@@ -294,6 +298,13 @@ export function CartSheet({ navigate }: CartSheetProps) {
                   />
                 </label>
               </div>
+
+              {hemat > 0 && (
+                <div className="mt-3 flex items-center justify-between text-[12.5px]">
+                  <span className="font-semibold text-gold-dark">Hemat promo</span>
+                  <span className="font-extrabold tabular-nums text-gold-dark">−{formatRupiah(hemat)}</span>
+                </div>
+              )}
 
               <div className="mt-3.5 flex items-center justify-between">
                 <span className="text-[13px] font-semibold text-forest/60">Total pesanan</span>

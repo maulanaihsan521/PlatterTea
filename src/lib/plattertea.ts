@@ -138,6 +138,21 @@ export function formatRupiah(price: number): string {
   return `Rp${price.toLocaleString('id-ID')}`
 }
 
+// ============ Promo harga coret (lapisan tampilan publik) ============
+
+/**
+ * Besaran diskon tampilan: setiap harga produk tampil "seolah-olah" dipotong
+ * Rp2.000 — harga normal (harga + 2.000) dicoret, harga sekarang jadi harga promo.
+ * HANYA lapisan tampilan: harga asli di DB, subtotal/total keranjang, dan
+ * pesanan WhatsApp tetap memakai harga sekarang (yang dibayar tidak berubah).
+ */
+export const PROMO_DISKON_RP = 2000
+
+/** Harga normal (sebelum "diskon") yang dicoret di tampilan publik. */
+export function hargaSebelumDiskon(price: number): number {
+  return price + PROMO_DISKON_RP
+}
+
 /**
  * Highlight angka untuk kartu promo (harga paket / nominal diskon).
  * Dipetakan dari judul promo di CMS — tanpa field harga khusus.

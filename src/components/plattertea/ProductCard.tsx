@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast'
 import { ArrowRight, Plus, Check, ShoppingBag } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { CoretPrice } from './PromoPrice'
 
 /** WhatsApp brand glyph (simple-icons path) — dipakai tombol checkout WhatsApp di keranjang */
 export function WhatsAppIcon({ className }: { className?: string }) {
@@ -98,11 +99,14 @@ export function ProductCard({ product, onOpen, className }: ProductCardProps) {
           {product.shortDesc}
         </p>
 
-        {/* Harga + aksi — harga besar, tombol tambah bulat, pill hijau tua + panah (wrap pada kartu sempit) */}
+        {/* Harga + aksi — harga promo besar dgn harga normal dicoret di atasnya */}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-1.5 gap-y-2 pt-4">
-          <p className="shrink-0 text-[16.5px] font-extrabold tracking-tight text-forest">
-            {formatRupiah(product.price)}
-          </p>
+          <div className="shrink-0">
+            <CoretPrice price={product.price} className="block text-[11px] leading-tight" />
+            <p className="text-[16.5px] font-extrabold leading-tight tracking-tight text-forest">
+              {formatRupiah(product.price)}
+            </p>
+          </div>
           <div className="ml-auto flex shrink-0 items-center gap-1.5">
             <button
               type="button"
@@ -171,7 +175,10 @@ export function ProductCardRow({ product, onOpen }: ProductCardProps) {
             </span>
           )}
         </div>
-        <p className="text-[13.5px] font-extrabold tracking-tight text-forest">{formatRupiah(product.price)}</p>
+        <p className="flex flex-wrap items-baseline gap-x-1.5">
+          <CoretPrice price={product.price} className="text-[11px]" />
+          <span className="text-[13.5px] font-extrabold tracking-tight text-forest">{formatRupiah(product.price)}</span>
+        </p>
         <div className="mt-1 flex items-center gap-1.5">
           <button
             type="button"
@@ -228,7 +235,10 @@ export function TeaCard({ product, onOpen }: ProductCardProps) {
       </div>
       <div className="px-2.5 pb-2.5 pt-2">
         <h3 className="truncate text-[13.5px] font-bold leading-tight text-forest">{product.name}</h3>
-        <p className="mt-0.5 text-[13.5px] font-extrabold tracking-tight text-forest">{formatRupiah(product.price)}</p>
+        <p className="mt-0.5 flex items-baseline justify-center gap-x-1.5">
+          <CoretPrice price={product.price} className="text-[10.5px]" />
+          <span className="text-[13.5px] font-extrabold tracking-tight text-forest">{formatRupiah(product.price)}</span>
+        </p>
       </div>
       {/* Hint hover — affordance klik */}
       <span

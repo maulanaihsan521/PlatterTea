@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { Product, Route } from '@/lib/plattertea'
 import { formatRupiah } from '@/lib/plattertea'
+import { CoretPrice, HematBadge } from '../PromoPrice'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
 import { useCartStore, MAX_QTY_PER_ITEM } from '@/hooks/use-cart'
 import { useToast } from '@/hooks/use-toast'
@@ -161,7 +162,11 @@ export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
                 {product.category?.name || 'Menu'}
               </span>
               <h1 className="mt-3 text-3xl font-extrabold text-forest sm:text-4xl">{product.name}</h1>
-              <p className="mt-2 text-2xl font-extrabold text-gold-dark">{formatRupiah(product.price)}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+                <p className="text-2xl font-extrabold text-gold-dark">{formatRupiah(product.price)}</p>
+                <CoretPrice price={product.price} className="text-[15px]" />
+                <HematBadge />
+              </div>
               <p className="mt-4 text-[15px] leading-relaxed text-forest/75">
                 {product.fullDesc || product.shortDesc}
               </p>
@@ -325,7 +330,10 @@ export function ProductDetailView({ slug, navigate }: ProductDetailViewProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="truncate text-[15px] font-bold text-forest">{p.name}</h3>
-                  <p className="mt-0.5 text-[13px] font-semibold text-gold-dark">{formatRupiah(p.price)}</p>
+                  <p className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5">
+                    <CoretPrice price={p.price} className="text-[11px]" />
+                    <span className="text-[13px] font-semibold text-gold-dark">{formatRupiah(p.price)}</span>
+                  </p>
                 </div>
                 <ArrowRight className="h-5 w-5 shrink-0 text-forest/40 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-forest" />
               </button>
