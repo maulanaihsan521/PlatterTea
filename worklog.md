@@ -1431,3 +1431,33 @@ Stage Summary:
 - Bug posisi harga tuntas: layout kartu kini deterministik & seragam (harga atas, tombol bawah full-width)
   — pola e-commerce standar, sekaligus menaikkan target sentuh tombol ke 40px
 - Commit lokal TANPA push (menunggu kata "push" dari user)
+
+---
+Task ID: 13-w
+Agent: main (Z.ai Code)
+Task: Audit performa website — "cek apakah website berat atau tidak"
+
+Work Log:
+- METRIK DEV (agent-browser Performance API, 1404px): TTFB 94ms, FCP 576ms, LCP 716ms (hero.webp),
+  CLS 0, load 669ms — semuanya kategori "baik" (ambang Google LCP < 2500ms)
+- PRODUKSI (plattertea.vercel.app): 36 request, decoded 1.8MB (dev 6.2MB — JS dev memang belum
+  diminifikasi), load event 854ms dari sandbox, FCP 832ms. Brotli aktif: chunk JS terbesar 219KB
+  decoded → 71KB wire; CSS 176KB → 25KB wire. Cache: static immutable 1 thn, gambar 7 hari + SWR,
+  API s-maxage=30 + SWR 300 (verifikasi header x-vercel-cache: HIT)
+- GAMBAR: 23 webp total 1.07MB saat full-scroll, 0 rusak; terberat mix-sip-enjoy.webp 159KB (opsional
+  bisa dimampatkan lg, prioritas rendah). public/products total 652KB utk 11 file — sehat
+- API: hangat 3-26ms (dev) & 35-43ms (prod via curl, sebagian stale-cache); KUNJUNGAN PERTAMA dingin
+  di produksi 1.5-4.2 dtk per API — diinvestigasi via header x-vercel-id: hkg1::iad1::...
+- AKAR MASALAH: Vercel function region DEFAULT iad1 (Washington DC) padahal Supabase ap-southeast-1
+  (Singapura) → tiap roundtrip DB menyeberang Pasifik 2x (~220ms per arah); cold start + N query
+  = 1.5-4.2 dtk utk pengunjung pertama (target market Purwokerto/Indonesia kena dampak terbesar)
+- FIX: vercel.json + "regions": ["sin1"] (Singapura, satu kota dgn Supabase) — RTT DB turun dr ~440ms
+  → ~10ms; API dinamis Asia dr ~300-500ms → 30-80ms. JSON tervalidasi. Efektif setelah deploy berikut
+- Frontend fetch sudah paralel (useEffect mount bersamaan) — tidak perlu diubah
+
+Stage Summary:
+- Kesimpulan audit: website TIDAK berat (LCP <1 dtk, CLS 0, total transfer ~0.6-0.7MB kunjungan
+  pertama + lazy image sisanya, brotli + cache berlapis) — satu-satunya titik lambat = region function
+  Vercel salah benua, sudah diperbaiki di vercel.json (menunggu push/deploy utk aktif)
+- Commit lokal TANPA push (menunggu kata "push" dari user)
+- Opsional backlog: kompres mix-sip-enjoy.webp 159KB → ~100KB
