@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ProductCard, TeaCard } from '../ProductCard'
 import { MarketDaysBanner, OpenPOSection } from '../MarketDays'
 import { TestimonialForm } from '../TestimonialForm'
-import { Leaf, LeafPair, Blob } from '../Decor'
+import { Leaf, LeafPair, Blob, Swoosh } from '../Decor'
 import { Mascot } from '../Mascot'
 import { useSettings, waLink, WA_MESSAGES } from '@/hooks/use-plattertea'
 import { formatRupiah, promoHighlight, type Product, type Promotion, type Testimonial, type Route } from '@/lib/plattertea'
@@ -34,28 +34,37 @@ function Hero({ navigate }: HomeViewProps) {
       <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 px-4 pb-14 sm:px-6 lg:grid-cols-2 lg:gap-6 lg:px-8 lg:pb-20">
         {/* Text */}
         <div className="pt-fade-up text-center lg:text-left">
-          {/* Wordmark resmi "Mix, Sip, Enjoy!" — maskot, daun, kilau & swoosh sudah termasuk dlm aset */}
-          <h1>
+          {/* H1 ganda-visual: wordmark resmi utk mobile/tablet, teks script + swoosh utk desktop.
+              SR membaca teks sekali via sr-only; gambar & teks visual masing2 aria-hidden (duplikat dekoratif). */}
+          <h1 className="relative">
             <img
               src="/brand/mix-sip-enjoy.webp"
-              alt="Mix, Sip, Enjoy!"
+              alt=""
+              aria-hidden="true"
               width={1400}
               height={467}
               fetchPriority="high"
               draggable={false}
-              className="mx-auto w-full max-w-[350px] select-none sm:max-w-[430px] lg:mx-0 lg:max-w-[540px]"
+              className="mx-auto w-full max-w-[350px] select-none sm:max-w-[430px] lg:hidden"
             />
+            <span aria-hidden="true" className="relative hidden lg:block">
+              <span className="font-script text-6xl leading-[1.15] text-forest lg:text-[64px]">
+                Mix, Sip, Enjoy!
+              </span>
+              <Swoosh className="absolute -bottom-3 left-8 h-5 w-64 text-gold" />
+            </span>
+            <span className="sr-only">Mix, Sip, Enjoy!</span>
           </h1>
 
           <p className="mx-auto mt-7 max-w-md text-[16.5px] font-medium leading-relaxed text-forest sm:text-lg sm:text-forest/90 lg:mx-0 lg:text-lg">
             {settings.hero_subtitle}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-2 sm:gap-3 lg:justify-start">
             <button
               type="button"
               onClick={() => navigate({ view: 'menu' })}
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-7 py-3 text-[15px] font-bold text-forest shadow-[0_6px_20px_rgba(232,161,38,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-gold-dark hover:text-cream hover:shadow-[0_10px_28px_rgba(232,161,38,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-gold px-[14px] py-3 text-[14px] font-bold text-forest shadow-[0_6px_20px_rgba(232,161,38,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-gold-dark hover:text-cream hover:shadow-[0_10px_28px_rgba(232,161,38,0.5)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest sm:px-7 sm:text-[15px]"
             >
               Lihat Menu
               <ArrowRight className="h-4.5 w-4.5" />
@@ -64,7 +73,7 @@ function Hero({ navigate }: HomeViewProps) {
               href={wa}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border-2 border-forest/15 bg-white/70 px-7 py-3 text-[15px] font-bold text-forest backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-forest hover:bg-forest hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border-2 border-forest/15 bg-white/70 px-[14px] py-3 text-[14px] font-bold text-forest backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-forest hover:bg-forest hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-forest sm:px-7 sm:text-[15px]"
             >
               <MessageCircle className="h-4.5 w-4.5" />
               Hubungi Kami

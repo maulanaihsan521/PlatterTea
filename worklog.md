@@ -1203,3 +1203,23 @@ Stage Summary:
 1. [TUNGGU USER] Push perubahan hero wordmark (13-j + 13-k)
 2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
 3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
+
+---
+Task ID: 13-l
+Agent: main (Z.ai Code)
+Task: Wordmark "Mix, Sip, Enjoy!" MOBILE-ONLY (desktop kembali ke teks script) + review kenyamanan tampilan mobile (user)
+
+Work Log:
+- SPLIT RESPONSIF: h1 kini ganda-visual dgn semantik aman — <img wordmark> tampil <lg (mobile+tablet), <span> teks script + Swoosh tampil lg+ (desktop = desain asli); teks "Mix, Sip, Enjoy!" dibaca SR tepat 1x via span.sr-only, img & span visual aria-hidden (duplikat dekoratif)
+- REVIEW KENYAMANAN MOBILE: temuan — tombol "Lihat Menu"+"Hubungi Kami" menumpuk vertikal (beda dgn mockup yg berdampingan) → rapikan: px-[14px] text-[14px] gap-2 utk <sm (sm: kembali px-7 text-15); ukur nyata 360px = deficit 9px → setelah rapikan muat
+- VERIFIKASI 4 LEBAR: satuBaris=true & overflow=false @360/@375/@390/@768; desktop 1280: wordmarkHidden + textVisible (desain asli kembali, swoosh kiri); lint 0; console 0 error; screenshot final 360 & 390 — rhythm vertikal nyaman (nav→wordmark 24px, wordmark→sub 28px)
+
+Stage Summary:
+- Mobile/tablet = wordmark resmi (maskot+daun+kilau+swoosh 1 aset, 159KB WebP); Desktop = teks script + swoosh (desain asli) — sesuai permintaan user
+- Tombol hero berdampingan di SEMUA lebar mobile (360-768) sesuai mockup
+- SIAP PUSH — MENUNGGU PERINTAH USER; file berubah: HomeView.tsx, Decor.tsx (Sparkle), public/brand/mix-sip-enjoy.webp
+
+## Unresolved Issues / Next Priorities
+1. [TUNGGU USER] Push perubahan hero (13-j/k/l)
+2. [WAJIB USER] Revoke PAT GitHub lama + ganti password admin produksi + rotasi Supabase key
+3. Backlog: touch drag reorder, SW offline LRU, notifikasi login-gagal
