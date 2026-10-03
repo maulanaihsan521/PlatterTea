@@ -7,7 +7,7 @@ import { GalleryLightbox, GalleryZoomHint } from '../GalleryLightbox'
 import { useSettings } from '@/hooks/use-plattertea'
 import { Leaf, LeafPair, Blob } from '../Decor'
 import { Mascot } from '../Mascot'
-import { HeartHandshake, Leaf as LeafIcon, ChefHat, BadgeCheck, Smile, TrendingUp, Target, Rocket } from 'lucide-react'
+import { HeartHandshake, Leaf as LeafIcon, ChefHat, BadgeCheck, Smile, TrendingUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface AboutViewProps {
@@ -148,11 +148,16 @@ export function AboutView({ navigate }: AboutViewProps) {
       <section className="relative py-8 lg:py-14" aria-labelledby="visi-misi">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Vision */}
+            {/* Vision — maskot point (melirik + menunjuk arah masa depan) sbg ikon */}
             <div className="relative overflow-hidden rounded-[28px] bg-forest p-7 shadow-[0_16px_40px_rgba(15,46,38,0.3)] sm:p-9">
               <Leaf className="pointer-events-none absolute -right-4 -top-2 h-14 w-24 rotate-12 text-forest-light/50" />
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/20 text-gold">
-                <Target className="h-6 w-6" />
+              <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-gold/20 ring-2 ring-gold/30 sm:h-[76px] sm:w-[76px]">
+                <img
+                  src="/brand/mascot-point.png"
+                  alt="Maskot PlatterTea menunjuk ke depan — simbol visi"
+                  loading="lazy"
+                  className="h-full w-full scale-110 object-cover object-top"
+                />
               </span>
               <h3 className="mt-4 text-xl font-extrabold text-cream">Visi Kami</h3>
               <p className="mt-3 text-[14.5px] leading-relaxed text-cream/75">
@@ -160,11 +165,16 @@ export function AboutView({ navigate }: AboutViewProps) {
               </p>
             </div>
 
-            {/* Mission */}
+            {/* Mission — maskot jump (energik mengeksekusi misi) sbg ikon */}
             <div className="relative overflow-hidden rounded-[28px] bg-white p-7 shadow-[0_2px_20px_rgba(23,61,50,0.08)] sm:p-9">
               <LeafPair flip className="pointer-events-none absolute -bottom-3 -right-3 h-14 w-20 text-sage-light" />
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-sage-light text-forest">
-                <Rocket className="h-6 w-6" />
+              <span className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full bg-sage-light ring-2 ring-sage-light sm:h-[76px] sm:w-[76px]">
+                <img
+                  src="/brand/mascot-jump.png"
+                  alt="Maskot PlatterTea melompat semangat — simbol misi"
+                  loading="lazy"
+                  className="h-full w-full scale-110 object-cover object-top"
+                />
               </span>
               <h3 className="mt-4 text-xl font-extrabold text-forest">Misi Kami</h3>
               <ul className="mt-3 space-y-2.5">

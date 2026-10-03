@@ -1528,3 +1528,22 @@ Stage Summary:
 - LANGKAH USER SETELAH PUSH (di luar kode): daftar/verifikasi Google Search Console → submit
   sitemap.xml → minta indexing; sitelinks muncul otomatis begitu Google mengenali struktur & trafik
 - Opsional lanjutan: FAQPage JSON-LD dinamis dari DB, domain sendiri utk brand trust
+
+---
+Task ID: 14-b
+Agent: main (Z.ai Code)
+Task: Ganti ikon Visi Kami & Misi Kami di halaman About dengan maskot brand
+
+Work Log:
+- Seleksi maskot (8 kandidat public/brand/): Visi = mascot-point (melirik + menunjuk — simbol
+  melihat ke masa depan), Misi = mascot-jump (melompat semangat — simbol eksekusi misi)
+- Verifikasi PNG palette+tRNS = transparan asli (preview hitam hanya efek render tool), jadi
+  menyatu mulus di kartu gelap (bg-forest) maupun putih
+- AboutView.tsx: badge ikon lingkaran 48px di-upgrade jadi avatar cameo 64→76px (rounded-full
+  overflow-hidden + object-cover object-top — wajah maskot terlihat), ring halus gold/sage;
+  alt teks deskriptif per maskot; lucide Target & Rocket dihapus dari import
+- QA: lint 0, tsc 0, screenshot desktop + mobile — kedua kartu tampil manis & on-brand
+
+Stage Summary:
+- Identitas maskot kini hadir di bagian Visi/Misi — halaman About lebih hidup & personal
+- Commit lokal TANPA push (menunggu kata "push" dari user)
