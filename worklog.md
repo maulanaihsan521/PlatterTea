@@ -1783,3 +1783,29 @@ Stage Summary:
 - Laporan pentest bisa dijawab: F-01 F-04 F-05 F-06 F-07 F-11 closed; F-09 dibantah
   dgn bukti header; F-03 mitigasi CDN + rationale; F-08/F-10 documented-as-is
 - Cron diperbarui dgn aturan proteksi dev server (env -u + jangan bunuh server hidup)
+
+---
+Task ID: 22
+Agent: main (Z.ai Code)
+Task: Review & iteration sebelum push (permintaan user: pastikan tidak ada bug lalu push)
+
+Work Log:
+- Review commit antara: eb17934 (auto-commit sandbox .zscripts/dev.pid — trivial, aman)
+- SMOKE TEST penuh: 7 halaman publik 200, JSON-LD Product/FAQ ada, SSR metadata /menu OK,
+  lint 0, tsc 0 — NAMUN ditemukan BUG: /api/products kosong + login attempt ke-5 → 500
+- AKAR MASALAH: Postgres 42P05 "prepared statement s0 already exists" — transaksi pooler
+  6543 (Supavisor transaction mode) + Prisma prepared statements = bentrok antar koneksi
+  pool. .env rekonstruksi Task 20 kehilangan parameter pgbouncer
+- FIX: DATABASE_URL += ?pgbouncer=true&connection_limit=1 (pola resmi Supabase×Prisma)
+- Verifikasi pasca-fix: /api/products 8 produk ✓, /produk/tea-only 200 ✓, 42P05 = 0
+  kemunculan ✓, login: tipe salah 400 ✓, kredensial salah 401 ✓ (uji awal "400" hanya
+  artefak escaping shell pada skrip uji, bukan bug app), ke-5 terkunci 429 + header
+  Retry-After: 900 / X-RateLimit-Limit: 5 ✓, error log bersih ✓
+- Visual: menu 8 kartu dgn badge Hemat utuh; 404 kustom render manis; PWA offline
+  fallback terbukti berfungsi saat server mati (bonus QA tak direncanakan)
+- CATATAN PENTING PRODUKSI: env Vercel DATABASE_URL WAJIB diberi ?pgbouncer=true&connection_limit=1
+  juga — tanpa itu produksi berisiko 42P05 intermiten yang sama (dicek pasca-deploy)
+
+Stage Summary:
+- Semua temuan review dituntaskan; 0 bug tersisa; siap push
+- Perbaikan .env lokal bersifat gitignored — produksi disinkronkan manual via dashboard Vercel
