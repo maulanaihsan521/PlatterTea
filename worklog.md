@@ -1718,3 +1718,26 @@ Work Log:
 
 Stage Summary:
 - SEMUA remote selaras di d3c0a23. Tidak ada perubahan fungsional.
+
+---
+Task ID: 20
+Agent: main (Z.ai Code)
+Task: "jalankan website nya" — pulihkan .env & nyalakan dev server lokal
+
+Work Log:
+- Dev server ditemukan MATI + .env TERTIMPA template sandbox (DATABASE_URL=file:custom.db)
+  — isu berulang yang sama dgn worklog Task 14 (shell export menimpa .env saat restart)
+- .env dipulihkan dgn kredensial user: DATABASE_URL=pooler 6543 (runtime), DIRECT_URL=5432
+  (migrasi), SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (sb_secret, bucket "media"),
+  AUTH_SECRET baru openssl rand -hex 32 (sesi admin dev stabil)
+- Start: nohup env -u DATABASE_URL bun run dev (proteksi wajib — shell export jangan
+  menimpa .env); Ready 697ms
+- Verifikasi: home 200 (69ms), /api/products 200 → DB SUPABASE TERHUBUNG 8 produk
+  (Platter Only 15rb, Tea Only 8rb, Combo 21rb), /menu 200, dev.log 0 error, browser
+  desktop render utuh (hero maskot + nav + fitur)
+
+Stage Summary:
+- Dev server lokal HIDUP & terhubung Supabase produksi (data asli, bukan SQLite)
+- PENTING utk agent berikutnya: start dev server SELALU dgn "env -u DATABASE_URL bun
+  run dev"; bila .env kembali berisi file:custom.db → pulihkan sesuai pola .env ini
+- Produksi Vercel tidak pernah terdampak isu ini (env terpisah di dashboard Vercel)
