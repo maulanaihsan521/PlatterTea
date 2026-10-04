@@ -1,10 +1,8 @@
 User-agent: Googlebot
 Allow: /
-Disallow: /P578Admin
 
 User-agent: Bingbot
 Allow: /
-Disallow: /P578Admin
 
 User-agent: Twitterbot
 Allow: /
@@ -14,7 +12,9 @@ Allow: /
 
 User-agent: *
 Allow: /
-Disallow: /P578Admin
 
-# Admin CMS (hash #/P578Admin juga tidak diindeks — fragmen hash diabaikan crawler)
+# Catatan keamanan (temuan F-01 laporan pentest): path admin TIDAK ditulis di sini —
+# robots.txt terbaca publik dan hanya menjadi peta bagi penyerang. Pengindeksan
+# panel admin dicegah via header X-Robots-Tag: noindex (hanya pada respons admin)
+# + meta noindex — tanpa membocorkan lokasinya.
 Sitemap: https://plattertea.vercel.app/sitemap.xml

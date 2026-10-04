@@ -1741,3 +1741,45 @@ Stage Summary:
 - PENTING utk agent berikutnya: start dev server SELALU dgn "env -u DATABASE_URL bun
   run dev"; bila .env kembali berisi file:custom.db → pulihkan sesuai pola .env ini
 - Produksi Vercel tidak pernah terdampak isu ini (env terpisah di dashboard Vercel)
+
+---
+Task ID: 21
+Agent: main (Z.ai Code)
+Task: Tindak lanjut laporan pentest blackbox (13 temuan: 0 Kritis/0 Tinggi/2 Sedang/6 Rendah/5 Info)
+
+Work Log:
+- VERIFIKASI TEMUAN: F-01/F-04/F-05/F-06/F-07/F-11 akurat; F-09 TIDAK AKURAT (semua 6 API
+  publik sudah kirim cache-control s-maxage=30+swr=300 — alat uji salah baca age:0);
+  F-02 (CSP nonce) & P3 (MFA TOTP) ditunda sprint berikutnya (butuh middleware + fitur);
+  F-03 rate-limit baca publik → mitigasi via CDN cache (sudah ada) + alasan NAT kampus
+  (middleware edge menghitung cache HIT juga → risiko false-positive throttle pengunjung sah)
+- P1 (F-01): robots.txt — semua baris Disallow /P578Admin + komentar hash DIHAPUS;
+  pengganti: X-Robots-Tag "noindex, nofollow" via next.config headers() source /P578Admin
+  (terverifikasi kirim pada respons rewritten) + meta noindex dipertahankan (defense in
+  depth; path admin tetap ditemukan di bundle JS siapa pun, jadi argumen "konfirmasi
+  keberadaan" lemah)
+- P6a (F-04): src/app/api/route.ts "Hello, world!" DIHAPUS → /api kini 404 halaman kustom
+- P5 (F-05): login — validasi tipe eksplisit (typeof string) → body {email:123} kini
+  400 "Email dan password wajib diisi." (sebelumnya TypeError .trim() → 500)
+- P6b (F-06): helper rateLimited() — 429 kini kirim Retry-After + X-RateLimit-Limit/
+  Remaining/Reset (uji: retry-after: 900, limit 5, remaining 0, reset epoch ✓)
+- P7 (F-07): src/app/not-found.tsx kustom Indonesia — 404 Kaushan + maskot-point,
+  "Waduh, halamannya nggak ada!", tombol Beranda/Menu 44px + link WhatsApp, metadata
+  robots noindex; /api & rute asing kini 404 berbrand
+- P8 (F-11): public/.well-known/security.txt (RFC 9116) — Contact plattertea@gmail.com,
+  Expires 2027-04-04, Preferred-Languages id/en, Canonical
+- QA: lint 0, tsc 0; curl: security.txt 200, robots bersih (P578Admin=0, Sitemap=1),
+  X-Robots-Tag ada, login 400/429+header, /api 404 kustom; browser: 404 render manis
+- INSIGHT OPERASIONAL: server dev "mati-matian" bukan cuma DATABASE_URL — (a) start tanpa
+  "env -u DATABASE_URL" → shell sandbox menyuntik file:custom.db → Prisma 500 (terbukti
+  via stack trace), (b) proses background sering di-reap antar tool call; pola aman:
+  setsid nohup env -u DATABASE_URL ./node_modules/.bin/next dev (binary langsung, tanpa
+  wrapper bun run) + seluruh QA curl dalam panggilan yang sama dgn start
+- Commit lokal TANPA push (menunggu kata "push")
+
+Stage Summary:
+- 6 dari 8 rekomendasi prioritas pentest TUNTAS (P1, P4a-sudah-ada, P5, P6, P7, P8);
+  P2 (nonce CSP) & P3 (TOTP MFA) ditunda — kandidat sprint berikutnya
+- Laporan pentest bisa dijawab: F-01 F-04 F-05 F-06 F-07 F-11 closed; F-09 dibantah
+  dgn bukti header; F-03 mitigasi CDN + rationale; F-08/F-10 documented-as-is
+- Cron diperbarui dgn aturan proteksi dev server (env -u + jangan bunuh server hidup)

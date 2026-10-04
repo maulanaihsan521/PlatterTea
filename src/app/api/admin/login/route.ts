@@ -1,14 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { verifyPassword, setSessionCookie } from '@/lib/auth'
-import { checkRateLimit, recordFailure, clearRateLimit, requestIp } from '@/lib/rate-limit'
+import { checkRateLimit, recordFailure, clearRateLimit, requestIp, type RateLimitResult } from '@/lib/rate-limit'
 import { logAudit } from '@/lib/audit'
+
+// Header standar rate-limit utk respons 429 (temuan F-06 pentest: 429 tanpa
+// Retry-After menyulitkan klien sah & monitoring mengetahui kapan boleh coba lagi)
+function rateLimited(res: RateLimitResult) {
+  return NextResponse.json(
+    {
+      success: false,
+      error: `Terlalu banyak percobaan gagal. Coba lagi dalam ${Math.ceil(res.retryAfterSec / 60)} menit.`,
+      lockedUntilSec: res.retryAfterSec,
+    },
+    {
+      status: 429,
+      headers: {
+        'Retry-After': String(res.retryAfterSec),
+        'X-RateLimit-Limit': '5',
+        'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': String(Math.floor(Date.now() / 1000) + res.retryAfterSec),
+      },
+    }
+  )
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null)
-    const email = (body?.email || '').trim().toLowerCase()
-    const password = body?.password || ''
+    // Validasi tipe eksplisit (temuan F-05 pentest: body dgn tipe salah, mis.
+    // email:123, memicu TypeError .trim() → 500; kini ditolak 400 dengan pesan baku)
+    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : ''
+    const password = typeof body?.password === 'string' ? body.password : ''
 
     if (!email || !password) {
       return NextResponse.json(
@@ -21,21 +44,13 @@ export async function POST(req: NextRequest) {
     const key = `${requestIp(req)}:${email}`
     const limit = checkRateLimit(key)
     if (!limit.allowed) {
-      const menit = Math.ceil(limit.retryAfterSec / 60)
       logAudit({
         action: 'LOGIN_FAILED',
         entity: 'Auth',
         entityLabel: email,
         detail: { reason: 'locked', retryAfterSec: limit.retryAfterSec },
       })
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Terlalu banyak percobaan gagal. Coba lagi dalam ${menit} menit.`,
-          lockedUntilSec: limit.retryAfterSec,
-        },
-        { status: 429 }
-      )
+      return rateLimited(limit)
     }
 
     const user = await db.adminUser.findUnique({ where: { email } })
@@ -49,14 +64,7 @@ export async function POST(req: NextRequest) {
       })
       if (!after.allowed) {
         // percobaan ke-5 (dan selanjutnya) → terkunci
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Terlalu banyak percobaan gagal. Login terkunci sementara.',
-            lockedUntilSec: after.retryAfterSec,
-          },
-          { status: 429 }
-        )
+        return rateLimited(after)
       }
       return NextResponse.json(
         {

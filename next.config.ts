@@ -44,7 +44,14 @@ const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/(.*)", headers: securityHeaders }];
+    return [
+      { source: "/(.*)", headers: securityHeaders },
+      // X-Robots-Tag noindex khusus panel admin — pengganti Disallow robots.txt
+      // (temuan F-01 pentest: robots.txt terbaca publik & membocorkan path admin;
+      // header ini dikirim HANYA pada respons /P578Admin tanpa membocorkan path).
+      { source: "/P578Admin", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+      { source: "/P578Admin/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    ];
   },
   /**
    * SEO path-routing SSR: semua path di-rewrite ke halaman tunggal "/" dengan
